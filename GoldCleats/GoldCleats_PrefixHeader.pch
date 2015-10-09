@@ -1,0 +1,31 @@
+//
+//  GoldCleats_PrefixHeader.pch
+//  GoldCleats
+//
+//  Created by Raju Gautam on 21/09/15.
+//  Copyright (c) 2015 Raju Gautam. All rights reserved.
+//
+
+#ifndef GoldCleats_GoldCleats_PrefixHeader_pch
+#define GoldCleats_GoldCleats_PrefixHeader_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#endif
+
+#define FLDeviceIsUIKit7() [[[UIDevice currentDevice] systemVersion] doubleValue] >= 7.0f
+
+
+#define kBaseURL @"https://instagram.com/"
+#define kInstagramAPIBaseURL @"https://api.instagram.com"
+#define kAuthenticationURL @"oauth/authorize/?client_id=%@&redirect_uri=%@&response_type=token&scope=likes+comments+basic"  // comments
+#define kInstagramClientID @"326e45c8d7fa495fb9348498b07d3e1b"
+#define kInstagramRedirectURI @"http://www.instantsys.com"
+
+static NSString *const KDISMISSVIEW = @"KDISMISSVIEW";
+
+
+#endif

@@ -1,0 +1,11 @@
+platform :ios, '8.0'
+
+use_frameworks!
+
+pod 'imglyKit', '~> 2.4'
+
+pod 'XCDYouTubeKit', '~> 2.3.1'
+pod 'TGCameraViewController'
+pod 'Fabric'
+pod 'TwitterKit'
+pod 'TwitterCore'
