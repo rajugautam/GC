@@ -82,6 +82,8 @@
 		4343941A1BB2AC56009FBE0F /* MMDrawerVisualState.m in Sources */ = {isa = PBXBuildFile; fileRef = 434394151BB2AC56009FBE0F /* MMDrawerVisualState.m */; };
 		4343941B1BB2AC56009FBE0F /* UIViewController+MMDrawerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 434394171BB2AC56009FBE0F /* UIViewController+MMDrawerController.m */; };
 		4343941E1BB2AC74009FBE0F /* CDNavDrawerControllerTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343941D1BB2AC74009FBE0F /* CDNavDrawerControllerTableViewController.m */; };
+		435B32431BC7F48E000BF880 /* close-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 435B32411BC7F48E000BF880 /* close-icon.png */; settings = {ASSET_TAGS = (); }; };
+		435B32441BC7F48E000BF880 /* close-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 435B32421BC7F48E000BF880 /* close-icon@2x.png */; settings = {ASSET_TAGS = (); }; };
 		435C31531BC66DC3009CB834 /* play_green.png in Resources */ = {isa = PBXBuildFile; fileRef = 435C31521BC66DC3009CB834 /* play_green.png */; settings = {ASSET_TAGS = (); }; };
 		438B7FFC1BB91A8800C4F1EB /* ic_profile_placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 438B7FFB1BB91A8800C4F1EB /* ic_profile_placeholder@2x.png */; };
 		438B7FFE1BB91ABB00C4F1EB /* ic_pointer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 438B7FFD1BB91ABB00C4F1EB /* ic_pointer@2x.png */; };
@@ -223,6 +225,8 @@
 		434394171BB2AC56009FBE0F /* UIViewController+MMDrawerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+MMDrawerController.m"; sourceTree = "<group>"; };
 		4343941C1BB2AC74009FBE0F /* CDNavDrawerControllerTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDNavDrawerControllerTableViewController.h; sourceTree = "<group>"; };
 		4343941D1BB2AC74009FBE0F /* CDNavDrawerControllerTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDNavDrawerControllerTableViewController.m; sourceTree = "<group>"; };
+		435B32411BC7F48E000BF880 /* close-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "close-icon.png"; sourceTree = "<group>"; };
+		435B32421BC7F48E000BF880 /* close-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "close-icon@2x.png"; sourceTree = "<group>"; };
 		435C31521BC66DC3009CB834 /* play_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play_green.png; sourceTree = "<group>"; };
 		438B7FFB1BB91A8800C4F1EB /* ic_profile_placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_profile_placeholder@2x.png"; sourceTree = "<group>"; };
 		438B7FFD1BB91ABB00C4F1EB /* ic_pointer@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_pointer@2x.png"; sourceTree = "<group>"; };
@@ -437,6 +441,8 @@
 				43F8FA981BBA9F7B00C6348C /* ic_left_arrow_white.png */,
 				43F8FA991BBA9F7B00C6348C /* ic_right_arrow_white.png */,
 				43F8FA921BBA99D000C6348C /* ic_email.png */,
+				435B32411BC7F48E000BF880 /* close-icon.png */,
+				435B32421BC7F48E000BF880 /* close-icon@2x.png */,
 				435C31521BC66DC3009CB834 /* play_green.png */,
 				43F8FA931BBA99D000C6348C /* ic_lock.png */,
 				43F8FA941BBA99D000C6348C /* ic_user.png */,
@@ -597,6 +603,7 @@
 			files = (
 				433739301BB6B01200B79093 /* ic_my_profile.png in Resources */,
 				43122C4F1BB087D600A34D0A /* GTMOAuth2ViewTouch.xib in Resources */,
+				435B32441BC7F48E000BF880 /* close-icon@2x.png in Resources */,
 				434394091BB2A3E8009FBE0F /* like_golden@3x.png in Resources */,
 				433739521BB7F75F00B79093 /* ic_twitter@2x.png in Resources */,
 				433739531BB7F75F00B79093 /* ic_youtube@2x.png in Resources */,
@@ -619,6 +626,7 @@
 				4343940D1BB2A439009FBE0F /* add_video_golder.png in Resources */,
 				433739261BB6AB1E00B79093 /* ic_watched.png in Resources */,
 				43F8FA961BBA99D000C6348C /* ic_lock.png in Resources */,
+				435B32431BC7F48E000BF880 /* close-icon.png in Resources */,
 				438B80121BB94B7800C4F1EB /* ic_gradient3.png in Resources */,
 				434393FA1BB1BE3B009FBE0F /* Facebook.png in Resources */,
 				4337392C1BB6AD7E00B79093 /* ic_favorite.png in Resources */,
