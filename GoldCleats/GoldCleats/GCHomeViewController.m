@@ -82,6 +82,19 @@
             // Not yet authorized, request authorization and push the login UI onto the navigation stack.
         [[self navigationController] pushViewController:[self createAuthController] animated:YES];
     }
+    
+    /**
+     
+      Get Filters Information(Just for knowledge)
+     
+     **/
+    
+    NSArray * filters = [CIFilter filterNamesInCategory:kCICategoryBuiltIn];
+    NSLog(@"Filter list %@", filters);
+    
+    CIFilter filter = [CIFilter filterWithName:@"CISepiaTone"];
+    
+    NSLog(@"Filter attributes %@", [filter attributes]);
 }
 
 - (UIView *)updateTableViewBackgroundViewForMessage:(NSString *)message {
