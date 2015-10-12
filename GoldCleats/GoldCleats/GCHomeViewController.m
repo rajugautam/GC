@@ -89,12 +89,12 @@
      
      **/
     
-    NSArray * filters = [CIFilter filterNamesInCategory:kCICategoryBuiltIn];
-    NSLog(@"Filter list %@", filters);
-    
-    CIFilter filter = [CIFilter filterWithName:@"CISepiaTone"];
-    
-    NSLog(@"Filter attributes %@", [filter attributes]);
+//    NSArray * filters = [CIFilter filterNamesInCategory:kCICategoryBuiltIn];
+//    NSLog(@"Filter list %@", filters);
+//    
+//    CIFilter *filter = [CIFilter filterWithName:@"CISepiaTone"];
+//    
+//    NSLog(@"Filter attributes %@", [filter attributes]);
 }
 
 - (UIView *)updateTableViewBackgroundViewForMessage:(NSString *)message {

@@ -83,6 +83,7 @@
 		41419ADCD6536FA61D0EF6EF6F87EC4D /* HighContrast.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C60B3DC0F5148F118BF9ABE1A16ACA9 /* HighContrast.png */; };
 		429F4F8D54C24513C5CA1FEA9D0D77AC /* Breeze.png in Resources */ = {isa = PBXBuildFile; fileRef = 06B50766C801057E24F560C124C8CBB7 /* Breeze.png */; };
 		42E7372BDEB8229CCAA8C7A17F09B1F8 /* Liberator.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9B972E4EAB733182A996A6EB66E6B537 /* Liberator.ttf */; };
+		43B905AF1BCBE79B00800FF8 /* IMGLYVideoEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B905AE1BCBE79B00800FF8 /* IMGLYVideoEditorViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		44E8943903157E69BA9C393BC22036F3 /* TGCameraColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 294F7A15CC0329E2B27B8985C6906DD0 /* TGCameraColor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		469C644B2E52E71E10B8723DCE8812AD /* PolaSX.png in Resources */ = {isa = PBXBuildFile; fileRef = F761F15313B0A9BD215653F21C288C41 /* PolaSX.png */; };
 		4918A7437F16A690E8ABD118DBF2ADA7 /* XCDYouTubeVideoOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = F782F1067A928E76D620DF8DB6589DE7 /* XCDYouTubeVideoOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -416,6 +417,7 @@
 		427355A3FE4023483718A4CAF784F338 /* Tender.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = Tender.png; path = "imglyKit/Backend/Filter Responses/Tender.png"; sourceTree = "<group>"; };
 		42DE5915BFE0FE822335A4CCB054004B /* IMGLYNavigationAnimationController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IMGLYNavigationAnimationController.swift; path = imglyKit/Frontend/Editor/IMGLYNavigationAnimationController.swift; sourceTree = "<group>"; };
 		43295909FF138C1F18AC6E7BBDFDE471 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.3.sdk/System/Library/Frameworks/AssetsLibrary.framework; sourceTree = DEVELOPER_DIR; };
+		43B905AE1BCBE79B00800FF8 /* IMGLYVideoEditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IMGLYVideoEditorViewController.swift; path = ../../GoldCleats/IMGLYVideoEditorViewController.swift; sourceTree = "<group>"; };
 		4407AF8DEE4F861A47C0C8A18B73BDF0 /* IMGLYContrastBrightnessSaturationFilter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IMGLYContrastBrightnessSaturationFilter.swift; path = imglyKit/Backend/Processing/IMGLYContrastBrightnessSaturationFilter.swift; sourceTree = "<group>"; };
 		46023D0546BF50A95EDEEA2F527DE9A1 /* IMGLYColorButton.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IMGLYColorButton.swift; path = imglyKit/Frontend/Editor/IMGLYColorButton.swift; sourceTree = "<group>"; };
 		47974554CBC92AD3DA4F01CC7AF870F1 /* TGCameraViewController.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; name = TGCameraViewController.bundle; path = TGCameraViewController/Resources/TGCameraViewController.bundle; sourceTree = "<group>"; };
@@ -878,6 +880,7 @@
 		8EBC7893876378A03E082215B21E37C8 /* imglyKit */ = {
 			isa = PBXGroup;
 			children = (
+				43B905AE1BCBE79B00800FF8 /* IMGLYVideoEditorViewController.swift */,
 				8EE8E2E869617F20C3A29DFA5208B6FB /* CIFilterExtension.swift */,
 				24954B97C08F14B9249867445E61A28A /* IMGLYAD1920Filter.swift */,
 				E968FF0545533A7D5A7EE0F988FEAC44 /* IMGLYActionButton.swift */,
@@ -1548,6 +1551,7 @@
 				5D36579BE1AA4F42A14521EE880124CE /* IMGLYColorfulFilter.swift in Sources */,
 				D3056AA4E43207C1BD831B8205DB5BFC /* IMGLYContrastBrightnessSaturationFilter.swift in Sources */,
 				BD986436356E7783E32E91715C695453 /* IMGLYContrastEditorViewController.swift in Sources */,
+				43B905AF1BCBE79B00800FF8 /* IMGLYVideoEditorViewController.swift in Sources */,
 				229E0B2D87796EF6E36F34EA881B007A /* IMGLYCoolFilter.swift in Sources */,
 				CA5C56D7113954E8ACD62A4DE80D7402 /* IMGLYCottonCandyFilter.swift in Sources */,
 				F52B37ACDA4BBFF1AED1AE1A211E1B7A /* IMGLYCreamyFilter.swift in Sources */,

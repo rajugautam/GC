@@ -418,9 +418,14 @@ public class IMGLYCameraViewController: UIViewController {
     }
     
     private func configureTopControlsConstraintsWithMetrics(metrics: [String : AnyObject], views: [String : AnyObject]) {
-        topControlsView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-(==topControlMargin)-[dismissButton(>=topControlMinWidth)]-(>=topControlMargin)-[flashButton(>=topControlMinWidth)]-(==topControlMargin)-|", options: [], metrics: metrics, views: views))
+        topControlsView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-(==topControlMargin)-[dismissButton(>=topControlMinWidth)]-(>=topControlMargin)-[flashButton(>=topControlMinWidth)]-(>=topControlMargin)-[switchCameraButton(>=topControlMinWidth)]-(==topControlMargin)-|", options: [], metrics: metrics, views: views))
+        
+        //topControlsView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-(==topControlMargin)-[flashButton(>=topControlMinWidth)]-(>=topControlMargin)-[switchCameraButton(>=topControlMinWidth)]-(==topControlMargin)-|", options: [], metrics: metrics, views: views))
+        
+        //topControlsView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-(==topControlMargin)-[dismissButton(>=topControlMinWidth)]-(>=topControlMargin)-[flashButton(>=topControlMinWidth)]-(==topControlMargin)-|", options: [], metrics: metrics, views: views))
+        topControlsView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[dismissButton]|", options: [], metrics: nil, views: views))
         topControlsView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[flashButton]|", options: [], metrics: nil, views: views))
-        //        topControlsView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[switchCameraButton]|", options: [], metrics: nil, views: views))
+        topControlsView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[switchCameraButton]|", options: [], metrics: nil, views: views))
     }
     
     private func configureBottomControlsConstraintsWithMetrics(metrics: [String : AnyObject], views: [String : AnyObject]) {
@@ -551,7 +556,7 @@ public class IMGLYCameraViewController: UIViewController {
         case .Photo:
             color = UIColor.blackColor()
         case .Video:
-            color = UIColor.blackColor().colorWithAlphaComponent(0.3)
+            color = UIColor.blackColor().colorWithAlphaComponent(0.8)
         }
         
         topControlsView.backgroundColor = color
@@ -713,7 +718,15 @@ public class IMGLYCameraViewController: UIViewController {
         
         imagePicker.delegate = self
         imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
-        imagePicker.mediaTypes = [String(kUTTypeImage)]
+        switch(self.currentRecordingMode) {
+        case .Photo:
+            imagePicker.mediaTypes = [String(kUTTypeImage)]
+            break
+        case .Video:
+            imagePicker.mediaTypes = [String(kUTTypeVideo)]
+                break
+        }
+        
         imagePicker.allowsEditing = false
         
         self.presentViewController(imagePicker, animated: true, completion: nil)
@@ -952,7 +965,7 @@ extension IMGLYCameraViewController: IMGLYCameraControllerDelegate {
                 previousActionButton.alpha = 0
             }
             
-            self.cameraRollButton.alpha = self.currentRecordingMode == .Video ? 0 : 1
+            self.cameraRollButton.alpha = self.currentRecordingMode == .Video ? 1 : 1
             
             self.bottomControlsView.layoutIfNeeded()
         }
