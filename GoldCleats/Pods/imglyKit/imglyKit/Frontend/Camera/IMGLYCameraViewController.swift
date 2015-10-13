@@ -354,6 +354,7 @@ public class IMGLYCameraViewController: UIViewController {
         topControlsView.addSubview(dismissButton)
         topControlsView.addSubview(switchCameraButton)
         
+        
         bottomControlsView.addSubview(cameraRollButton)
         bottomControlsView.addSubview(actionButtonContainer)
         bottomControlsView.addSubview(filterSelectionButton)
@@ -610,6 +611,24 @@ public class IMGLYCameraViewController: UIViewController {
     private func showEditorNavigationControllerWithImage(image: UIImage) {
         let editorViewController = IMGLYMainEditorViewController()
         editorViewController.highResolutionImage = image
+        if let cameraController = cameraController {
+            editorViewController.initialFilterType = cameraController.effectFilter.filterType
+            editorViewController.initialFilterIntensity = cameraController.effectFilter.inputIntensity
+        }
+        editorViewController.completionBlock = editorCompletionBlock
+        
+        let navigationController = IMGLYNavigationController(rootViewController: editorViewController)
+        navigationController.navigationBar.barStyle = .Black
+        navigationController.navigationBar.translucent = false
+        navigationController.navigationBar.titleTextAttributes = [ NSForegroundColorAttributeName : UIColor.whiteColor() ]
+        
+        self.presentViewController(navigationController, animated: true, completion: nil)
+    }
+    
+    private func showVideoEditorNavigationControllerWithURL(videoURL:NSURL) {
+        let editorViewController = IMGLYVideoEditorViewController()
+        editorViewController.videoURL = videoURL
+        //editorViewController.highResolutionImage = image
         if let cameraController = cameraController {
             editorViewController.initialFilterType = cameraController.effectFilter.filterType
             editorViewController.initialFilterIntensity = cameraController.effectFilter.inputIntensity
@@ -1049,6 +1068,7 @@ extension IMGLYCameraViewController: IMGLYCameraControllerDelegate {
             //            if let completionBlock = self.completionBlock {
             //                completionBlock(nil, fileURL)
             //            } else {
+            self.showVideoEditorNavigationControllerWithURL(fileURL)
             self.saveMovieWithMovieURLToAssets(fileURL)
             //            }
         }

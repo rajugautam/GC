@@ -16,7 +16,7 @@
                         <color key="separatorColor" red="0.10980392156862745" green="0.11372549019607843" blue="0.12549019607843137" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Eys-24-GbL">
-                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Eys-24-GbL" id="vaU-Rm-tU5">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
