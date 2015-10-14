@@ -743,7 +743,7 @@ public class IMGLYCameraViewController: UIViewController {
             break
         case .Video:
             imagePicker.mediaTypes = [String(kUTTypeMovie)]
-                break
+            break
         }
         
         imagePicker.allowsEditing = false

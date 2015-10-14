@@ -2,7 +2,6 @@ PODS:
   - Fabric (1.5.1):
     - Fabric/Base (= 1.5.1)
   - Fabric/Base (1.5.1)
-  - imglyKit (2.4.0)
   - TGCameraViewController (2.2.1)
   - TwitterCore (1.11.1)
   - TwitterKit (1.11.1)
@@ -10,7 +9,6 @@ PODS:
 
 DEPENDENCIES:
   - Fabric
-  - imglyKit (~> 2.4)
   - TGCameraViewController
   - TwitterCore
   - TwitterKit
@@ -18,7 +16,6 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   Fabric: 03c3b3fe77e11a2bc31421b989a9c7adaa4779a5
-  imglyKit: 0cad9283d29806902f3f60c7799e29dba74d806d
   TGCameraViewController: 06bc4b742f2524fbf60f92cade61df595e8b8678
   TwitterCore: 9ec69df7571207044b1a2f57ae2c87fe73348ac5
   TwitterKit: bce9f0eac1e186caab5aa570d64d82c5cb9089be

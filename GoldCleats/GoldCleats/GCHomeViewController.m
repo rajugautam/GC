@@ -24,8 +24,10 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import "GCShareVideoViewController.h"
 #import "XCDYouTubeVideoPlayerViewController.h"
+#import "GoldCleats-Swift.h"
+
 @import AssetsLibrary;
-@import imglyKit;
+//@import imglyKit;
 
 #define CDDRAWERACTION @"CDDrawerAction"
 

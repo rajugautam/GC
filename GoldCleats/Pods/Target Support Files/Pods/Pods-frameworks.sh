@@ -54,10 +54,8 @@ code_sign_if_enabled() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework 'Pods/TGCameraViewController.framework'
   install_framework 'Pods/XCDYouTubeKit.framework'
-  install_framework 'Pods/imglyKit.framework'
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework 'Pods/TGCameraViewController.framework'
   install_framework 'Pods/XCDYouTubeKit.framework'
-  install_framework 'Pods/imglyKit.framework'
 fi

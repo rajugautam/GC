@@ -1,1 +1,0 @@
-IMGLYKIT_OTHER_LDFLAGS = -framework "AVFoundation" -framework "Accelerate" -framework "CoreGraphics" -framework "CoreImage" -framework "CoreMotion" -framework "CoreText" -framework "Foundation" -framework "GLKit" -framework "MobileCoreServices" -framework "OpenGLES" -framework "Photos" -framework "UIKit"
