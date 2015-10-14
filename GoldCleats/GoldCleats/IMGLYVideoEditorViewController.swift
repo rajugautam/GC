@@ -39,9 +39,10 @@
             self.moviePlayer = MPMoviePlayerController(contentURL: self.videoURL)
             if let player = self.moviePlayer {
                 //player.view.frame = self.view.bounds
-                player.view.frame = CGRectMake(0, 0, self.view.frame.size.width, 150);
+                //player.view.frame = CGRectMake(0, 0, self.view.frame.size.width, 150);
                 player.controlStyle = .None
                 player.repeatMode = .One
+                player.fullscreen = false
                 player.play()
                 player.scalingMode = .AspectFill
             }
@@ -145,7 +146,7 @@
 
         public private(set) lazy var bottomEditorView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.blackColor()
+            view.backgroundColor = UIColor.greenColor()
             view.translatesAutoresizingMaskIntoConstraints = false
             return view
             
@@ -158,6 +159,7 @@
         public let filterSelectionController = IMGLYFilterSelectionController()
         private var filterSelectionViewConstraint: NSLayoutConstraint?
         private var cropSelectionViewConstraint: NSLayoutConstraint?
+        private var toolSelectionViewConstraint: NSLayoutConstraint?
         var moviePlayer : MPMoviePlayerController?
         private let maxLowResolutionSideLength = CGFloat(1600)
         var videoURL: NSURL?
@@ -243,6 +245,7 @@
             
             view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[cameraPreviewContainer][bottomControlsView(==topControlsViewHeight)]", options: [], metrics: metrics, views: views))
             view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomControlsView][bottomEditorView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
+            //view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomEditorView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
             view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomControlsView][filterSelectionView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
             
             
@@ -253,7 +256,7 @@
             
             view.addConstraints([cameraPreviewContainerTopConstraint!, cameraPreviewContainerBottomConstraint!])
             
-//            cropSelectionViewConstraint = NSLayoutConstraint(item: bottomEditorView, attribute: .Top, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Bottom, multiplier: 1, constant: 0)
+//            cropSelectionViewConstraint = NSLayoutConstraint(item: bottomEditorView, attribute: .Top, relatedBy: .Equal, toItem: bottomLayoutGuide, attribute: .Bottom, multiplie3r: 1, constant: 0)
 //            view.addConstraint(cropSelectionViewConstraint!)
             
             filterSelectionViewConstraint = NSLayoutConstraint(item: filterSelectionController.view, attribute: .Top, relatedBy: .Equal, toItem: bottomLayoutGuide, attribute: .Bottom, multiplier: 1, constant: 0)
@@ -302,7 +305,7 @@
             filterSelectionButton.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
             filterSelectionButton.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
             bottomControlsView.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
-            bottomControlsView.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .Right, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Right, multiplier: 1, constant: 0))
+            bottomControlsView.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .Right, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Right, multiplier: 1, constant: -20))
         }
 
         private func updateConstraintsForRecordingMode() {
@@ -332,7 +335,7 @@
                     // Expand
                     filterSelectionController.beginAppearanceTransition(true, animated: true)
                     filterSelectionViewConstraint.constant = -1 * CGFloat(FilterSelectionViewHeight)
-//                    self.cropSelectionViewConstraint!.constant = 1 * CGFloat(FilterSelectionViewHeight)
+                    //self.cropSelectionViewConstraint!.constant = 0
                     UIView.animateWithDuration(animationDuration, delay: 0, usingSpringWithDamping: dampingFactor, initialSpringVelocity: 0, options: [], animations: {
                         sender?.transform = CGAffineTransformIdentity
                         //self.bottomEditorView.removeFromSuperview()
@@ -344,7 +347,7 @@
                     // Close
                     filterSelectionController.beginAppearanceTransition(false, animated: true)
                     filterSelectionViewConstraint.constant = 0
-//                    self.cropSelectionViewConstraint!.constant = -1 * CGFloat(FilterSelectionViewHeight)
+                    //self.cropSelectionViewConstraint!.constant = -1 * CGFloat(FilterSelectionViewHeight)
                     UIView.animateWithDuration(animationDuration, delay: 0, usingSpringWithDamping: dampingFactor, initialSpringVelocity: 0, options: [], animations: {
                         sender?.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
                         //self.view.addSubview(self.bottomEditorView)

@@ -742,7 +742,7 @@ public class IMGLYCameraViewController: UIViewController {
             imagePicker.mediaTypes = [String(kUTTypeImage)]
             break
         case .Video:
-            imagePicker.mediaTypes = [String(kUTTypeVideo)]
+            imagePicker.mediaTypes = [String(kUTTypeMovie)]
                 break
         }
         

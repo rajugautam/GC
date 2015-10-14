@@ -24,112 +24,112 @@ public class IMGLYInstanceFactory {
         switch(type) {
         case .None:
             return IMGLYNoneFilter()
-        case .K1:
-            return IMGLYK1Filter()
-        case .K2:
-            return IMGLYK2Filter()
-        case .K6:
-            return IMGLYK6Filter()
-        case .KDynamic:
-            return IMGLYKDynamicFilter()
-        case .Fridge:
-            return IMGLYFridgeFilter()
-        case .Breeze:
-            return IMGLYBreezeFilter()
-        case .Orchid:
-            return IMGLYOrchidFilter()
-        case .Chest:
-            return IMGLYChestFilter()
-        case .Front:
-            return IMGLYFrontFilter()
-        case .Fixie:
-            return IMGLYFixieFilter()
-        case .X400:
-            return IMGLYX400Filter()
+//        case .K1:
+//            return IMGLYK1Filter()
+//        case .K2:
+//            return IMGLYK2Filter()
+//        case .K6:
+//            return IMGLYK6Filter()
+//        case .KDynamic:
+//            return IMGLYKDynamicFilter()
+//        case .Fridge:
+//            return IMGLYFridgeFilter()
+//        case .Breeze:
+//            return IMGLYBreezeFilter()
+//        case .Orchid:
+//            return IMGLYOrchidFilter()
+//        case .Chest:
+//            return IMGLYChestFilter()
+//        case .Front:
+//            return IMGLYFrontFilter()
+//        case .Fixie:
+//            return IMGLYFixieFilter()
+//        case .X400:
+//            return IMGLYX400Filter()
         case .BW:
             return IMGLYBWFilter()
-        case .AD1920:
-            return IMGLYAD1920Filter()
-        case .Lenin:
-            return IMGLYLeninFilter()
-        case .Quozi:
-            return IMGLYQuoziFilter()
-        case .Pola669:
-            return IMGLYPola669Filter()
-        case .PolaSX:
-            return IMGLYPolaSXFilter()
-        case .Food:
-            return IMGLYFoodFilter()
+//        case .AD1920:
+//            return IMGLYAD1920Filter()
+//        case .Lenin:
+//            return IMGLYLeninFilter()
+//        case .Quozi:
+//            return IMGLYQuoziFilter()
+//        case .Pola669:
+//            return IMGLYPola669Filter()
+//        case .PolaSX:
+//            return IMGLYPolaSXFilter()
+//        case .Food:
+//            return IMGLYFoodFilter()
         case .Glam:
             return IMGLYGlamFilter()
-        case .Celsius:
-            return IMGLYCelsiusFilter()
-        case .Texas:
-            return IMGLYTexasFilter()
-        case .Lomo:
-            return IMGLYLomoFilter()
-        case .Goblin:
-            return IMGLYGoblinFilter()
-        case .Sin:
-            return IMGLYSinFilter()
-        case .Mellow:
-            return IMGLYMellowFilter()
-        case .Soft:
-            return IMGLYSoftFilter()
-        case .Blues:
-            return IMGLYBluesFilter()
-        case .Elder:
-            return IMGLYElderFilter()
+//        case .Celsius:
+//            return IMGLYCelsiusFilter()
+//        case .Texas:
+//            return IMGLYTexasFilter()
+//        case .Lomo:
+//            return IMGLYLomoFilter()
+//        case .Goblin:
+//            return IMGLYGoblinFilter()
+//        case .Sin:
+//            return IMGLYSinFilter()
+//        case .Mellow:
+//            return IMGLYMellowFilter()
+//        case .Soft:
+//            return IMGLYSoftFilter()
+//        case .Blues:
+//            return IMGLYBluesFilter()
+//        case .Elder:
+//            return IMGLYElderFilter()
         case .Sunset:
             return IMGLYSunsetFilter()
         case .Evening:
             return IMGLYEveningFilter()
-        case .Steel:
-            return IMGLYSteelFilter()
-        case .Seventies:
-            return IMGLYSeventiesFilter()
-        case .HighContrast:
-            return IMGLYHighContrastFilter()
-        case .BlueShadows:
-            return IMGLYBlueShadowsFilter()
-        case .Highcarb:
-            return IMGLYHighcarbFilter()
-        case .Eighties:
-            return IMGLYEightiesFilter()
+//        case .Steel:
+//            return IMGLYSteelFilter()
+//        case .Seventies:
+//            return IMGLYSeventiesFilter()
+//        case .HighContrast:
+//            return IMGLYHighContrastFilter()
+//        case .BlueShadows:
+//            return IMGLYBlueShadowsFilter()
+//        case .Highcarb:
+//            return IMGLYHighcarbFilter()
+//        case .Eighties:
+//            return IMGLYEightiesFilter()
         case .Colorful:
             return IMGLYColorfulFilter()
-        case .Lomo100:
-            return IMGLYLomo100Filter()
-        case .Pro400:
-            return IMGLYPro400Filter()
+//        case .Lomo100:
+//            return IMGLYLomo100Filter()
+//        case .Pro400:
+//            return IMGLYPro400Filter()
         case .Twilight:
             return IMGLYTwilightFilter()
-        case .CottonCandy:
-            return IMGLYCottonCandyFilter()
+//        case .CottonCandy:
+//            return IMGLYCottonCandyFilter()
         case .Pale:
             return IMGLYPaleFilter()
-        case .Settled:
-            return IMGLYSettledFilter()
+//        case .Settled:
+//            return IMGLYSettledFilter()
         case .Cool:
             return IMGLYCoolFilter()
-        case .Litho:
-            return IMGLYLithoFilter()
+//        case .Litho:
+//            return IMGLYLithoFilter()
         case .Ancient:
             return IMGLYAncientFilter()
-        case .Pitched:
-            return IMGLYPitchedFilter()
-        case .Lucid:
-            return IMGLYLucidFilter()
-        case .Creamy:
-            return IMGLYCreamyFilter()
-        case .Keen:
-            return IMGLYKeenFilter()
+//        case .Pitched:
+//            return IMGLYPitchedFilter()
+//        case .Lucid:
+//            return IMGLYLucidFilter()
+//        case .Creamy:
+//            return IMGLYCreamyFilter()
+//        case .Keen:
+//            return IMGLYKeenFilter()
         case .Tender:
             return IMGLYTenderFilter()
-        case .Bleached:
-            return IMGLYBleachedFilter()
-        case .BleachedBlue:
-            return IMGLYBleachedBlueFilter()
+//        case .Bleached:
+//            return IMGLYBleachedFilter()
+//        case .BleachedBlue:
+//            return IMGLYBleachedBlueFilter()
         case .Fall:
             return IMGLYFallFilter()
         case .Winter:
@@ -146,6 +146,9 @@ public class IMGLYInstanceFactory {
             return IMGLYNeatFilter()
         case .Plate:
             return IMGLYPlateFilter()
+            
+        default:
+            return IMGLYNoneFilter()
         }
     }
     
@@ -220,59 +223,59 @@ public class IMGLYInstanceFactory {
     public class var availableFilterList: [IMGLYFilterType] {
         return [
             .None,
-            .K1,
-            .K2,
-            .K6,
-            .KDynamic,
-            .Fridge,
-            .Breeze,
-            .Orchid,
-            .Chest,
-            .Front,
-            .Fixie,
-            .X400,
+//            .K1,
+//            .K2,
+//            .K6,
+//            .KDynamic,
+//            .Fridge,
+//            .Breeze,
+//            .Orchid,
+//            .Chest,
+//            .Front,
+//            .Fixie,
+//            .X400,
             .BW,
-            .AD1920,
-            .Lenin,
-            .Quozi,
-            .Pola669,
-            .PolaSX,
-            .Food,
+//            .AD1920,
+//            .Lenin,
+//            .Quozi,
+//            .Pola669,
+//            .PolaSX,
+//            .Food,
             .Glam,
-            .Celsius,
-            .Texas,
-            .Lomo,
-            .Goblin,
-            .Sin,
-            .Mellow,
-            .Soft,
-            .Blues,
-            .Elder,
+//            .Celsius,
+//            .Texas,
+//            .Lomo,
+//            .Goblin,
+//            .Sin,
+//            .Mellow,
+//            .Soft,
+//            .Blues,
+//            .Elder,
             .Sunset,
             .Evening,
-            .Steel,
-            .Seventies,
-            .HighContrast,
-            .BlueShadows,
-            .Highcarb,
-            .Eighties,
+//            .Steel,
+//            .Seventies,
+//            .HighContrast,
+//            .BlueShadows,
+//            .Highcarb,
+//            .Eighties,
             .Colorful,
-            .Lomo100,
-            .Pro400,
+//            .Lomo100,
+//            .Pro400,
             .Twilight,
-            .CottonCandy,
+//            .CottonCandy,
             .Pale,
-            .Settled,
+//            .Settled,
             .Cool,
-            .Litho,
+//            .Litho,
             .Ancient,
-            .Pitched,
-            .Lucid,
-            .Creamy,
-            .Keen,
+//            .Pitched,
+//            .Lucid,
+//            .Creamy,
+//            .Keen,
             .Tender,
-            .Bleached,
-            .BleachedBlue,
+//            .Bleached,
+//            .BleachedBlue,
             .Fall,
             .Winter,
             .SepiaHigh,
