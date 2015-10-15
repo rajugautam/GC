@@ -31,7 +31,7 @@ private var centerModeButtonConstraint: NSLayoutConstraint?
 private var cameraPreviewContainerTopConstraint: NSLayoutConstraint?
 private var cameraPreviewContainerBottomConstraint: NSLayoutConstraint?
 
-public class IMGLYVideoEditorViewController: IMGLYEditorViewController {
+public class IMGLYVideoEditorViewController: IMGLYEditorViewController, VideoRangeSliderDelegate {
     
     // MARK: - Properties
     
@@ -143,9 +143,12 @@ public class IMGLYVideoEditorViewController: IMGLYEditorViewController {
         return view
         }()
     
-    public private(set) lazy var bottomEditorView: UIView = {
-        let view = UIView()
+    public private(set) lazy var bottomEditorView: VideoRangeSlider = {
+        let view = VideoRangeSlider(frame: CGRectMake(10, 15, self.view.frame.size.width - 20, 70), videoUrl:self.videoURL)
+        view.setPopoverBubbleSize(100, height:50)
+        view.bubleText.font = UIFont.systemFontOfSize(12)
         view.backgroundColor = UIColor.blackColor()
+        view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
         
@@ -243,7 +246,7 @@ public class IMGLYVideoEditorViewController: IMGLYEditorViewController {
         
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[cameraPreviewContainer][bottomControlsView(==topControlsViewHeight)]", options: [], metrics: metrics, views: views))
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomControlsView][bottomEditorView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomControlsView][filterSelectionView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomEditorView][filterSelectionView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
         
         
         //            view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomControlsView][bottomEditorView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
@@ -322,6 +325,10 @@ public class IMGLYVideoEditorViewController: IMGLYEditorViewController {
     }
     
     
+    // Video Slider delegate func
+    @objc public func videoRange(slider:VideoRangeSlider?, didChangeLeftPosition:CGFloat, rightPosition:CGFloat) {
+        
+    }
     // MARK: - Targets
     public func toggleFilters(sender: UIButton?) {
         if let filterSelectionViewConstraint = self.filterSelectionViewConstraint {

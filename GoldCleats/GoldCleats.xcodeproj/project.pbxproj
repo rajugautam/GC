@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		02AF87EC762C4ABA0B28E1B1 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 335099054D75705857DFFB8C /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		430EA09D1BCED67500EDB591 /* VideoRangeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 430EA09C1BCED67500EDB591 /* VideoRangeSlider.m */; settings = {ASSET_TAGS = (); }; };
+		430EA0A01BCED6AF00EDB591 /* VideoSliderLeftView.m in Sources */ = {isa = PBXBuildFile; fileRef = 430EA09F1BCED6AF00EDB591 /* VideoSliderLeftView.m */; settings = {ASSET_TAGS = (); }; };
+		430EA0A31BCED6C500EDB591 /* VideoSliderRightView.m in Sources */ = {isa = PBXBuildFile; fileRef = 430EA0A21BCED6C500EDB591 /* VideoSliderRightView.m */; settings = {ASSET_TAGS = (); }; };
+		430EA0A61BCED70B00EDB591 /* VideoSliderBubble.m in Sources */ = {isa = PBXBuildFile; fileRef = 430EA0A51BCED70B00EDB591 /* VideoSliderBubble.m */; settings = {ASSET_TAGS = (); }; };
 		43122BD61BAD979900A34D0A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 43122BD51BAD979900A34D0A /* main.m */; };
 		43122BD91BAD979900A34D0A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 43122BD81BAD979900A34D0A /* AppDelegate.m */; };
 		43122BDC1BAD979900A34D0A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 43122BDB1BAD979900A34D0A /* ViewController.m */; };
@@ -326,6 +330,14 @@
 		00CF4E92D98C94DA2B97DA43 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		1872BB7CC1F895F4B40EC5F2 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		335099054D75705857DFFB8C /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		430EA09B1BCED67500EDB591 /* VideoRangeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoRangeSlider.h; sourceTree = "<group>"; };
+		430EA09C1BCED67500EDB591 /* VideoRangeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoRangeSlider.m; sourceTree = "<group>"; };
+		430EA09E1BCED6AF00EDB591 /* VideoSliderLeftView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoSliderLeftView.h; sourceTree = "<group>"; };
+		430EA09F1BCED6AF00EDB591 /* VideoSliderLeftView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoSliderLeftView.m; sourceTree = "<group>"; };
+		430EA0A11BCED6C500EDB591 /* VideoSliderRightView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoSliderRightView.h; sourceTree = "<group>"; };
+		430EA0A21BCED6C500EDB591 /* VideoSliderRightView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoSliderRightView.m; sourceTree = "<group>"; };
+		430EA0A41BCED70B00EDB591 /* VideoSliderBubble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoSliderBubble.h; sourceTree = "<group>"; };
+		430EA0A51BCED70B00EDB591 /* VideoSliderBubble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoSliderBubble.m; sourceTree = "<group>"; };
 		43122BD01BAD979900A34D0A /* GoldCleats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GoldCleats.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43122BD41BAD979900A34D0A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43122BD51BAD979900A34D0A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -703,6 +715,21 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		430EA09A1BCED52F00EDB591 /* Custom Views */ = {
+			isa = PBXGroup;
+			children = (
+				430EA09B1BCED67500EDB591 /* VideoRangeSlider.h */,
+				430EA09C1BCED67500EDB591 /* VideoRangeSlider.m */,
+				430EA09E1BCED6AF00EDB591 /* VideoSliderLeftView.h */,
+				430EA09F1BCED6AF00EDB591 /* VideoSliderLeftView.m */,
+				430EA0A11BCED6C500EDB591 /* VideoSliderRightView.h */,
+				430EA0A21BCED6C500EDB591 /* VideoSliderRightView.m */,
+				430EA0A41BCED70B00EDB591 /* VideoSliderBubble.h */,
+				430EA0A51BCED70B00EDB591 /* VideoSliderBubble.m */,
+			);
+			name = "Custom Views";
+			sourceTree = "<group>";
+		};
 		43122BC71BAD979900A34D0A = {
 			isa = PBXGroup;
 			children = (
@@ -729,6 +756,7 @@
 		43122BD21BAD979900A34D0A /* GoldCleats */ = {
 			isa = PBXGroup;
 			children = (
+				430EA09A1BCED52F00EDB591 /* Custom Views */,
 				435764D81BCE6FED008B7328 /* Resources */,
 				43B905A71BCBC0C700800FF8 /* Swift Classes */,
 				434393F21BB1B72F009FBE0F /* Categories */,
@@ -1487,6 +1515,7 @@
 				435765531BCE8613008B7328 /* IMGLYActionButton.swift in Sources */,
 				435765671BCE8613008B7328 /* IMGLYColorfulFilter.swift in Sources */,
 				435765BB1BCE8613008B7328 /* IMGLYTexasFilter.swift in Sources */,
+				430EA09D1BCED67500EDB591 /* VideoRangeSlider.m in Sources */,
 				4357655D1BCE8613008B7328 /* IMGLYBrightnessEditorViewController.swift in Sources */,
 				435765BE1BCE8613008B7328 /* IMGLYTextFilter.swift in Sources */,
 				435765831BCE8613008B7328 /* IMGLYGobblinFilter.swift in Sources */,
@@ -1518,6 +1547,7 @@
 				435765B41BCE8613008B7328 /* IMGLYStickerFilter.swift in Sources */,
 				435765991BCE8613008B7328 /* IMGLYNoGreenFilter.swift in Sources */,
 				435765A61BCE8613008B7328 /* IMGLYRecordingMode.swift in Sources */,
+				430EA0A31BCED6C500EDB591 /* VideoSliderRightView.m in Sources */,
 				4357656E1BCE8613008B7328 /* IMGLYCropFilter.swift in Sources */,
 				43122BD91BAD979900A34D0A /* AppDelegate.m in Sources */,
 				435765C61BCE8613008B7328 /* NSAffineTransformExtension.swift in Sources */,
@@ -1600,7 +1630,9 @@
 				435765921BCE8613008B7328 /* IMGLYLomoFilter.swift in Sources */,
 				433739121BB685A800B79093 /* GCSplashViewController.m in Sources */,
 				435765A71BCE8613008B7328 /* IMGLYResponseFilter.swift in Sources */,
+				430EA0A61BCED70B00EDB591 /* VideoSliderBubble.m in Sources */,
 				43122C521BB08D7700A34D0A /* VideoPlayerViewController.m in Sources */,
+				430EA0A01BCED6AF00EDB591 /* VideoSliderLeftView.m in Sources */,
 				435765771BCE8613008B7328 /* IMGLYFilterCollectionViewCell.swift in Sources */,
 				435765B61BCE8613008B7328 /* IMGLYStickersEditorViewController.swift in Sources */,
 				435765C31BCE8613008B7328 /* IMGLYX400Filter.swift in Sources */,
