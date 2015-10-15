@@ -67,6 +67,7 @@
     self.navigationController.navigationBar.titleTextAttributes = attributes;
         //self.navigationController.hidesBarsOnSwipe = YES;
     
+//    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:136.0f/255.0f green:167.0f/255.0f blue:57.0f/255.0f alpha:1.0f]];
     CGRect rect = self.view.frame;
     _floatingButton = [[UIButton alloc] initWithFrame:CGRectMake(rect.size.width/2 - 30, rect.size.height - 230, 70.0, 70.0)];
     [_floatingButton setImage:[UIImage imageNamed:@"add_video"] forState:UIControlStateNormal];
@@ -156,6 +157,11 @@
     } else {
         self.youtubeService.authorizer = authResult;
     }
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:136.0f/255.0f green:167.0f/255.0f blue:57.0f/255.0f alpha:1.0f]];
+    self.navigationController.navigationBarHidden = false;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -301,7 +307,9 @@
         NSLog(@"recording done %@", url);
         [self saveVideoToPhoneFrom:url];
     };
-[self presentViewController:cameraView animated:YES completion:nil];
+    self.navigationController.navigationBarHidden = true;
+//    [self presentViewController:cameraView animated:YES completion:nil];
+    [self.navigationController pushViewController:cameraView animated:false];
 }
 
 - (void)showVideoLibrary {
@@ -338,12 +346,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         NSURL *videoUrl = [info objectForKey:UIImagePickerControllerMediaURL];
         
         [self saveVideoToPhoneFrom:videoUrl];
-        
-//        VideoUploadViewController *uploadController = [[VideoUploadViewController alloc] init];
-//        uploadController.videoUrl = videoUrl;
-//        uploadController.youtubeService = self.youtubeService;
-//        
-//        [[self navigationController] pushViewController:uploadController animated:YES];
     }
     
     

@@ -22,7 +22,7 @@
     
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     
-    [[UINavigationBar appearance]setBarTintColor:[UIColor colorWithRed:136.0f/255.0f green:167.0f/255.0f blue:57.0f/255.0f alpha:1.0f]];
+    //[[UINavigationBar appearance]setBarTintColor:[UIColor colorWithRed:136.0f/255.0f green:167.0f/255.0f blue:57.0f/255.0f alpha:1.0f]];
     // Override point for customization after application launch.
     [Fabric with:@[[Twitter class]]];
 

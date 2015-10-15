@@ -7,6 +7,8 @@
 //
 import UIKit
 import MediaPlayer
+import Photos
+import AssetsLibrary
 //    @objc public enum IMGLYEditorResult: Int {
 //        case Done
 //        case Cancel
@@ -31,7 +33,7 @@ private var centerModeButtonConstraint: NSLayoutConstraint?
 private var cameraPreviewContainerTopConstraint: NSLayoutConstraint?
 private var cameraPreviewContainerBottomConstraint: NSLayoutConstraint?
 
-public class IMGLYVideoEditorViewController: IMGLYEditorViewController, VideoRangeSliderDelegate {
+public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderDelegate {
     
     // MARK: - Properties
     
@@ -58,30 +60,30 @@ public class IMGLYVideoEditorViewController: IMGLYEditorViewController, VideoRan
         return view
         }()
     
-    public lazy var actionButtons: [IMGLYActionButton] = {
-        let bundle = NSBundle(forClass: self.dynamicType)
-        var handlers = [IMGLYActionButton]()
-        
-        handlers.append(
-            IMGLYActionButton(
-                title: NSLocalizedString("main-editor.button.filter", tableName: nil, bundle: bundle, value: "", comment: ""),
-                image: UIImage(named: "icon_option_filters", inBundle: bundle, compatibleWithTraitCollection: nil),
-                handler: { [unowned self] in self.subEditorButtonPressed(.Filter) }))
-        
-        handlers.append(
-            IMGLYActionButton(
-                title: NSLocalizedString("main-editor.button.focus", tableName: nil, bundle: bundle, value: "", comment: ""),
-                image: UIImage(named: "icon_option_focus", inBundle: bundle, compatibleWithTraitCollection: nil),
-                handler: { [unowned self] in self.subEditorButtonPressed(.Focus) }))
-        
-        handlers.append(
-            IMGLYActionButton(
-                title: NSLocalizedString("main-editor.button.crop", tableName: nil, bundle: bundle, value: "", comment: ""),
-                image: UIImage(named: "icon_option_crop", inBundle: bundle, compatibleWithTraitCollection: nil),
-                handler: { [unowned self] in self.subEditorButtonPressed(.Crop) }))
-        
-        return handlers
-        }()
+//    public lazy var actionButtons: [IMGLYActionButton] = {
+//        let bundle = NSBundle(forClass: self.dynamicType)
+//        var handlers = [IMGLYActionButton]()
+//        
+//        handlers.append(
+//            IMGLYActionButton(
+//                title: NSLocalizedString("main-editor.button.filter", tableName: nil, bundle: bundle, value: "", comment: ""),
+//                image: UIImage(named: "icon_option_filters", inBundle: bundle, compatibleWithTraitCollection: nil),
+//                handler: { [unowned self] in self.subEditorButtonPressed(.Filter) }))
+//        
+//        handlers.append(
+//            IMGLYActionButton(
+//                title: NSLocalizedString("main-editor.button.focus", tableName: nil, bundle: bundle, value: "", comment: ""),
+//                image: UIImage(named: "icon_option_focus", inBundle: bundle, compatibleWithTraitCollection: nil),
+//                handler: { [unowned self] in self.subEditorButtonPressed(.Focus) }))
+//        
+//        handlers.append(
+//            IMGLYActionButton(
+//                title: NSLocalizedString("main-editor.button.crop", tableName: nil, bundle: bundle, value: "", comment: ""),
+//                image: UIImage(named: "icon_option_crop", inBundle: bundle, compatibleWithTraitCollection: nil),
+//                handler: { [unowned self] in self.subEditorButtonPressed(.Crop) }))
+//        
+//        return handlers
+//        }()
     
     public private(set) lazy var cameraRollButton: UIButton = {
         let bundle = NSBundle(forClass: self.dynamicType)
@@ -97,6 +99,24 @@ public class IMGLYVideoEditorViewController: IMGLYEditorViewController, VideoRan
     
     public private(set) lazy var actionButtonContainer: UIView = {
         let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+        }()
+    
+    public private(set) lazy var rightBarButtonItem: UIButton = {
+        let bundle = NSBundle(forClass: self.dynamicType)
+        let button:UIButton = UIButton(frame: CGRectMake(0, 0, 50, 20))
+        button.setTitle("Next", forState: .Normal)
+        button.titleLabel?.textAlignment = .Right
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 17)
+        button.setTitleColor(UIColor.init(red:52.0/255.0, green:125.0/255.0, blue:204.0/255.0, alpha:1.0), forState: .Normal)
+        button.addTarget(self, action: "tappedDone:", forControlEvents: .TouchUpInside)
+        return button
+    }()
+    
+    private lazy var activityIndicatorView: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(activityIndicatorStyle: .White)
+        view.hidesWhenStopped = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
         }()
@@ -138,7 +158,7 @@ public class IMGLYVideoEditorViewController: IMGLYEditorViewController, VideoRan
     
     public private(set) lazy var bottomControlsView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.blackColor()
+        view.backgroundColor = UIColor.init(red: 27.0/255.0, green: 30.0/255.0, blue: 32.0/255, alpha: 1)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
         }()
@@ -164,6 +184,7 @@ public class IMGLYVideoEditorViewController: IMGLYEditorViewController, VideoRan
     var moviePlayer : MPMoviePlayerController?
     private let maxLowResolutionSideLength = CGFloat(1600)
     var videoURL: NSURL?
+    var isFromLibrary:Bool?
     
     // MARK: - UIViewController
     
@@ -173,6 +194,11 @@ public class IMGLYVideoEditorViewController: IMGLYEditorViewController, VideoRan
         let bundle = NSBundle(forClass: self.dynamicType)
         navigationItem.title = NSLocalizedString("main-editor.title", tableName: nil, bundle: bundle, value: "", comment: "")
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "cancelTapped:")
+//        let rightBtn1:UIBarButtonItem =
+//        let rightBtn2:UIBarButtonItem = UIBarButtonItem(customView: activityIndicatorView)
+//        
+//        let barButtons:NSArray = [rightBtn1, rightBtn2]
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButtonItem)
         
         navigationController?.delegate = self
         
@@ -287,7 +313,7 @@ public class IMGLYVideoEditorViewController: IMGLYEditorViewController, VideoRan
         cameraRollButton.addConstraint(NSLayoutConstraint(item: cameraRollButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
         cameraRollButton.addConstraint(NSLayoutConstraint(item: cameraRollButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
         bottomControlsView.addConstraint(NSLayoutConstraint(item: cameraRollButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
-        bottomControlsView.addConstraint(NSLayoutConstraint(item: cameraRollButton, attribute: .Left, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Left, multiplier: 1, constant: 20))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: cameraRollButton, attribute: .Left, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Left, multiplier: 1, constant: 10))
         
         // CropSelectionButton
         cropSelectionButton.addConstraint(NSLayoutConstraint(item: cropSelectionButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
@@ -325,9 +351,13 @@ public class IMGLYVideoEditorViewController: IMGLYEditorViewController, VideoRan
     }
     
     
-    // Video Slider delegate func
+    // MARK: - Video Slider delegate func
     @objc public func videoRange(slider:VideoRangeSlider?, didChangeLeftPosition:CGFloat, rightPosition:CGFloat) {
-        
+        print("slider values \(didChangeLeftPosition) and \(rightPosition)")
+        //self.moviePlayer?.pause()
+        self.moviePlayer?.initialPlaybackTime = Double(didChangeLeftPosition)
+        self.moviePlayer?.endPlaybackTime = Double(rightPosition)
+        self.moviePlayer?.play()
     }
     // MARK: - Targets
     public func toggleFilters(sender: UIButton?) {
@@ -391,79 +421,125 @@ public class IMGLYVideoEditorViewController: IMGLYEditorViewController, VideoRan
     
     // MARK: - Helpers
     
-    private func subEditorButtonPressed(buttonType: IMGLYMainMenuButtonType) {
-        if (buttonType == IMGLYMainMenuButtonType.Magic) {
-            if !updating {
-                fixedFilterStack.enhancementFilter.enabled = !fixedFilterStack.enhancementFilter.enabled
-                updatePreviewImage()
+//    private func subEditorButtonPressed(buttonType: IMGLYMainMenuButtonType) {
+//        if (buttonType == IMGLYMainMenuButtonType.Magic) {
+//            if !updating {
+//                fixedFilterStack.enhancementFilter.enabled = !fixedFilterStack.enhancementFilter.enabled
+//                updatePreviewImage()
+//            }
+//        } else {
+//            if let viewController = IMGLYInstanceFactory.viewControllerForButtonType(buttonType, withFixedFilterStack: fixedFilterStack) {
+//                viewController.lowResolutionImage = lowResolutionImage
+//                viewController.previewImageView.image = previewImageView.image
+//                viewController.completionHandler = subEditorDidComplete
+//                
+//                showViewController(viewController, sender: self)
+//            }
+//        }
+//    }
+    
+//    private func subEditorDidComplete(image: UIImage?, fixedFilterStack: IMGLYFixedFilterStack) {
+//        previewImageView.image = image
+//        self.fixedFilterStack = fixedFilterStack
+//    }
+    
+    
+//    private func updatePreviewImage() {
+//        if let lowResolutionImage = self.lowResolutionImage {
+//            updating = true
+//            dispatch_async(PhotoProcessorQueue) {
+//                let processedImage = IMGLYPhotoProcessor.processWithUIImage(lowResolutionImage, filters: self.fixedFilterStack.activeFilters)
+//                
+//                dispatch_async(dispatch_get_main_queue()) {
+//                    self.previewImageView.image = processedImage
+//                    self.updating = false
+//                }
+//            }
+//        }
+//    }
+    
+    private func saveMovieWithMovieURLToAssets(movieURL: NSURL) {
+        
+        let library: ALAssetsLibrary = ALAssetsLibrary()
+        let videoWriteCompletionBlock: ALAssetsLibraryWriteVideoCompletionBlock = {(newURL: NSURL!, error: NSError!) in
+            if (error != nil) {
+                print("Error writing image with metadata to Photo Library: \(error)")
             }
-        } else {
-            if let viewController = IMGLYInstanceFactory.viewControllerForButtonType(buttonType, withFixedFilterStack: fixedFilterStack) {
-                viewController.lowResolutionImage = lowResolutionImage
-                viewController.previewImageView.image = previewImageView.image
-                viewController.completionHandler = subEditorDidComplete
-                
-                showViewController(viewController, sender: self)
-            }
-        }
-    }
-    
-    private func subEditorDidComplete(image: UIImage?, fixedFilterStack: IMGLYFixedFilterStack) {
-        previewImageView.image = image
-        self.fixedFilterStack = fixedFilterStack
-    }
-    
-    
-    private func updatePreviewImage() {
-        if let lowResolutionImage = self.lowResolutionImage {
-            updating = true
-            dispatch_async(PhotoProcessorQueue) {
-                let processedImage = IMGLYPhotoProcessor.processWithUIImage(lowResolutionImage, filters: self.fixedFilterStack.activeFilters)
-                
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.previewImageView.image = processedImage
-                    self.updating = false
+            else {
+                self.pushShareScreenWithVideoUrl(newURL)
+                do {
+                    try NSFileManager.defaultManager().removeItemAtURL(movieURL)
+                } catch _ {
                 }
             }
+            
+        }
+        if library.videoAtPathIsCompatibleWithSavedPhotosAlbum(movieURL) {
+            library.writeVideoAtPathToSavedPhotosAlbum(movieURL, completionBlock: videoWriteCompletionBlock)
+        }
+        
+//        PHPhotoLibrary.sharedPhotoLibrary().performChanges({
+//            PHAssetChangeRequest.creationRequestForAssetFromVideoAtFileURL(movieURL)
+//            }) { success, error in
+//                if let error = error {
+//                    dispatch_async(dispatch_get_main_queue()) {
+//                        let bundle = NSBundle(forClass: self.dynamicType)
+//                        
+//                        let alertController = UIAlertController(title: NSLocalizedString("camera-view-controller.error-saving-video.title", tableName: nil, bundle: bundle, value: "", comment: ""), message: error.localizedDescription, preferredStyle: .Alert)
+//                        let cancelAction = UIAlertAction(title: NSLocalizedString("camera-view-controller.error-saving-video.cancel", tableName: nil, bundle: bundle, value: "", comment: ""), style: .Cancel, handler: nil)
+//                        
+//                        alertController.addAction(cancelAction)
+//                        
+//                        self.presentViewController(alertController, animated: true, completion: nil)
+//                    }
+//                }
+//                
+//                do {
+//                    try NSFileManager.defaultManager().removeItemAtURL(movieURL)
+//                } catch _ {
+//                }
+//        }
+    }
+    // MARK: - EditorViewController
+    
+    public func tappedDone(sender: UIBarButtonItem?) {
+        navigationItem.rightBarButtonItem = nil
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicatorView)
+        activityIndicatorView.startAnimating()
+        if !(isFromLibrary ?? true) {
+            self.saveMovieWithMovieURLToAssets(videoURL!)
+        } else {
+            self.pushShareScreenWithVideoUrl(videoURL!)
         }
     }
     
-    // MARK: - EditorViewController
-    
-    override public func tappedDone(sender: UIBarButtonItem?) {
-        if let completionBlock = completionBlock {
-            //highResolutionImage = highResolutionImage?.imgly_normalizedImage
-            var filteredHighResolutionImage: UIImage?
-            
-            //                if let highResolutionImage = self.highResolutionImage {
-            //                    sender?.enabled = false
-            //                    dispatch_async(PhotoProcessorQueue) {
-            //                        filteredHighResolutionImage = IMGLYPhotoProcessor.processWithUIImage(highResolutionImage, filters: self.fixedFilterStack.activeFilters)
-            //
-            //                        dispatch_async(dispatch_get_main_queue()) {
-            //                            completionBlock(.Done, filteredHighResolutionImage)
-            //                            sender?.enabled = true
-            //                        }
-            //                    }
-            //                } else {
-            //                    completionBlock(.Done, filteredHighResolutionImage)
-            //                }
-        } else {
-            dismissViewControllerAnimated(true, completion: nil)
-        }
+    private func pushShareScreenWithVideoUrl(newVideoPath:NSURL) {
+        let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let shareViewController : GCShareVideoViewController = storyboard.instantiateViewControllerWithIdentifier("SHARE_VIDEO_CONTROLLER") as! GCShareVideoViewController
+        shareViewController.freshVideo = true
+        shareViewController.videoUrl = newVideoPath
+        //        let navigationController = UINavigationController(rootViewController: shareViewController)
+        self.navigationController?.navigationBar.barStyle = .Black
+        self.navigationController?.navigationBar.translucent = false
+        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor() ]
+        
+        self.navigationController?.pushViewController(shareViewController, animated: true)
     }
     
     @objc private func cancelTapped(sender: UIBarButtonItem?) {
-        if let completionBlock = completionBlock {
-            completionBlock(.Cancel, nil)
-        } else {
-            dismissViewControllerAnimated(true, completion: nil)
-        }
+//        if let completionBlock = completionBlock {
+//            completionBlock(.Cancel, nil)
+//        } else {
+            let viewControllers:NSArray = (self.navigationController?.viewControllers)!
+        
+        self.navigationController?.popToViewController(viewControllers[0] as! UIViewController, animated: true)
+            self.navigationController?.popToRootViewControllerAnimated(true)
+//        }
     }
     
-    public override var enableZoomingInPreviewImage: Bool {
-        return true
-    }
+//    public override var enableZoomingInPreviewImage: Bool {
+//        return true
+//    }
 }
 
 //    extension IMGLYVideoEditorViewController: UICollectionViewDataSource {

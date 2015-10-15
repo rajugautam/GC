@@ -67,7 +67,7 @@ public class IMGLYCameraViewController: UIViewController {
     
     public private(set) lazy var topControlsView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.blackColor()
+        view.backgroundColor = UIColor.init(red: 27.0/255.0, green: 30.0/255.0, blue: 32.0/255, alpha: 1)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
         }()
@@ -625,22 +625,24 @@ public class IMGLYCameraViewController: UIViewController {
         self.presentViewController(navigationController, animated: true, completion: nil)
     }
     
-    private func showVideoEditorNavigationControllerWithURL(videoURL:NSURL) {
+    private func showVideoEditorNavigationControllerWithURL(videoURL:NSURL, isFromLibrary:Bool) {
         let editorViewController = IMGLYVideoEditorViewController()
         editorViewController.videoURL = videoURL
-        //editorViewController.highResolutionImage = image
+        editorViewController.isFromLibrary = isFromLibrary
         if let cameraController = cameraController {
             editorViewController.initialFilterType = cameraController.effectFilter.filterType
             editorViewController.initialFilterIntensity = cameraController.effectFilter.inputIntensity
         }
         editorViewController.completionBlock = editorCompletionBlock
+        self.navigationController?.navigationBarHidden = false
+        //let navigationController = IMGLYNavigationController(rootViewController: editorViewController)
+        self.navigationController?.navigationBar.barStyle = .Black
+        self.navigationController?.navigationBar.translucent = false
+        self.navigationController?.navigationBar.barTintColor = UIColor.init(red: 27.0/255.0, green: 30.0/255.0, blue: 32.0/255, alpha: 1)
+        self.navigationController?.navigationBar.titleTextAttributes = [ NSForegroundColorAttributeName : UIColor.whiteColor() ]
         
-        let navigationController = IMGLYNavigationController(rootViewController: editorViewController)
-        navigationController.navigationBar.barStyle = .Black
-        navigationController.navigationBar.translucent = false
-        navigationController.navigationBar.titleTextAttributes = [ NSForegroundColorAttributeName : UIColor.whiteColor() ]
-        
-        self.presentViewController(navigationController, animated: true, completion: nil)
+        //self.presentViewController(navigationController, animated: true, completion: nil)
+        self.navigationController?.pushViewController(editorViewController, animated: true)
     }
     
     private func saveMovieWithMovieURLToAssets(movieURL: NSURL) {
@@ -771,8 +773,10 @@ public class IMGLYCameraViewController: UIViewController {
         if let recordVideoButton = sender {
             if recordVideoButton.recording {
                 cameraController?.startVideoRecording()
+                self.cameraRollButton.hidden = true
             } else {
                 cameraController?.stopVideoRecording()
+                self.cameraRollButton.hidden = false
             }
             
             if let filterSelectionViewConstraint = filterSelectionViewConstraint where filterSelectionViewConstraint.constant != 0 {
@@ -829,6 +833,7 @@ public class IMGLYCameraViewController: UIViewController {
         dismissViewControllerAnimated(true, completion: nil)
         dismissViewControllerAnimated(true, completion: nil)
     }
+    
     
     @objc private func image(image: UIImage, didFinishSavingWithError: NSError, contextInfo:UnsafePointer<Void>) {
         setLastImageFromRollAsPreview()
@@ -1068,8 +1073,8 @@ extension IMGLYCameraViewController: IMGLYCameraControllerDelegate {
             //            if let completionBlock = self.completionBlock {
             //                completionBlock(nil, fileURL)
             //            } else {
-            self.showVideoEditorNavigationControllerWithURL(fileURL)
-            self.saveMovieWithMovieURLToAssets(fileURL)
+            self.showVideoEditorNavigationControllerWithURL(fileURL, isFromLibrary:false)
+//            self.saveMovieWithMovieURLToAssets(fileURL)
             //            }
         }
     }
@@ -1091,20 +1096,38 @@ extension IMGLYCameraViewController: IMGLYCameraControllerDelegate {
 
 extension IMGLYCameraViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     public func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        let image = info[UIImagePickerControllerOriginalImage] as? UIImage
+        let mediaType = info[UIImagePickerControllerMediaType] as! NSString
         
         self.dismissViewControllerAnimated(true, completion: {
-            //            if let completionBlock = self.completionBlock {
-            //                completionBlock(image, nil)
-            //            } else {
-            if let image = image {
+            if mediaType.isEqualToString(kUTTypeImage as String)
+            {
+                let image = info[UIImagePickerControllerOriginalImage] as! UIImage
                 self.showEditorNavigationControllerWithImage(image)
+            } else if mediaType.isEqualToString(kUTTypeMovie as String)
+            {
+                let videoPath = info[UIImagePickerControllerMediaURL] as! NSURL
+//                let videoUrl:NSURL = NSURL(string: videoPath)!
+                self.showVideoEditorNavigationControllerWithURL(videoPath, isFromLibrary:true)
             }
-            //            }
         })
+        
+        
+        
+//        let image = info[UIImagePickerControllerOriginalImage] as? UIImage
+//        
+//        self.dismissViewControllerAnimated(true, completion: {
+//            //            if let completionBlock = self.completionBlock {
+//            //                completionBlock(image, nil)
+//            //            } else {
+//            if let image = image {
+//                self.showEditorNavigationControllerWithImage(image)
+//            }
+//            //            }
+//        })
     }
     
     public func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+        //self.dismissViewControllerAnimated(true, completion: nil)
+        self.navigationController?.popViewControllerAnimated(true)
     }
 }

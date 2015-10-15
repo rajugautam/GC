@@ -11,6 +11,7 @@
 #import "GCVideoShareDescCell.h"
 #import "VideoData.h"
 #import "Utils.h"
+#import "GCHomeViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import "XCDYouTubeVideoPlayerViewController.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
@@ -28,14 +29,28 @@
     _uploadVideo = [[YouTubeUploadVideo alloc] init];
     _uploadVideo.delegate = self;
     
+    //[self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:136.0f/255.0f green:167.0f/255.0f blue:57.0f/255.0f alpha:1.0f]];
+    
+    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Home" style:UIBarButtonItemStylePlain target:self action:@selector(takeMeToHome:)];
+    self.navigationItem.leftBarButtonItem = leftBarButton;
     self.subView = [[UIView alloc] init];
-    self.tableView.contentInset = UIEdgeInsetsMake(-30, 0, 0, 0);
+    //self.tableView.contentInset = UIEdgeInsetsMake(-30, 0, 0, 0);
 
     UITapGestureRecognizer *gestureRec = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissSubViews)];
     
     [self.subView addGestureRecognizer:gestureRec];
     
     _thumbnail = [self generateImage];
+}
+
+- (void)takeMeToHome : (id)sender {
+    NSArray *viewControllers = [self.navigationController viewControllers];
+    if ([viewControllers count] > 0 && [viewControllers[0] isKindOfClass:[GCHomeViewController class]]) {
+        [self.navigationController popToViewController:viewControllers[0] animated:YES];
+    } else {
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }
+    
 }
 
 - (void)dismissSubViews {
