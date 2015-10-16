@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "GTLYouTube.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property(nonatomic, retain) GTLServiceYouTube *youtubeService;
 
 
 @end

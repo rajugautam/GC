@@ -616,18 +616,21 @@ public class IMGLYCameraViewController: UIViewController {
             editorViewController.initialFilterIntensity = cameraController.effectFilter.inputIntensity
         }
         editorViewController.completionBlock = editorCompletionBlock
+        self.navigationController?.navigationBarHidden = false
+        //let navigationController = IMGLYNavigationController(rootViewController: editorViewController)
+        self.navigationController?.navigationBar.barStyle = .Black
+        self.navigationController?.navigationBar.translucent = false
+        self.navigationController?.navigationBar.titleTextAttributes = [ NSForegroundColorAttributeName : UIColor.whiteColor() ]
+        self.navigationController?.navigationBar.barTintColor = UIColor.init(red: 27.0/255.0, green: 30.0/255.0, blue: 32.0/255, alpha: 1)
         
-        let navigationController = IMGLYNavigationController(rootViewController: editorViewController)
-        navigationController.navigationBar.barStyle = .Black
-        navigationController.navigationBar.translucent = false
-        navigationController.navigationBar.titleTextAttributes = [ NSForegroundColorAttributeName : UIColor.whiteColor() ]
-        
-        self.presentViewController(navigationController, animated: true, completion: nil)
+        //self.presentViewController(navigationController, animated: true, completion: nil)
+        self.navigationController?.pushViewController(editorViewController, animated: true)
     }
     
-    private func showVideoEditorNavigationControllerWithURL(videoURL:NSURL, isFromLibrary:Bool) {
+    private func showVideoEditorNavigationControllerWithURL(videoURL:NSURL, referenceURL:NSURL, isFromLibrary:Bool) {
         let editorViewController = IMGLYVideoEditorViewController()
         editorViewController.videoURL = videoURL
+        editorViewController.referenceURL = referenceURL
         editorViewController.isFromLibrary = isFromLibrary
         if let cameraController = cameraController {
             editorViewController.initialFilterType = cameraController.effectFilter.filterType
@@ -1074,7 +1077,7 @@ extension IMGLYCameraViewController: IMGLYCameraControllerDelegate {
             //            if let completionBlock = self.completionBlock {
             //                completionBlock(nil, fileURL)
             //            } else {
-            self.showVideoEditorNavigationControllerWithURL(fileURL, isFromLibrary:false)
+            self.showVideoEditorNavigationControllerWithURL(fileURL, referenceURL:fileURL, isFromLibrary:false)
 //            self.saveMovieWithMovieURLToAssets(fileURL)
             //            }
         }
@@ -1107,8 +1110,9 @@ extension IMGLYCameraViewController: UIImagePickerControllerDelegate, UINavigati
             } else if mediaType.isEqualToString(kUTTypeMovie as String)
             {
                 let videoPath = info[UIImagePickerControllerMediaURL] as! NSURL
+                let refURL = info[UIImagePickerControllerReferenceURL] as! NSURL
 //                let videoUrl:NSURL = NSURL(string: videoPath)!
-                self.showVideoEditorNavigationControllerWithURL(videoPath, isFromLibrary:true)
+                self.showVideoEditorNavigationControllerWithURL(videoPath, referenceURL:refURL, isFromLibrary:true)
             }
         })
         

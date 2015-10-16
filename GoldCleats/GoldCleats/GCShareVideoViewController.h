@@ -13,6 +13,10 @@
 
 @class VideoData;
 
+typedef NS_ENUM(NSInteger, MediaType) {
+    KTypeVideo,
+    kTypeImage
+};
 
 @interface GCShareVideoViewController : UITableViewController<YouTubeUploadVideoDelegate, UITextViewDelegate, FBSDKSharingDelegate>
 
@@ -20,9 +24,10 @@
 @property(nonatomic, strong) NSURL *videoUrl;
 @property(nonatomic, strong) NSURL *referenceUrl;
 @property(nonatomic, strong) YouTubeUploadVideo *uploadVideo;
-@property(nonatomic, retain) GTLServiceYouTube *youtubeService;
+//@property(nonatomic, retain) GTLServiceYouTube *youtubeService;
 @property(nonatomic, readwrite) BOOL freshVideo;
 @property(nonatomic, retain) UIImage *thumbnail;
+@property(nonatomic, assign) enum MediaType mediaType;
 
 @property(nonatomic, retain) UIView *subView;
 @property(nonatomic, retain) NSString *videoDescription;

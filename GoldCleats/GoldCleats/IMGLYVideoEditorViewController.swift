@@ -27,6 +27,7 @@ import AssetsLibrary
 private let ButtonCollectionViewCellReuseIdentifier = "ButtonCollectionViewCell"
 private let ButtonCollectionViewCellSize = CGSize(width: 66, height: 90)
 private let BottomControlSize = CGSize(width: 47, height: 47)
+private let PointerControlSize = CGSize(width: 15, height: 9)
 private let FilterSelectionViewHeight = 100
 
 private var centerModeButtonConstraint: NSLayoutConstraint?
@@ -85,7 +86,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
 //        return handlers
 //        }()
     
-    public private(set) lazy var cameraRollButton: UIButton = {
+    public private(set) lazy var filterSelectionButton: UIButton = {
         let bundle = NSBundle(forClass: self.dynamicType)
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -132,17 +133,26 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     public private(set) var actionButton: UIControl?
     
-    public private(set) lazy var filterSelectionButton: UIButton = {
+    public private(set) lazy var zoomVideoButton: UIButton = {
         let bundle = NSBundle(forClass: self.dynamicType)
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "icon_option_focus", inBundle: bundle, compatibleWithTraitCollection: nil), forState: .Normal)
         button.layer.cornerRadius = 3
         button.clipsToBounds = true
-        button.addTarget(self, action: "toggleFilters:", forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: "zoomVideo:", forControlEvents: .TouchUpInside)
         button.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
         return button
         }()
+    
+    public private(set) lazy var controlSelectionPointer:UIImageView = {
+       let bundle = NSBundle(forClass: self.dynamicType)
+        let pointer = UIImageView()
+        pointer.image = UIImage.init(named: "ic_pointer")
+        pointer.translatesAutoresizingMaskIntoConstraints = false
+        return pointer
+        
+    }()
     
     public private(set) lazy var cropSelectionButton: UIButton = {
         let bundle = NSBundle(forClass: self.dynamicType)
@@ -165,10 +175,13 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     public private(set) lazy var bottomEditorView: VideoRangeSlider = {
         let view = VideoRangeSlider(frame: CGRectMake(10, 15, self.view.frame.size.width - 20, 70), videoUrl:self.videoURL)
-        view.setPopoverBubbleSize(100, height:50)
+        view.setPopoverBubbleSize(120, height:60)
         view.bubleText.font = UIFont.systemFontOfSize(12)
         view.backgroundColor = UIColor.blackColor()
         view.delegate = self
+//        view.minGap = 1
+        view.topBorder.backgroundColor = UIColor.init(red: 0.945, green: 0.945, blue: 0.945, alpha: 1.0)
+        view.bottomBorder.backgroundColor = UIColor.init(red: 0.806, green: 0.806, blue: 0.806, alpha: 1.0)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
         
@@ -184,6 +197,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     var moviePlayer : MPMoviePlayerController?
     private let maxLowResolutionSideLength = CGFloat(1600)
     var videoURL: NSURL?
+    var referenceURL: NSURL?
     var isFromLibrary:Bool?
     
     // MARK: - UIViewController
@@ -200,7 +214,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
 //        let barButtons:NSArray = [rightBtn1, rightBtn2]
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButtonItem)
         
-        navigationController?.delegate = self
+//        navigationController?.delegate = self
         
         fixedFilterStack.effectFilter = IMGLYInstanceFactory.effectFilterWithType(initialFilterType)
         fixedFilterStack.effectFilter.inputIntensity = initialFilterIntensity
@@ -208,11 +222,16 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         //updatePreviewImage()
         configureViewHierarchy()
         configureViewConstraints()
-        //toggleFilters(filterSelectionButton)
+
+        
+        //toggleFilters(zoomVideoButton)
         //updateConstraintsForRecordingMode()
         //configureMenuCollectionView()
     }
     
+    override public func viewDidAppear(animated: Bool) {
+        self.cropVideo(self.cropSelectionButton)
+    }
     
     private func configureViewHierarchy() {
         view.addSubview(backgroundContainerView)
@@ -227,9 +246,10 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         filterSelectionController.didMoveToParentViewController(self)
         view.addSubview(filterSelectionController.view)
         
-        bottomControlsView.addSubview(cameraRollButton)
-        bottomControlsView.addSubview(cropSelectionButton)
         bottomControlsView.addSubview(filterSelectionButton)
+        bottomControlsView.addSubview(cropSelectionButton)
+        bottomControlsView.addSubview(zoomVideoButton)
+        bottomControlsView.addSubview(controlSelectionPointer)
         
         // Add Video Crop control to bottomEditorView, here
         
@@ -244,9 +264,10 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             "bottomControlsView" : bottomControlsView,
             "bottomEditorView" : bottomEditorView,
             "filterSelectionView" : filterSelectionController.view,
-            "cameraRollButton" : cameraRollButton,
+            "filterSelectionButton" : filterSelectionButton,
             "cropSelectionButton" : cropSelectionButton,
-            "filterSelectionButton" : filterSelectionButton
+            "zoomVideoButton" : zoomVideoButton,
+            "controlSelectionPointer": controlSelectionPointer
         ]
         
         let metrics: [String : AnyObject] = [
@@ -309,11 +330,11 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         //                bottomControlsView.addConstraint(NSLayoutConstraint(item: bottomControlsView, attribute: .Top, relatedBy: .Equal, toItem: actionButtonContainer, attribute: .Top, multiplier: 1, constant: -5))
         //            }
         
-        // CameraRollButton
-        cameraRollButton.addConstraint(NSLayoutConstraint(item: cameraRollButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
-        cameraRollButton.addConstraint(NSLayoutConstraint(item: cameraRollButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
-        bottomControlsView.addConstraint(NSLayoutConstraint(item: cameraRollButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
-        bottomControlsView.addConstraint(NSLayoutConstraint(item: cameraRollButton, attribute: .Left, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Left, multiplier: 1, constant: 10))
+        // filterSelectionButton
+        filterSelectionButton.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
+        filterSelectionButton.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .Left, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Left, multiplier: 1, constant: 10))
         
         // CropSelectionButton
         cropSelectionButton.addConstraint(NSLayoutConstraint(item: cropSelectionButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
@@ -327,11 +348,16 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         //            bottomControlsView.addConstraint(NSLayoutConstraint(item: actionButtonContainer, attribute: .CenterX, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterX, multiplier: 1, constant: 0))
         //            bottomControlsView.addConstraint(NSLayoutConstraint(item: bottomControlsView, attribute: .Bottom, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Bottom, multiplier: 1, constant: 10))
         
-        // FilterSelectionButton
-        filterSelectionButton.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
-        filterSelectionButton.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
-        bottomControlsView.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
-        bottomControlsView.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .Right, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Right, multiplier: 1, constant: 0))
+        // zoomVideoButton
+        zoomVideoButton.addConstraint(NSLayoutConstraint(item: zoomVideoButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
+        zoomVideoButton.addConstraint(NSLayoutConstraint(item: zoomVideoButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: zoomVideoButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: zoomVideoButton, attribute: .Right, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Right, multiplier: 1, constant: 0))
+        
+        controlSelectionPointer.addConstraint(NSLayoutConstraint(item: controlSelectionPointer, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: PointerControlSize.width))
+        controlSelectionPointer.addConstraint(NSLayoutConstraint(item: controlSelectionPointer, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: PointerControlSize.height))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: controlSelectionPointer, attribute: .Bottom, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Bottom, multiplier: 1, constant: 0))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: controlSelectionPointer, attribute: .CenterX, relatedBy: .Equal, toItem: filterSelectionButton, attribute: .CenterX, multiplier: 1, constant: 0))
     }
     
     private func updateConstraintsForRecordingMode() {
@@ -353,20 +379,22 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     // MARK: - Video Slider delegate func
     @objc public func videoRange(slider:VideoRangeSlider?, didChangeLeftPosition:CGFloat, rightPosition:CGFloat) {
-        print("slider values \(didChangeLeftPosition) and \(rightPosition)")
-        //self.moviePlayer?.pause()
-        self.moviePlayer?.initialPlaybackTime = Double(didChangeLeftPosition)
-        self.moviePlayer?.endPlaybackTime = Double(rightPosition)
-        self.moviePlayer?.play()
+        print("slider values \(didChangeLeftPosition) and \(rightPosition) \(self.videoURL) and \(self.referenceURL) ")
+        //self.moviePlayer?.stop()
+//        self.moviePlayer?.contentURL = self.referenceURL
+//        self.moviePlayer?.initialPlaybackTime = Double(didChangeLeftPosition)
+//        self.moviePlayer?.endPlaybackTime = Double(rightPosition)
+//        self.moviePlayer?.play()
     }
+    
     // MARK: - Targets
     public func toggleFilters(sender: UIButton?) {
         if let filterSelectionViewConstraint = self.filterSelectionViewConstraint {
             let animationDuration = NSTimeInterval(0.6)
             let dampingFactor = CGFloat(0.6)
-            
             if filterSelectionViewConstraint.constant == 0 {
                 // Expand
+                self.animatePointer(sender)
                 filterSelectionController.beginAppearanceTransition(true, animated: true)
                 filterSelectionViewConstraint.constant = -1 * CGFloat(FilterSelectionViewHeight)
                 //                    self.cropSelectionViewConstraint!.constant = 1 * CGFloat(FilterSelectionViewHeight)
@@ -393,8 +421,51 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         }
     }
     
-    public func cropVideo(sender:UIButton?) {
+    private func animatePointer(sender:UIButton?) {
         
+        UIView.animateWithDuration(0.3, animations: {
+            var frame:CGRect = self.controlSelectionPointer.frame
+            frame.origin.x = (sender?.frame.origin.x)! + (sender?.frame.size.width)! / 2 - 8
+            self.controlSelectionPointer.frame = frame
+        })
+    }
+    
+    public func zoomVideo(sender:UIButton?) {
+        //self.toggleFilters(self.filterSelectionButton)
+        let animationDuration = NSTimeInterval(0.6)
+        let dampingFactor = CGFloat(0.6)
+        
+        let filterSelectionViewConstraint = self.filterSelectionViewConstraint
+        filterSelectionController.beginAppearanceTransition(false, animated: true)
+        filterSelectionViewConstraint!.constant = 0
+        //                    self.cropSelectionViewConstraint!.constant = -1 * CGFloat(FilterSelectionViewHeight)
+        UIView.animateWithDuration(animationDuration, delay: 0, usingSpringWithDamping: dampingFactor, initialSpringVelocity: 0, options: [], animations: {
+            sender?.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
+            //self.view.addSubview(self.bottomEditorView)
+            self.view.layoutIfNeeded()
+            }, completion: { finished in
+                self.filterSelectionController.endAppearanceTransition()
+        })
+        self.animatePointer(sender)
+    }
+    
+    public func cropVideo(sender:UIButton?) {
+        //self.toggleFilters(self.filterSelectionButton)
+        let animationDuration = NSTimeInterval(0.6)
+        let dampingFactor = CGFloat(0.6)
+
+        let filterSelectionViewConstraint = self.filterSelectionViewConstraint
+        filterSelectionController.beginAppearanceTransition(false, animated: true)
+        filterSelectionViewConstraint!.constant = 0
+        //                    self.cropSelectionViewConstraint!.constant = -1 * CGFloat(FilterSelectionViewHeight)
+        UIView.animateWithDuration(animationDuration, delay: 0, usingSpringWithDamping: dampingFactor, initialSpringVelocity: 0, options: [], animations: {
+            sender?.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
+            //self.view.addSubview(self.bottomEditorView)
+            self.view.layoutIfNeeded()
+            }, completion: { finished in
+                self.filterSelectionController.endAppearanceTransition()
+        })
+        self.animatePointer(sender)
     }
     
     // MARK: - Configuration
@@ -506,10 +577,11 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         navigationItem.rightBarButtonItem = nil
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicatorView)
         activityIndicatorView.startAnimating()
+        
         if !(isFromLibrary ?? true) {
             self.saveMovieWithMovieURLToAssets(videoURL!)
         } else {
-            self.pushShareScreenWithVideoUrl(videoURL!)
+            self.pushShareScreenWithVideoUrl(referenceURL!)
         }
     }
     
@@ -517,7 +589,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let shareViewController : GCShareVideoViewController = storyboard.instantiateViewControllerWithIdentifier("SHARE_VIDEO_CONTROLLER") as! GCShareVideoViewController
         shareViewController.freshVideo = true
+        shareViewController.referenceUrl = newVideoPath
         shareViewController.videoUrl = newVideoPath
+        shareViewController.mediaType = MediaType.KTypeVideo;
         //        let navigationController = UINavigationController(rootViewController: shareViewController)
         self.navigationController?.navigationBar.barStyle = .Black
         self.navigationController?.navigationBar.translucent = false
@@ -577,9 +651,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
 //        }
 //    }
 
-extension IMGLYVideoEditorViewController: UINavigationControllerDelegate {
-    public func navigationController(navigationController: UINavigationController, animationControllerForOperation operation: UINavigationControllerOperation, fromViewController fromVC: UIViewController, toViewController toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return IMGLYNavigationAnimationController()
-    }
-}
+//extension IMGLYVideoEditorViewController: UINavigationControllerDelegate {
+//    public func navigationController(navigationController: UINavigationController, animationControllerForOperation operation: UINavigationControllerOperation, fromViewController fromVC: UIViewController, toViewController toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        return IMGLYNavigationAnimationController()
+//    }
+//}
 

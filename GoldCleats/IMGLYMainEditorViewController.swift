@@ -126,14 +126,16 @@ public class IMGLYMainEditorViewController: IMGLYEditorViewController {
         let bundle = NSBundle(forClass: self.dynamicType)
         navigationItem.title = NSLocalizedString("main-editor.title", tableName: nil, bundle: bundle, value: "", comment: "")
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "cancelTapped:")
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "tappedDone:")
         
-        navigationController?.delegate = self
+//        navigationController?.delegate = self
         
         fixedFilterStack.effectFilter = IMGLYInstanceFactory.effectFilterWithType(initialFilterType)
         fixedFilterStack.effectFilter.inputIntensity = initialFilterIntensity
         
         updatePreviewImage()
         configureMenuCollectionView()
+        
     }
     
     // MARK: - Configuration
@@ -219,7 +221,7 @@ public class IMGLYMainEditorViewController: IMGLYEditorViewController {
     // MARK: - EditorViewController
     
     override public func tappedDone(sender: UIBarButtonItem?) {
-        if let completionBlock = completionBlock {
+//        if let completionBlock = completionBlock {
             highResolutionImage = highResolutionImage?.imgly_normalizedImage
             var filteredHighResolutionImage: UIImage?
             
@@ -229,24 +231,38 @@ public class IMGLYMainEditorViewController: IMGLYEditorViewController {
                     filteredHighResolutionImage = IMGLYPhotoProcessor.processWithUIImage(highResolutionImage, filters: self.fixedFilterStack.activeFilters)
                     
                     dispatch_async(dispatch_get_main_queue()) {
-                        completionBlock(.Done, filteredHighResolutionImage)
+//                        completionBlock(.Done, filteredHighResolutionImage)
+                        self.pushShareScreenWithImage(filteredHighResolutionImage!)
                         sender?.enabled = true
                     }
                 }
-            } else {
-                completionBlock(.Done, filteredHighResolutionImage)
             }
-        } else {
-            dismissViewControllerAnimated(true, completion: nil)
-        }
+//            else {
+//                completionBlock(.Done, filteredHighResolutionImage)
+//            }
+//        } else {
+//            dismissViewControllerAnimated(true, completion: nil)
+//        }
+    }
+    
+    private func pushShareScreenWithImage(newImage:UIImage) {
+        let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let shareViewController : GCShareVideoViewController = storyboard.instantiateViewControllerWithIdentifier("SHARE_VIDEO_CONTROLLER") as! GCShareVideoViewController
+        shareViewController.mediaType = MediaType.kTypeImage;
+        shareViewController.thumbnail = newImage
+        //        let navigationController = UINavigationController(rootViewController: shareViewController)
+        self.navigationController?.navigationBar.barStyle = .Black
+        self.navigationController?.navigationBar.translucent = false
+        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor() ]
+        
+        self.navigationController?.pushViewController(shareViewController, animated: true)
     }
     
     @objc private func cancelTapped(sender: UIBarButtonItem?) {
-        if let completionBlock = completionBlock {
-            completionBlock(.Cancel, nil)
-        } else {
-            dismissViewControllerAnimated(true, completion: nil)
-        }
+        let viewControllers:NSArray = (self.navigationController?.viewControllers)!
+        
+        self.navigationController?.popToViewController(viewControllers[0] as! UIViewController, animated: true)
+        self.navigationController?.popToRootViewControllerAnimated(true)
     }
     
     public override var enableZoomingInPreviewImage: Bool {
@@ -289,8 +305,8 @@ extension IMGLYMainEditorViewController: UICollectionViewDelegate {
     }
 }
 
-extension IMGLYMainEditorViewController: UINavigationControllerDelegate {
-    public func navigationController(navigationController: UINavigationController, animationControllerForOperation operation: UINavigationControllerOperation, fromViewController fromVC: UIViewController, toViewController toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return IMGLYNavigationAnimationController()
-    }
-}
+//extension IMGLYMainEditorViewController: UINavigationControllerDelegate {
+//    public func navigationController(navigationController: UINavigationController, animationControllerForOperation operation: UINavigationControllerOperation, fromViewController fromVC: UIViewController, toViewController toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+//        return IMGLYNavigationAnimationController()
+//    }
+//}

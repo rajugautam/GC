@@ -15,7 +15,7 @@
 //#import "UploadController.h"
 #import "VideoPlayerViewController.h"
 //#import "VideoListViewController.h"
-
+#import "AppDelegate.h"
 #import <AVFoundation/AVFoundation.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "Utils.h"
@@ -75,12 +75,14 @@
     [_floatingButton addTarget:self action:@selector(showCamera) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_floatingButton];
     
-        // Initialize the youtube service & load existing credentials from the keychain if available
+    // Initialize the youtube service & load existing credentials from the keychain if available
     self.youtubeService = [[GTLServiceYouTube alloc] init];
     self.youtubeService.authorizer =
     [GTMOAuth2ViewControllerTouch authForGoogleFromKeychainForName:kKeychainItemName
                                                           clientID:kClientID
                                                       clientSecret:kClientSecret];
+    AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    delegate.youtubeService = self.youtubeService;
     if (![self isAuthorized]) {
             // Not yet authorized, request authorization and push the login UI onto the navigation stack.
         [[self navigationController] pushViewController:[self createAuthController] animated:YES];
@@ -157,6 +159,8 @@
     } else {
         self.youtubeService.authorizer = authResult;
     }
+    AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    delegate.youtubeService = self.youtubeService;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -168,6 +172,7 @@
     [super viewDidAppear:animated];
         // Always display the camera UI.
     [self showList];
+    [self.view bringSubviewToFront:self.floatingButton];
 }
 
 - (void)showList {
@@ -343,7 +348,7 @@
     
     GCShareVideoViewController *shareViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"SHARE_VIDEO_CONTROLLER"];
     shareViewController.videoData = videoData;
-    shareViewController.youtubeService = youTubeService;
+    //shareViewController.youtubeService = youTubeService;
     shareViewController.videoUrl = videoUrl;
     shareViewController.referenceUrl = refUrl;
     shareViewController.freshVideo = isFreshVideo;
@@ -361,10 +366,10 @@
 }
 
 - (void)showCamera {
-    _floatingButton.transform = CGAffineTransformMakeScale(0.1, 0.1);
-    //_floatingButton.transform = CGAffineTransformMakeRotation(90);
-    
-    [UIView animateWithDuration:2.0 delay:0 usingSpringWithDamping:0.2 initialSpringVelocity:6.0 options:UIViewAnimationOptionAllowUserInteraction animations: ^{_floatingButton.transform = CGAffineTransformIdentity;} completion:nil];
+//    _floatingButton.transform = CGAffineTransformMakeScale(0.1, 0.1);
+//    //_floatingButton.transform = CGAffineTransformMakeRotation(90);
+//    
+//    [UIView animateWithDuration:2.0 delay:0 usingSpringWithDamping:0.2 initialSpringVelocity:6.0 options:UIViewAnimationOptionAllowUserInteraction animations: ^{_floatingButton.transform = CGAffineTransformIdentity;} completion:nil];
     
     IMGLYCameraViewController *cameraView = [[IMGLYCameraViewController alloc] init];
     cameraView.squareMode = TRUE;
@@ -454,5 +459,26 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     videoPlayer.moviePlayer.shouldAutoplay=YES;
     [self presentMoviePlayerViewControllerAnimated:videoPlayer];
 
+}
+
+- (BOOL)shouldAutorotate {
+    return NO;
+}
+
+//- (NSUInteger)supportedInterfaceOrientations {
+//    return UIInterfaceOrientationMaskPortrait;
+//}
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
+- (NSUInteger)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskPortrait;
+}
+#else
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskPortrait;
+}
+#endif
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+    return NO;
 }
 @end

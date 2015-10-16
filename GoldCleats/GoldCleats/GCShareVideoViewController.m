@@ -11,6 +11,7 @@
 #import "GCVideoShareDescCell.h"
 #import "VideoData.h"
 #import "Utils.h"
+#import "AppDelegate.h"
 #import "GCHomeViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import "XCDYouTubeVideoPlayerViewController.h"
@@ -20,7 +21,9 @@
 #import <Social/Social.h>
 #import <TwitterKit/TwitterKit.h>
 
-
+@interface GCShareVideoViewController ()
+@property (nonatomic, retain) UIImageView *previewImageView;
+@end
 
 @implementation GCShareVideoViewController
 
@@ -34,13 +37,15 @@
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Home" style:UIBarButtonItemStylePlain target:self action:@selector(takeMeToHome:)];
     self.navigationItem.leftBarButtonItem = leftBarButton;
     self.subView = [[UIView alloc] init];
-    //self.tableView.contentInset = UIEdgeInsetsMake(-30, 0, 0, 0);
+    self.tableView.contentInset = UIEdgeInsetsMake(-30, 0, 0, 0);
 
     UITapGestureRecognizer *gestureRec = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissSubViews)];
     
     [self.subView addGestureRecognizer:gestureRec];
     
-    _thumbnail = [self generateImage];
+    if (_freshVideo) {
+        _thumbnail = [self generateImage];
+    }
 }
 
 - (void)takeMeToHome : (id)sender {
@@ -68,6 +73,9 @@
 //        [self.subView removeFromSuperview];
 //    }];
     [self.player.view removeFromSuperview];
+    if (_previewImageView) {
+        [_previewImageView removeFromSuperview];
+    }
     [self.subView removeFromSuperview];
     
 }
@@ -82,6 +90,7 @@
 {
     AVAsset *asset = [AVAsset assetWithURL:_videoUrl];
     AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc]initWithAsset:asset];
+    imageGenerator.appliesPreferredTrackTransform = YES;
     CMTime time = CMTimeMake(1, 1);
     CGImageRef imageRef = [imageGenerator copyCGImageAtTime:time actualTime:NULL error:NULL];
     UIImage *thumbnail = [UIImage imageWithCGImage:imageRef];
@@ -123,11 +132,22 @@
                 }];
             }
             
-            if (_freshVideo) {
-                cell.videoThumbnail.image = _thumbnail;
-            } else {
-                cell.videoThumbnail.image = _videoData.thumbnail;
+            switch (_mediaType) {
+                case kTypeImage:
+                    cell.videoThumbnail.image = _thumbnail;
+                    cell.playVideo.hidden = TRUE;
+                    break;
+                case KTypeVideo:
+                    if (_freshVideo) {
+                        cell.videoThumbnail.image = _thumbnail;
+                    } else {
+                        cell.videoThumbnail.image = _videoData.thumbnail;
+                    }
+                    break;
+                default:
+                    break;
             }
+            
             return cell;
         }
             break;
@@ -170,7 +190,19 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if(indexPath.section == 0 && indexPath.row ==0) {
-        [self startPreviewingVideo];
+        switch (_mediaType) {
+            case kTypeImage:
+                [self startPreviewingImage];
+                break;
+                
+            case KTypeVideo:
+                [self startPreviewingVideo];
+                break;
+                
+            default:
+                break;
+        }
+        
     }
 }
 
@@ -196,6 +228,18 @@
 
 - (void)updateText : (NSString *)string {
     self.videoDescription = string;
+}
+
+- (void)startPreviewingImage {
+    _previewImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 250)];
+//    _previewImageView.center = self.view.center;
+    _previewImageView.contentMode = UIViewContentModeScaleAspectFill;
+    [_previewImageView setImage:_thumbnail];
+    [self.subView addSubview:_previewImageView];
+    
+    //[self displayPlayerView:self.subView fromPoint:CGPointMake(10, 20)];
+    
+    [self displayImageView:_previewImageView withInView:self.subView fromPoint:CGPointMake(10, 20)];
 }
 
 - (void)startPreviewingVideo {
@@ -243,11 +287,31 @@
     }];
 }
 
+- (void) displayImageView: (UIImageView *)imageView withInView:(UIView *) view fromPoint: (CGPoint) point
+{
+    [view setBounds:self.view.bounds];
+    [view setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.7]];
+    [view setCenter:point];
+    [view setAlpha:0.0];
+    [self.navigationController.view addSubview:view];
+    [view setTransform:CGAffineTransformMakeScale(0, 0)];
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        [view setCenter:self.view.center];
+        [imageView setCenter:self.view.center];
+        [view setTransform:CGAffineTransformIdentity];
+        [view setAlpha:1.0];
+    }];
+}
+
 #pragma mark Upload video to YouTube
 -(void)uploadVideoToYouTube: (id)sender {
     NSData *fileData = [NSData dataWithContentsOfURL:_videoUrl];
     NSString *title = @"GoldCleats";//titleField.text;
     
+    if (fileData == nil) return;
+    AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    GTLServiceYouTube *youtubeService = delegate.youtubeService;
 //    if ([title isEqualToString:@""]) {
 //        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
 //        [dateFormat setDateFormat:@"'Direct Lite Uploaded File ('EEEE MMMM d, YYYY h:mm a, zzz')"];
@@ -257,7 +321,7 @@
 //        description = @"Uploaded from ";
 //    }
     
-    [self.uploadVideo uploadYouTubeVideoWithService:_youtubeService
+    [self.uploadVideo uploadYouTubeVideoWithService:youtubeService
                                            fileData:fileData
                                               title:self.title
                                         description:self.videoDescription];

@@ -34,7 +34,7 @@
             //_videoThumbnail.contentMode = UIViewContentModeScaleAspectFill;
             //[_videoThumbnail setImage:[UIImage imageNamed:@"video_placeholder"]];
         [_videoThumbnail setBackgroundColor:[UIColor colorWithRed:230.0f/255.0f green:231.0f/255.0f blue:232.0f/255.0f alpha:1.0f]];
-        [_videoThumbnail setContentMode:UIViewContentModeScaleAspectFit];
+        [_videoThumbnail setContentMode:UIViewContentModeScaleAspectFill];
         
         [self.contentView addSubview:_videoThumbnail];
         
