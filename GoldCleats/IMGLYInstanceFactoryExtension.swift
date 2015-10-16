@@ -24,22 +24,22 @@ extension IMGLYInstanceFactory {
         switch (type) {
         case IMGLYMainMenuButtonType.Filter:
             return filterEditorViewControllerWithFixedFilterStack(fixedFilterStack)
-        case IMGLYMainMenuButtonType.Stickers:
-            return stickersEditorViewControllerWithFixedFilterStack(fixedFilterStack)
+//        case IMGLYMainMenuButtonType.Stickers:
+//            return stickersEditorViewControllerWithFixedFilterStack(fixedFilterStack)
         case IMGLYMainMenuButtonType.Orientation:
             return orientationEditorViewControllerWithFixedFilterStack(fixedFilterStack)
-        case IMGLYMainMenuButtonType.Focus:
-            return focusEditorViewControllerWithFixedFilterStack(fixedFilterStack)
+//        case IMGLYMainMenuButtonType.Focus:
+//            return focusEditorViewControllerWithFixedFilterStack(fixedFilterStack)
         case IMGLYMainMenuButtonType.Crop:
             return cropEditorViewControllerWithFixedFilterStack(fixedFilterStack)
         case IMGLYMainMenuButtonType.Brightness:
             return brightnessEditorViewControllerWithFixedFilterStack(fixedFilterStack)
         case IMGLYMainMenuButtonType.Contrast:
             return contrastEditorViewControllerWithFixedFilterStack(fixedFilterStack)
-        case IMGLYMainMenuButtonType.Saturation:
-            return saturationEditorViewControllerWithFixedFilterStack(fixedFilterStack)
-        case IMGLYMainMenuButtonType.Text:
-            return textEditorViewControllerWithFixedFilterStack(fixedFilterStack)
+//        case IMGLYMainMenuButtonType.Saturation:
+//            return saturationEditorViewControllerWithFixedFilterStack(fixedFilterStack)
+//        case IMGLYMainMenuButtonType.Text:
+//            return textEditorViewControllerWithFixedFilterStack(fixedFilterStack)
         default:
             return nil
         }

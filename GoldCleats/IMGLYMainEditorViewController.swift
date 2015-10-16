@@ -14,17 +14,17 @@ import UIKit
 }
 
 @objc public enum IMGLYMainMenuButtonType: Int {
-    case Magic
+//    case Magic
     case Filter
-    case Stickers
+//    case Stickers
     case Orientation
-    case Focus
+//    case Focus
     case Crop
     case Brightness
     case Contrast
-    case Saturation
-    case Noise
-    case Text
+//    case Saturation
+//    case Noise
+//    case Text
     case Reset
 }
 
@@ -41,13 +41,13 @@ public class IMGLYMainEditorViewController: IMGLYEditorViewController {
         let bundle = NSBundle(forClass: self.dynamicType)
         var handlers = [IMGLYActionButton]()
         
-        handlers.append(
-            IMGLYActionButton(
-                title: NSLocalizedString("main-editor.button.magic", tableName: nil, bundle: bundle, value: "", comment: ""),
-                image: UIImage(named: "icon_option_magic", inBundle: bundle, compatibleWithTraitCollection: nil),
-                selectedImage: UIImage(named: "icon_option_magic_active", inBundle: bundle, compatibleWithTraitCollection: nil),
-                handler: { [unowned self] in self.subEditorButtonPressed(.Magic) },
-                showSelection: { [unowned self] in return self.fixedFilterStack.enhancementFilter.enabled }))
+//        handlers.append(
+//            IMGLYActionButton(
+//                title: NSLocalizedString("main-editor.button.magic", tableName: nil, bundle: bundle, value: "", comment: ""),
+//                image: UIImage(named: "icon_option_magic", inBundle: bundle, compatibleWithTraitCollection: nil),
+//                selectedImage: UIImage(named: "icon_option_magic_active", inBundle: bundle, compatibleWithTraitCollection: nil),
+//                handler: { [unowned self] in self.subEditorButtonPressed(.Magic) },
+//                showSelection: { [unowned self] in return self.fixedFilterStack.enhancementFilter.enabled }))
         
         handlers.append(
             IMGLYActionButton(
@@ -55,11 +55,11 @@ public class IMGLYMainEditorViewController: IMGLYEditorViewController {
                 image: UIImage(named: "icon_option_filters", inBundle: bundle, compatibleWithTraitCollection: nil),
                 handler: { [unowned self] in self.subEditorButtonPressed(.Filter) }))
         
-        handlers.append(
-            IMGLYActionButton(
-                title: NSLocalizedString("main-editor.button.stickers", tableName: nil, bundle: bundle, value: "", comment: ""),
-                image: UIImage(named: "icon_option_sticker", inBundle: bundle, compatibleWithTraitCollection: nil),
-                handler: { [unowned self] in self.subEditorButtonPressed(.Stickers) }))
+//        handlers.append(
+//            IMGLYActionButton(
+//                title: NSLocalizedString("main-editor.button.stickers", tableName: nil, bundle: bundle, value: "", comment: ""),
+//                image: UIImage(named: "icon_option_sticker", inBundle: bundle, compatibleWithTraitCollection: nil),
+//                handler: { [unowned self] in self.subEditorButtonPressed(.Stickers) }))
         
         handlers.append(
             IMGLYActionButton(
@@ -67,11 +67,11 @@ public class IMGLYMainEditorViewController: IMGLYEditorViewController {
                 image: UIImage(named: "icon_option_orientation", inBundle: bundle, compatibleWithTraitCollection: nil),
                 handler: { [unowned self] in self.subEditorButtonPressed(.Orientation) }))
         
-        handlers.append(
-            IMGLYActionButton(
-                title: NSLocalizedString("main-editor.button.focus", tableName: nil, bundle: bundle, value: "", comment: ""),
-                image: UIImage(named: "icon_option_focus", inBundle: bundle, compatibleWithTraitCollection: nil),
-                handler: { [unowned self] in self.subEditorButtonPressed(.Focus) }))
+//        handlers.append(
+//            IMGLYActionButton(
+//                title: NSLocalizedString("main-editor.button.focus", tableName: nil, bundle: bundle, value: "", comment: ""),
+//                image: UIImage(named: "icon_option_focus", inBundle: bundle, compatibleWithTraitCollection: nil),
+//                handler: { [unowned self] in self.subEditorButtonPressed(.Focus) }))
         
         handlers.append(
             IMGLYActionButton(
@@ -84,24 +84,24 @@ public class IMGLYMainEditorViewController: IMGLYEditorViewController {
                 title: NSLocalizedString("main-editor.button.brightness", tableName: nil, bundle: bundle, value: "", comment: ""),
                 image: UIImage(named: "icon_option_brightness", inBundle: bundle, compatibleWithTraitCollection: nil),
                 handler: { [unowned self] in self.subEditorButtonPressed(.Brightness) }))
-        
+
         handlers.append(
             IMGLYActionButton(
                 title: NSLocalizedString("main-editor.button.contrast", tableName: nil, bundle: bundle, value: "", comment: ""),
                 image: UIImage(named: "icon_option_contrast", inBundle: bundle, compatibleWithTraitCollection: nil),
                 handler: { [unowned self] in self.subEditorButtonPressed(.Contrast) }))
         
-        handlers.append(
-            IMGLYActionButton(
-                title: NSLocalizedString("main-editor.button.saturation", tableName: nil, bundle: bundle, value: "", comment: ""),
-                image: UIImage(named: "icon_option_saturation", inBundle: bundle, compatibleWithTraitCollection: nil),
-                handler: { [unowned self] in self.subEditorButtonPressed(.Saturation) }))
+//        handlers.append(
+//            IMGLYActionButton(
+//                title: NSLocalizedString("main-editor.button.saturation", tableName: nil, bundle: bundle, value: "", comment: ""),
+//                image: UIImage(named: "icon_option_saturation", inBundle: bundle, compatibleWithTraitCollection: nil),
+//                handler: { [unowned self] in self.subEditorButtonPressed(.Saturation) }))
         
-        handlers.append(
-            IMGLYActionButton(
-                title: NSLocalizedString("main-editor.button.text", tableName: nil, bundle: bundle, value: "", comment: ""),
-                image: UIImage(named: "icon_option_text", inBundle: bundle, compatibleWithTraitCollection: nil),
-                handler: { [unowned self] in self.subEditorButtonPressed(.Text) }))
+//        handlers.append(
+//            IMGLYActionButton(
+//                title: NSLocalizedString("main-editor.button.text", tableName: nil, bundle: bundle, value: "", comment: ""),
+//                image: UIImage(named: "icon_option_text", inBundle: bundle, compatibleWithTraitCollection: nil),
+//                handler: { [unowned self] in self.subEditorButtonPressed(.Text) }))
         
         return handlers
         }()
@@ -161,12 +161,12 @@ public class IMGLYMainEditorViewController: IMGLYEditorViewController {
     // MARK: - Helpers
     
     private func subEditorButtonPressed(buttonType: IMGLYMainMenuButtonType) {
-        if (buttonType == IMGLYMainMenuButtonType.Magic) {
-            if !updating {
-                fixedFilterStack.enhancementFilter.enabled = !fixedFilterStack.enhancementFilter.enabled
-                updatePreviewImage()
-            }
-        } else {
+//        if (buttonType == IMGLYMainMenuButtonType.Magic) {
+//            if !updating {
+//                fixedFilterStack.enhancementFilter.enabled = !fixedFilterStack.enhancementFilter.enabled
+//                updatePreviewImage()
+//            }
+//        } else {
             if let viewController = IMGLYInstanceFactory.viewControllerForButtonType(buttonType, withFixedFilterStack: fixedFilterStack) {
                 viewController.lowResolutionImage = lowResolutionImage
                 viewController.previewImageView.image = previewImageView.image
@@ -174,7 +174,7 @@ public class IMGLYMainEditorViewController: IMGLYEditorViewController {
                 
                 showViewController(viewController, sender: self)
             }
-        }
+//        }
     }
     
     private func subEditorDidComplete(image: UIImage?, fixedFilterStack: IMGLYFixedFilterStack) {

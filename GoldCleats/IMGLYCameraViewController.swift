@@ -831,7 +831,8 @@ public class IMGLYCameraViewController: UIViewController {
             completionBlock(image, nil)
         }
         dismissViewControllerAnimated(true, completion: nil)
-        dismissViewControllerAnimated(true, completion: nil)
+        self.navigationController?.popViewControllerAnimated(true)
+        //dismissViewControllerAnimated(true, completion: nil)
     }
     
     

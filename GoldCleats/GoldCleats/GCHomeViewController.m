@@ -215,11 +215,11 @@
 
 - (NSInteger)tableView:(UITableView*)tableView numberOfRowsInSection:(NSInteger)section {
     
-    return [self.videos count];
+    return 1;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    return [self.videos count];
 }
 
 - (UITableViewCell*)tableView:(UITableView*)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -229,7 +229,7 @@
         cell = [[HomeViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
 
-    VideoData *vidData = [self.videos objectAtIndex:indexPath.row];
+    VideoData *vidData = [self.videos objectAtIndex:indexPath.section];
     cell.videoThumbnail.image = vidData.fullImage;
     cell.description.text = [vidData getTitle];//@"This video was uploaded as a test. and some of the description was expected to be returned from youtube!!!";//[vidData getTitle];
     [cell.contentView bringSubviewToFront:cell.playButton];
@@ -242,19 +242,85 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    CGFloat offset = 235;
+    CGFloat offset = 320;
     
-    VideoData *vidData = [self.videos objectAtIndex:indexPath.row];
+    VideoData *vidData = [self.videos objectAtIndex:indexPath.section];
     
-    CGSize size = [[vidData getTitle] sizeWithFont:[UIFont fontWithName:@"AvenirNext-Regular" size:15] constrainedToSize:CGSizeMake(self.tableView.bounds.size.width - 10.0f, 17000.0f) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize size = [[vidData getTitle] sizeWithFont:[UIFont fontWithName:@"AvenirNext-Regular" size:15] constrainedToSize:CGSizeMake(self.tableView.bounds.size.width - 10.0f, 40.0f) lineBreakMode:NSLineBreakByWordWrapping];
     
-    return MAX(245.0f, offset + size.height);
+    return MAX(280.0f, offset + size.height);
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return 55.0f;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(tableView.bounds), 55.0f)];
+    
+    [headerView setBackgroundColor:[UIColor whiteColor]];
+    UILabel *timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetWidth(tableView.bounds) - 70.0f , 2.0f, 60.0f, 55.0f)];
+    timeLabel.backgroundColor = [UIColor clearColor];
+    timeLabel.textColor = [UIColor lightGrayColor];
+    timeLabel.font = [UIFont fontWithName:@"AvenirNext-Medium" size:15];
+    timeLabel.textAlignment = NSTextAlignmentRight;
+    switch (section) {
+        case 0:
+            timeLabel.text = @"21m";
+            
+            break;
+        case 1:
+            timeLabel.text = @"1hr";
+            break;
+        case 2:
+            timeLabel.text = @"5hrs";
+            break;
+        case 3:
+            timeLabel.text = @"2days";
+            break;
+        default:
+            timeLabel.text = @"2days";
+            break;
+    }
+    [headerView addSubview:timeLabel];
+    
+    UIImageView *headerImage = [[UIImageView alloc] initWithFrame:CGRectMake(10, 18, 20, 20)];
+    [headerImage setImage:[UIImage imageNamed:@"ic_watched"]];
+    [headerImage setContentMode:UIViewContentModeScaleAspectFit];
+    [headerView addSubview:headerImage];
+
+    UILabel *watchedLabel = [[UILabel alloc] initWithFrame:CGRectMake(36.0f , 0.0f, 50.0f, 55.0f)];
+    watchedLabel.backgroundColor = [UIColor clearColor];
+    watchedLabel.textColor = [UIColor colorWithRed:52.0/255.0 green:125.0/255.0 blue:204.0/255.0 alpha:1.0f];
+    watchedLabel.font = [UIFont fontWithName:@"AvenirNext-Medium" size:15];
+    watchedLabel.textAlignment = NSTextAlignmentLeft;
+    switch (section) {
+        case 0:
+            watchedLabel.text = @"320";
+            
+            break;
+        case 1:
+            watchedLabel.text = @"120";
+            break;
+        case 2:
+            watchedLabel.text = @"56";
+            break;
+        case 3:
+            watchedLabel.text = @"1.1k";
+            break;
+        default:
+            watchedLabel.text = @"1mn";
+            break;
+    }
+    [headerView addSubview:watchedLabel];
+    
+    return headerView;
 }
 
 #pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    VideoData *selectedVideo = [_videos objectAtIndex:indexPath.row];
+    VideoData *selectedVideo = [_videos objectAtIndex:indexPath.section];
 
     [self playVideoInMediaPlayerForURL:selectedVideo.getYouTubeId];
     
@@ -269,7 +335,7 @@
 
 
 - (void)tableView:(UITableView *)tableView shareButtonPressedAtIndex:(NSIndexPath*)indexPath {
-    [self pushShareViewControllerWithData:[self.videos objectAtIndex:indexPath.row] localURL:nil referenceUrl:nil forYouTubeServices:nil freshVideo:NO];
+    [self pushShareViewControllerWithData:[self.videos objectAtIndex:indexPath.section] localURL:nil referenceUrl:nil forYouTubeServices:nil freshVideo:NO];
     
 }
 
