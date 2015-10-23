@@ -174,11 +174,13 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         }()
     
     public private(set) lazy var bottomEditorView: VideoRangeSlider = {
-        let view = VideoRangeSlider(frame: CGRectMake(10, 15, self.view.frame.size.width - 20, 70), videoUrl:self.videoURL)
+        let view = VideoRangeSlider(frame: CGRectMake(0, 15, self.view.frame.size.width, 70), videoUrl:self.videoURL)
         view.setPopoverBubbleSize(120, height:60)
         view.bubleText.font = UIFont.systemFontOfSize(12)
         view.backgroundColor = UIColor.blackColor()
         view.delegate = self
+        view.minGap = 5;
+        view.maxGap = 20;
 //        view.minGap = 1
         view.topBorder.backgroundColor = UIColor.init(red: 0.945, green: 0.945, blue: 0.945, alpha: 1.0)
         view.bottomBorder.backgroundColor = UIColor.init(red: 0.806, green: 0.806, blue: 0.806, alpha: 1.0)

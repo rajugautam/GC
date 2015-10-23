@@ -373,7 +373,7 @@
     
     IMGLYCameraViewController *cameraView = [[IMGLYCameraViewController alloc] init];
     cameraView.squareMode = TRUE;
-    cameraView.maximumVideoLength = 20;
+    cameraView.maximumVideoLength = VIDEORECORDLIMIT;
     cameraView.completionBlock = ^(UIImage *image, NSURL *url) {
         NSLog(@"recording done %@", url);
         [self saveVideoToPhoneFrom:url];

@@ -45,7 +45,7 @@ static const CGFloat kCropDimension = 300;
                 
                 NSString *uploadsPlaylistId =
                 
-                channel.contentDetails.relatedPlaylists.uploads;
+                channel.contentDetails.relatedPlaylists.likes;
                 
                 GTLQueryYouTube *playlistItemsListQuery = [GTLQueryYouTube queryForPlaylistItemsListWithPart:@"contentDetails"];
                 playlistItemsListQuery.maxResults = 20l;

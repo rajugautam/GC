@@ -11,7 +11,7 @@
 @interface VideoRangeSlider ()
 
 @property (nonatomic, strong) AVAssetImageGenerator *imageGenerator;
-@property (nonatomic, strong) UIView *bgView;
+@property (nonatomic, strong) UIScrollView *bgView;
 @property (nonatomic, strong) UIView *centerView;
 @property (nonatomic, strong) NSURL *videoUrl;
 @property (nonatomic, strong) VideoSliderLeftView *leftThumb;
@@ -37,8 +37,8 @@
         
         int thumbWidth = ceil(frame.size.width*0.05);
         
-        _bgView = [[UIControl alloc] initWithFrame:CGRectMake(thumbWidth-BG_VIEW_BORDERS_SIZE, 0, frame.size.width-(thumbWidth*2)+BG_VIEW_BORDERS_SIZE*2, frame.size.height)];
-        _bgView.layer.borderColor = [UIColor grayColor].CGColor;
+        _bgView = [[UIScrollView alloc] initWithFrame:CGRectMake(thumbWidth-BG_VIEW_BORDERS_SIZE, 0, frame.size.width-(thumbWidth*2)+BG_VIEW_BORDERS_SIZE*2, frame.size.height)];
+        _bgView.layer.borderColor = [UIColor lightGrayColor].CGColor;
         _bgView.layer.borderWidth = BG_VIEW_BORDERS_SIZE;
         [self addSubview:_bgView];
         
@@ -87,7 +87,7 @@
         
         _centerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
         _centerView.backgroundColor = [UIColor clearColor];
-        [self addSubview:_centerView];
+        //[self addSubview:_centerView];
         
         UIPanGestureRecognizer *centerPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleCenterPan:)];
         [_centerView addGestureRecognizer:centerPan];
@@ -140,6 +140,9 @@
 
 -(void)setMaxGap:(NSInteger)maxGap{
     _leftPosition = 0;
+    if (maxGap > _durationSeconds) {
+        maxGap = ceil(_durationSeconds);
+    }
     _rightPosition = _frame_width*maxGap/_durationSeconds;
     _maxGap = maxGap;
 }
@@ -165,12 +168,16 @@
 {
     if (gesture.state == UIGestureRecognizerStateBegan || gesture.state == UIGestureRecognizerStateChanged) {
         
+//        if (ceil(self.rightPosition - self.leftPosition) < 3 || floor(self.rightPosition - self.leftPosition) > VIDEORECORDLIMIT) {
+//            return;
+//        }
         CGPoint translation = [gesture translationInView:self];
         
         _leftPosition += translation.x;
         if (_leftPosition < 0) {
             _leftPosition = 0;
         }
+        
         
         if (
             (_rightPosition-_leftPosition <= _leftThumb.frame.size.width+_rightThumb.frame.size.width) ||
@@ -202,7 +209,10 @@
 {
     if (gesture.state == UIGestureRecognizerStateBegan || gesture.state == UIGestureRecognizerStateChanged) {
         
-        
+//        NSLog(@"left %f right %f and ceil%f and floor%f", self.leftPosition, self.rightPosition, ceil(self.rightPosition - self.leftPosition), floor(self.rightPosition - self.leftPosition));
+//        if (ceil(self.rightPosition - self.leftPosition) < 3 || floor(self.rightPosition - self.leftPosition) > VIDEORECORDLIMIT) {
+//            return;
+//        }
         CGPoint translation = [gesture translationInView:self];
         _rightPosition += translation.x;
         if (_rightPosition < 0) {
@@ -316,7 +326,7 @@
         self.imageGenerator.maximumSize = CGSizeMake(_bgView.frame.size.width, _bgView.frame.size.height);
     }
     
-    int picWidth = 50;
+    int picWidth = 70;
     
         // First image
     NSError *error;
@@ -340,8 +350,9 @@
     
     
     _durationSeconds = CMTimeGetSeconds([myAsset duration]);
-    
-    int picsCnt = ceil(_bgView.frame.size.width / picWidth);
+    // find the picsCnt based on contentSize
+    int picsCnt = ceil(_bgView.frame.size.width / 30);
+    _bgView.contentSize = CGSizeMake(picWidth * picsCnt, _bgView.frame.size.height);
     
     NSMutableArray *allTimes = [[NSMutableArray alloc] init];
     
