@@ -7,6 +7,7 @@
 //
 
 #import "VideoRangeSlider.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface VideoRangeSlider () <UIScrollViewDelegate>
 
@@ -41,10 +42,24 @@
         _bgView.layer.borderColor = [UIColor lightGrayColor].CGColor;
         _bgView.delegate = self;
         _bgView.layer.borderWidth = BG_VIEW_BORDERS_SIZE;
+//        _bgView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.8];
         [self addSubview:_bgView];
         
-        _videoUrl = videoUrl;
         
+//        CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+//        maskLayer.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
+//        maskLayer.fillColor = [UIColor blackColor].CGColor;
+//        
+//        UIBezierPath *path = [UIBezierPath bezierPathWithRect:frame];
+//        [path appendPath:[UIBezierPath bezierPathWithRect:CGRectMake(0, 0, frame.size.width - 60, frame.size.height)]];
+//        maskLayer.path = path.CGPath;
+//        //path.appendPath(UIBezierPath(rect: bounds))
+//        maskLayer.fillRule = kCAFillRuleEvenOdd;
+//        
+//        _bgView.layer.mask = maskLayer;
+        
+        
+        _videoUrl = videoUrl;
         
         _topBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, SLIDER_BORDERS_SIZE)];
         _topBorder.backgroundColor = [UIColor colorWithRed: 0.996 green: 0.951 blue: 0.502 alpha: 1];
@@ -88,6 +103,7 @@
         
         _centerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
         _centerView.backgroundColor = [UIColor clearColor];
+        //_centerView.alpha = 1.0;
         //[self addSubview:_centerView];
         
         UIPanGestureRecognizer *centerPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleCenterPan:)];
