@@ -174,7 +174,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         }()
     
     public private(set) lazy var bottomEditorView: VideoRangeSlider = {
-        let view = VideoRangeSlider(frame: CGRectMake(0, 15, self.view.frame.size.width, 70), videoUrl:self.videoURL)
+        let view = VideoRangeSlider(frame: CGRectMake(10, 15, self.view.frame.size.width, 70), videoUrl:self.videoURL)
         view.setPopoverBubbleSize(120, height:60)
         view.bubleText.font = UIFont.systemFontOfSize(12)
         view.backgroundColor = UIColor.blackColor()
@@ -201,6 +201,11 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     var videoURL: NSURL?
     var referenceURL: NSURL?
     var isFromLibrary:Bool?
+    var shouldCropVideo:Bool = false
+    var cropStartTime:CGFloat = 0.0
+    var cropEndTime:CGFloat = 20.0
+    private var exportSession:AVAssetExportSession!
+    private var tempVideoPath:NSURL!
     
     // MARK: - UIViewController
     
@@ -225,6 +230,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         configureViewHierarchy()
         configureViewConstraints()
 
+        
+        tempVideoPath = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent("tempMov.mov")
+        print("temp directory \(tempVideoPath)")
         
         //toggleFilters(zoomVideoButton)
         //updateConstraintsForRecordingMode()
@@ -381,12 +389,15 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     // MARK: - Video Slider delegate func
     @objc public func videoRange(slider:VideoRangeSlider?, didChangeLeftPosition:CGFloat, rightPosition:CGFloat) {
-        print("slider values \(didChangeLeftPosition) and \(rightPosition) \(self.videoURL) and \(self.referenceURL) ")
+        self.shouldCropVideo = true
+        self.cropStartTime = didChangeLeftPosition
+        self.cropEndTime = rightPosition
+//        print("slider values \(didChangeLeftPosition) and \(rightPosition) \(self.videoURL) and \(self.referenceURL) ")
         //self.moviePlayer?.stop()
-//        self.moviePlayer?.contentURL = self.referenceURL
-//        self.moviePlayer?.initialPlaybackTime = Double(didChangeLeftPosition)
-//        self.moviePlayer?.endPlaybackTime = Double(rightPosition)
-//        self.moviePlayer?.play()
+        self.moviePlayer?.contentURL = self.referenceURL
+        self.moviePlayer?.initialPlaybackTime = Double(didChangeLeftPosition)
+        self.moviePlayer?.endPlaybackTime = Double(rightPosition)
+        self.moviePlayer?.play()
     }
     
     // MARK: - Targets
@@ -470,6 +481,62 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         self.animatePointer(sender)
     }
     
+    public func exportEditedVideo() {
+        deleteTempVideoFile()
+        
+        let asset:AVAsset = AVAsset.init(URL: videoURL!)
+        let compatiblePresets = AVAssetExportSession.exportPresetsCompatibleWithAsset(asset)
+        
+        if compatiblePresets.contains(AVAssetExportPresetMediumQuality) {
+            
+            self.exportSession = AVAssetExportSession.init(asset: asset, presetName: AVAssetExportPresetPassthrough)!
+            
+            self.exportSession.outputURL = tempVideoPath
+            self.exportSession.outputFileType = AVFileTypeQuickTimeMovie
+            
+            let start:CMTime = CMTimeMakeWithSeconds(Double(self.cropStartTime), asset.duration.timescale)
+            let duration:CMTime = CMTimeMakeWithSeconds(Double((self.cropEndTime - self.cropStartTime)), asset.duration.timescale)
+            let timeRange:CMTimeRange = CMTimeRangeMake(start, duration)
+            self.exportSession.timeRange = timeRange
+            
+            self.exportSession.exportAsynchronouslyWithCompletionHandler( {
+                
+                switch self.exportSession.status {
+                case .Failed:
+                    print("cropping failed")
+                    break
+                    
+                case .Cancelled:
+                    print("cropping canceled")
+                    break
+                    
+                case .Completed:
+                    self.saveMovieWithMovieURLToAssets(self.tempVideoPath)
+                    break
+                    
+                default:
+                    
+                    break
+                }
+            })
+            
+        }
+        
+    }
+    
+    private func deleteTempVideoFile() {
+        let fm:NSFileManager = NSFileManager.defaultManager()
+        let exist:Bool = fm.fileExistsAtPath(tempVideoPath.absoluteString)
+        
+        if exist {
+            do {
+                try fm.removeItemAtPath(tempVideoPath.absoluteString as String)
+            } catch {
+                print("unable to delete temp video \(error)")
+            }
+        }
+    }
+    
     // MARK: - Configuration
     
     //        private func configureMenuCollectionView() {
@@ -532,7 +599,6 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
 //    }
     
     private func saveMovieWithMovieURLToAssets(movieURL: NSURL) {
-        
         let library: ALAssetsLibrary = ALAssetsLibrary()
         let videoWriteCompletionBlock: ALAssetsLibraryWriteVideoCompletionBlock = {(newURL: NSURL!, error: NSError!) in
             if (error != nil) {
@@ -579,7 +645,6 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         navigationItem.rightBarButtonItem = nil
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicatorView)
         activityIndicatorView.startAnimating()
-        
         if !(isFromLibrary ?? true) {
             self.saveMovieWithMovieURLToAssets(videoURL!)
         } else {
@@ -588,6 +653,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     }
     
     private func pushShareScreenWithVideoUrl(newVideoPath:NSURL) {
+        if shouldCropVideo {
+            self.exportEditedVideo()
+        }
         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let shareViewController : GCShareVideoViewController = storyboard.instantiateViewControllerWithIdentifier("SHARE_VIDEO_CONTROLLER") as! GCShareVideoViewController
         shareViewController.freshVideo = true

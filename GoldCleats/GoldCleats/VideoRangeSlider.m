@@ -8,7 +8,7 @@
 
 #import "VideoRangeSlider.h"
 
-@interface VideoRangeSlider ()
+@interface VideoRangeSlider () <UIScrollViewDelegate>
 
 @property (nonatomic, strong) AVAssetImageGenerator *imageGenerator;
 @property (nonatomic, strong) UIScrollView *bgView;
@@ -39,6 +39,7 @@
         
         _bgView = [[UIScrollView alloc] initWithFrame:CGRectMake(thumbWidth-BG_VIEW_BORDERS_SIZE, 0, frame.size.width-(thumbWidth*2)+BG_VIEW_BORDERS_SIZE*2, frame.size.height)];
         _bgView.layer.borderColor = [UIColor lightGrayColor].CGColor;
+        _bgView.delegate = self;
         _bgView.layer.borderWidth = BG_VIEW_BORDERS_SIZE;
         [self addSubview:_bgView];
         
@@ -156,6 +157,7 @@
 
 - (void)delegateNotification
 {
+    NSLog(@"sdsleftPosition %f sdfdsrightPosition %f", self.leftPosition, self.rightPosition);
     if ([_delegate respondsToSelector:@selector(videoRange:didChangeLeftPosition:rightPosition:)]){
         [_delegate videoRange:self didChangeLeftPosition:self.leftPosition rightPosition:self.rightPosition];
     }
@@ -171,6 +173,8 @@
 //        if (ceil(self.rightPosition - self.leftPosition) < 3 || floor(self.rightPosition - self.leftPosition) > VIDEORECORDLIMIT) {
 //            return;
 //        }
+//        _leftPosition = _leftPosition - _bgView.contentOffset.x;
+//        _rightPosition = _rightPosition - _bgView.contentOffset.x;
         CGPoint translation = [gesture translationInView:self];
         
         _leftPosition += translation.x;
@@ -209,18 +213,14 @@
 {
     if (gesture.state == UIGestureRecognizerStateBegan || gesture.state == UIGestureRecognizerStateChanged) {
         
-//        NSLog(@"left %f right %f and ceil%f and floor%f", self.leftPosition, self.rightPosition, ceil(self.rightPosition - self.leftPosition), floor(self.rightPosition - self.leftPosition));
-//        if (ceil(self.rightPosition - self.leftPosition) < 3 || floor(self.rightPosition - self.leftPosition) > VIDEORECORDLIMIT) {
-//            return;
-//        }
         CGPoint translation = [gesture translationInView:self];
         _rightPosition += translation.x;
         if (_rightPosition < 0) {
             _rightPosition = 0;
         }
         
-        if (_rightPosition > _frame_width){
-            _rightPosition = _frame_width;
+        if (_rightPosition > _bgView.frame.size.width){
+            _rightPosition = _bgView.frame.size.width;
         }
         
         if (_rightPosition-_leftPosition <= 0){
@@ -326,7 +326,7 @@
         self.imageGenerator.maximumSize = CGSizeMake(_bgView.frame.size.width, _bgView.frame.size.height);
     }
     
-    int picWidth = 70;
+    int picWidth = 60;
     
         // First image
     NSError *error;
@@ -351,8 +351,14 @@
     
     _durationSeconds = CMTimeGetSeconds([myAsset duration]);
     // find the picsCnt based on contentSize
-    int picsCnt = ceil(_bgView.frame.size.width / 30);
+    int picsCnt = MAX(3, MIN(15,ceil(_durationSeconds / 4)));//ceil(_bgView.frame.size.width / 30);
     _bgView.contentSize = CGSizeMake(picWidth * picsCnt, _bgView.frame.size.height);
+    if (_bgView.contentSize.width < [[UIScreen mainScreen] bounds].size.width) {
+        [self addSubview:_centerView];
+    }
+    
+    
+    _frame_width = picWidth *picsCnt;
     
     NSMutableArray *allTimes = [[NSMutableArray alloc] init];
     
@@ -364,7 +370,7 @@
         for (int i=1, ii=1; i<picsCnt; i++){
             time4Pic = i*picWidth;
             
-            CMTime timeFrame = CMTimeMakeWithSeconds(_durationSeconds*time4Pic/_bgView.frame.size.width, 600);
+            CMTime timeFrame = CMTimeMakeWithSeconds((_durationSeconds*time4Pic)/(picWidth * picsCnt), 600);
             
             [allTimes addObject:[NSValue valueWithCMTime:timeFrame]];
             
@@ -396,8 +402,8 @@
             tmp.frame = currentFrame;
             int all = (ii+1)*tmp.frame.size.width;
             
-            if (all > _bgView.frame.size.width){
-                int delta = all - _bgView.frame.size.width;
+            if (all > picWidth * picsCnt){
+                int delta = all - picWidth * picsCnt;
                 currentFrame.size.width -= delta;
             }
             
@@ -481,16 +487,37 @@
 
 - (CGFloat)leftPosition
 {
-    return _leftPosition * _durationSeconds / _frame_width;
+    return ((_leftPosition + _bgView.contentOffset.x) * _durationSeconds) / _frame_width;
 }
 
 
 - (CGFloat)rightPosition
 {
-    return _rightPosition * _durationSeconds / _frame_width;
+    return ((_rightPosition + _bgView.contentOffset.x) * _durationSeconds) / _frame_width;
 }
 
 
+#pragma mark UIScrollViewDelegate
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    [self hideBubble:_popoverBubble];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGPoint translation = [scrollView.panGestureRecognizer translationInView:scrollView];
+    
+    //[scrollView.panGestureRecognizer setTranslation:CGPointZero inView:scrollView];
+    
+//    [self setNeedsLayout];
+    
+    [self delegateNotification];
+    
+    
+    _popoverBubble.alpha = 1;
+    
+    [self setTimeLabel];
+
+}
 
 
 #pragma mark - Bubble
@@ -515,8 +542,7 @@
 
 -(void) setTimeLabel{
     self.bubleText.text = [self trimIntervalStr];
-        //NSLog([self timeDuration1]);
-        //NSLog([self timeDuration]);
+//        NSLog([self timeDuration]);
 }
 
 
