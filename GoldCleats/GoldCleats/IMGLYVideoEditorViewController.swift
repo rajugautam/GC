@@ -179,8 +179,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         view.bubleText.font = UIFont.systemFontOfSize(12)
         view.backgroundColor = UIColor.blackColor()
         view.delegate = self
-        view.minGap = 5;
-        view.maxGap = 20;
+        view.minGap = Int(VIDEORECORDMINLIMIT)
+        view.maxGap = Int(VIDEORECORDMAXLIMIT)
 //        view.minGap = 1
         view.topBorder.backgroundColor = UIColor.init(red: 0.945, green: 0.945, blue: 0.945, alpha: 1.0)
         view.bottomBorder.backgroundColor = UIColor.init(red: 0.806, green: 0.806, blue: 0.806, alpha: 1.0)

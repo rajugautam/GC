@@ -18,7 +18,8 @@
 
 #define FLDeviceIsUIKit7() [[[UIDevice currentDevice] systemVersion] doubleValue] >= 7.0f
 
-#define VIDEORECORDLIMIT 20 // Video recording limit(in seconds)
+#define VIDEORECORDMAXLIMIT 20 // Video recording limit(in seconds)
+#define VIDEORECORDMINLIMIT 5
 
 #define kBaseURL @"https://instagram.com/"
 #define kInstagramAPIBaseURL @"https://api.instagram.com"

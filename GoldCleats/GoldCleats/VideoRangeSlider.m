@@ -39,6 +39,8 @@
         int thumbWidth = ceil(frame.size.width*0.05);
         
         _bgView = [[UIScrollView alloc] initWithFrame:CGRectMake(thumbWidth-BG_VIEW_BORDERS_SIZE, 0, frame.size.width-(thumbWidth*2)+BG_VIEW_BORDERS_SIZE*2, frame.size.height)];
+        _bgView.showsHorizontalScrollIndicator = FALSE;
+        _bgView.delegate = self;
         _bgView.layer.borderColor = [UIColor lightGrayColor].CGColor;
         _bgView.delegate = self;
         _bgView.layer.borderWidth = BG_VIEW_BORDERS_SIZE;
@@ -158,7 +160,7 @@
 -(void)setMaxGap:(NSInteger)maxGap{
     _leftPosition = 0;
     if (maxGap > _durationSeconds) {
-        maxGap = ceil(_durationSeconds);
+        maxGap = floor(_durationSeconds);
     }
     _rightPosition = _frame_width*maxGap/_durationSeconds;
     _maxGap = maxGap;
@@ -178,6 +180,13 @@
         [_delegate videoRange:self didChangeLeftPosition:self.leftPosition rightPosition:self.rightPosition];
     }
     
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+    NSLog(@"left %f right %f positions", self.leftPosition, self.rightPosition);
+    if ([_delegate respondsToSelector:@selector(videoRange:didChangeLeftPosition:rightPosition:)]){
+        [_delegate videoRange:self didChangeLeftPosition:self.leftPosition rightPosition:self.rightPosition];
+    }
 }
 
 #pragma mark - Gestures
