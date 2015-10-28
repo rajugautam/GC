@@ -16,7 +16,7 @@
                         <color key="separatorColor" red="0.10980392156862745" green="0.11372549019607843" blue="0.12549019607843137" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Eys-24-GbL">
-                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Eys-24-GbL" id="vaU-Rm-tU5">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -78,7 +78,7 @@
                         <color key="sectionIndexColor" red="0.20392156862745098" green="0.49019607843137253" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="wb3-dF-oCc">
-                                <rect key="frame" x="0.0" y="114" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="50" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wb3-dF-oCc" id="6rB-AC-oxk">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -563,7 +563,7 @@ Are Born</string>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DXp-Yy-mpy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-45" y="-135"/>
+            <point key="canvasLocation" x="29" y="-129"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="hw8-oH-Y54">

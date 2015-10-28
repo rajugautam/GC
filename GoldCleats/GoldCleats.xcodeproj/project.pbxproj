@@ -293,6 +293,9 @@
 		435B32431BC7F48E000BF880 /* close-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 435B32411BC7F48E000BF880 /* close-icon.png */; settings = {ASSET_TAGS = (); }; };
 		435B32441BC7F48E000BF880 /* close-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 435B32421BC7F48E000BF880 /* close-icon@2x.png */; settings = {ASSET_TAGS = (); }; };
 		435C31531BC66DC3009CB834 /* play_green.png in Resources */ = {isa = PBXBuildFile; fileRef = 435C31521BC66DC3009CB834 /* play_green.png */; settings = {ASSET_TAGS = (); }; };
+		435DEFED1BDF84B4009AB97D /* GCProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 435DEFEC1BDF84B4009AB97D /* GCProfileViewController.m */; settings = {ASSET_TAGS = (); }; };
+		435DEFF01BDF84C5009AB97D /* GCActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 435DEFEF1BDF84C5009AB97D /* GCActivityViewController.m */; settings = {ASSET_TAGS = (); }; };
+		435DEFF31BDF84F4009AB97D /* GCShareViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 435DEFF21BDF84F4009AB97D /* GCShareViewController.m */; settings = {ASSET_TAGS = (); }; };
 		436511381BD0E26800D2FBA2 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436511351BD0E26800D2FBA2 /* FBSDKCoreKit.framework */; settings = {ASSET_TAGS = (); }; };
 		436511391BD0E26800D2FBA2 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436511361BD0E26800D2FBA2 /* FBSDKLoginKit.framework */; settings = {ASSET_TAGS = (); }; };
 		4365113A1BD0E26800D2FBA2 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436511371BD0E26800D2FBA2 /* FBSDKShareKit.framework */; settings = {ASSET_TAGS = (); }; };
@@ -649,6 +652,12 @@
 		435B32411BC7F48E000BF880 /* close-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "close-icon.png"; sourceTree = "<group>"; };
 		435B32421BC7F48E000BF880 /* close-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "close-icon@2x.png"; sourceTree = "<group>"; };
 		435C31521BC66DC3009CB834 /* play_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play_green.png; sourceTree = "<group>"; };
+		435DEFEB1BDF84B4009AB97D /* GCProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCProfileViewController.h; sourceTree = "<group>"; };
+		435DEFEC1BDF84B4009AB97D /* GCProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCProfileViewController.m; sourceTree = "<group>"; };
+		435DEFEE1BDF84C5009AB97D /* GCActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCActivityViewController.h; sourceTree = "<group>"; };
+		435DEFEF1BDF84C5009AB97D /* GCActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCActivityViewController.m; sourceTree = "<group>"; };
+		435DEFF11BDF84F4009AB97D /* GCShareViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCShareViewController.h; sourceTree = "<group>"; };
+		435DEFF21BDF84F4009AB97D /* GCShareViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCShareViewController.m; sourceTree = "<group>"; };
 		436511351BD0E26800D2FBA2 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		436511361BD0E26800D2FBA2 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		436511371BD0E26800D2FBA2 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
@@ -756,6 +765,7 @@
 		43122BD21BAD979900A34D0A /* GoldCleats */ = {
 			isa = PBXGroup;
 			children = (
+				435DEFEA1BDF848D009AB97D /* TabBarControllers */,
 				430EA09A1BCED52F00EDB591 /* Custom Views */,
 				435764D81BCE6FED008B7328 /* Resources */,
 				43B905A71BCBC0C700800FF8 /* Swift Classes */,
@@ -1177,6 +1187,19 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		435DEFEA1BDF848D009AB97D /* TabBarControllers */ = {
+			isa = PBXGroup;
+			children = (
+				435DEFEB1BDF84B4009AB97D /* GCProfileViewController.h */,
+				435DEFEC1BDF84B4009AB97D /* GCProfileViewController.m */,
+				435DEFEE1BDF84C5009AB97D /* GCActivityViewController.h */,
+				435DEFEF1BDF84C5009AB97D /* GCActivityViewController.m */,
+				435DEFF11BDF84F4009AB97D /* GCShareViewController.h */,
+				435DEFF21BDF84F4009AB97D /* GCShareViewController.m */,
+			);
+			name = TabBarControllers;
+			sourceTree = "<group>";
+		};
 		43B905A71BCBC0C700800FF8 /* Swift Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -1497,6 +1520,7 @@
 				435765911BCE8613008B7328 /* IMGLYLomo100Filter.swift in Sources */,
 				435765811BCE8613008B7328 /* IMGLYFrontFilter.swift in Sources */,
 				435765A51BCE8613008B7328 /* IMGLYQuoziFilter.swift in Sources */,
+				435DEFF31BDF84F4009AB97D /* GCShareViewController.m in Sources */,
 				435765B21BCE8613008B7328 /* IMGLYSticker.swift in Sources */,
 				4357658D1BCE8613008B7328 /* IMGLYKDynamicFilter.swift in Sources */,
 				4343941B1BB2AC56009FBE0F /* UIViewController+MMDrawerController.m in Sources */,
@@ -1537,6 +1561,7 @@
 				43122C0A1BB03AFD00A34D0A /* YouTubeGetUploads.m in Sources */,
 				435765541BCE8613008B7328 /* IMGLYAD1920Filter.swift in Sources */,
 				435765731BCE8613008B7328 /* IMGLYEnhancementFilter.swift in Sources */,
+				435DEFF01BDF84C5009AB97D /* GCActivityViewController.m in Sources */,
 				435765A11BCE8613008B7328 /* IMGLYPlateFilter.swift in Sources */,
 				435765891BCE8613008B7328 /* IMGLYInstanceFactoryExtension.swift in Sources */,
 				43122C091BB03AFC00A34D0A /* YouTubeDirectTag.m in Sources */,
@@ -1545,6 +1570,7 @@
 				435765B31BCE8613008B7328 /* IMGLYStickerCollectionViewCell.swift in Sources */,
 				43122C2A1BB03C6F00A34D0A /* GCHomeViewController.m in Sources */,
 				435765B41BCE8613008B7328 /* IMGLYStickerFilter.swift in Sources */,
+				435DEFED1BDF84B4009AB97D /* GCProfileViewController.m in Sources */,
 				435765991BCE8613008B7328 /* IMGLYNoGreenFilter.swift in Sources */,
 				435765A61BCE8613008B7328 /* IMGLYRecordingMode.swift in Sources */,
 				430EA0A31BCED6C500EDB591 /* VideoSliderRightView.m in Sources */,
@@ -1775,6 +1801,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1828,6 +1855,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

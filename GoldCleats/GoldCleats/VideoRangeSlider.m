@@ -14,6 +14,7 @@
 @property (nonatomic, strong) AVAssetImageGenerator *imageGenerator;
 @property (nonatomic, strong) UIScrollView *bgView;
 @property (nonatomic, strong) UIView *centerView;
+@property (nonatomic, strong) UIView *transparentView;
 @property (nonatomic, strong) NSURL *videoUrl;
 @property (nonatomic, strong) VideoSliderLeftView *leftThumb;
 @property (nonatomic, strong) VideoSliderRightView *rightThumb;
@@ -46,20 +47,12 @@
         _bgView.layer.borderWidth = BG_VIEW_BORDERS_SIZE;
 //        _bgView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.8];
         [self addSubview:_bgView];
+        ;
         
-        
-//        CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
-//        maskLayer.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
-//        maskLayer.fillColor = [UIColor blackColor].CGColor;
-//        
-//        UIBezierPath *path = [UIBezierPath bezierPathWithRect:frame];
-//        [path appendPath:[UIBezierPath bezierPathWithRect:CGRectMake(0, 0, frame.size.width - 60, frame.size.height)]];
-//        maskLayer.path = path.CGPath;
-//        //path.appendPath(UIBezierPath(rect: bounds))
-//        maskLayer.fillRule = kCAFillRuleEvenOdd;
-//        
-//        _bgView.layer.mask = maskLayer;
-        
+        _transparentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+        _transparentView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.6];
+        _transparentView.userInteractionEnabled = FALSE;
+        [self addSubview:_transparentView];
         
         _videoUrl = videoUrl;
         
@@ -127,11 +120,29 @@
         [_popoverBubble addSubview:_bubleText];
         
         [self getMovieFrame];
+        
+        [self opaqueCropView];
     }
     
     return self;
 }
 
+- (void)opaqueCropView {
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = CGRectMake(0, 0, _bgView.frame.size.width+20, _bgView.frame.size.height);
+    maskLayer.fillColor = [UIColor blackColor].CGColor;
+    
+    UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(_leftPosition, 0, _rightPosition - _leftPosition, _bgView.frame.size.height)];
+    [path appendPath:[UIBezierPath bezierPathWithRect:CGRectMake(0, 0, _bgView.frame.size.width+20, _bgView.frame.size.height)]];
+    
+    maskLayer.path = path.CGPath;
+    
+    maskLayer.fillRule = kCAFillRuleEvenOdd;
+    
+    _transparentView.layer.mask = maskLayer;
+    
+    //[_bgView bringSubviewToFront:_transparentView];
+}
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -218,6 +229,8 @@
         
         [gesture setTranslation:CGPointZero inView:self];
         
+        [self opaqueCropView];
+        
         [self setNeedsLayout];
         
         [self delegateNotification];
@@ -261,6 +274,8 @@
         
         [gesture setTranslation:CGPointZero inView:self];
         
+        [self opaqueCropView];
+        
         [self setNeedsLayout];
         
         [self delegateNotification];
@@ -295,6 +310,8 @@
         
         
         [gesture setTranslation:CGPointZero inView:self];
+        
+        [self opaqueCropView];
         
         [self setNeedsLayout];
         
@@ -532,11 +549,11 @@
     CGPoint translation = [scrollView.panGestureRecognizer translationInView:scrollView];
     
     //[scrollView.panGestureRecognizer setTranslation:CGPointZero inView:scrollView];
+    [self opaqueCropView];
     
-//    [self setNeedsLayout];
+    [self setNeedsLayout];
     
     [self delegateNotification];
-    
     
     _popoverBubble.alpha = 1;
     
