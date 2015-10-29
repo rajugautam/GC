@@ -7,7 +7,6 @@
 //
 import UIKit
 import MediaPlayer
-import Photos
 import AssetsLibrary
 //    @objc public enum IMGLYEditorResult: Int {
 //        case Done
@@ -27,6 +26,7 @@ import AssetsLibrary
 private let ButtonCollectionViewCellReuseIdentifier = "ButtonCollectionViewCell"
 private let ButtonCollectionViewCellSize = CGSize(width: 66, height: 90)
 private let BottomControlSize = CGSize(width: 47, height: 47)
+private let SlowMoButtonSize = CGSize(width: 55, height: 70)
 private let PointerControlSize = CGSize(width: 15, height: 9)
 private let FilterSelectionViewHeight = 100
 
@@ -34,7 +34,7 @@ private var centerModeButtonConstraint: NSLayoutConstraint?
 private var cameraPreviewContainerTopConstraint: NSLayoutConstraint?
 private var cameraPreviewContainerBottomConstraint: NSLayoutConstraint?
 
-public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderDelegate {
+public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderDelegate, GCVideoProcessorDelegate {
     
     // MARK: - Properties
     
@@ -53,6 +53,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         playerView.clipsToBounds = true
         return playerView
         }()
+    
+    
     
     public private(set) lazy var backgroundContainerView: UIView = {
         let view = UIView()
@@ -98,6 +100,97 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         return button
         }()
     
+    private(set) lazy var slowMoButton1: CustomButton = {
+        let bundle = NSBundle(forClass: self.dynamicType)
+        let button = CustomButton()
+        button.tag = 101
+        button.setTitle("10%", forState: .Normal)
+        button.titleLabel?.textAlignment = .Left
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 14)
+        button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "ic_slowMo1"), forState: .Normal)
+        button.setImage(UIImage(named: "ic_slowMo1_sel"), forState: .Selected)
+        button.imageView?.contentMode = .ScaleAspectFill
+        button.layer.cornerRadius = 2
+        button.clipsToBounds = true
+        button.addTarget(self, action: "changeVideofps:", forControlEvents: .TouchUpInside)
+        return button
+        }()
+    
+    private(set) lazy var slowMoButton2: CustomButton = {
+        let bundle = NSBundle(forClass: self.dynamicType)
+        let button = CustomButton()
+        button.tag = 102
+        button.setTitle("25%", forState: .Normal)
+        //button.titleLabel?.textAlignment = .Right
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 14)
+        button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "ic_slowMo2"), forState: .Normal)
+        button.setImage(UIImage(named: "ic_slowMo2_sel"), forState: .Selected)
+        //button.imageView?.contentMode = .Scale
+//        button.layer.cornerRadius = 2
+//        button.clipsToBounds = true
+        button.addTarget(self, action: "changeVideofps:", forControlEvents: .TouchUpInside)
+        return button
+        }()
+    
+    private(set) lazy var slowMoButton3: CustomButton = {
+        let bundle = NSBundle(forClass: self.dynamicType)
+        let button = CustomButton()
+        button.tag = 103
+        button.setTitle("50%", forState: .Normal)
+        //button.titleLabel?.textAlignment = .Right
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 14)
+        button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "ic_slowMo3"), forState: .Normal)
+        button.setImage(UIImage(named: "ic_slowMo3_sel"), forState: .Selected)
+        button.imageView?.contentMode = .ScaleAspectFill
+        button.layer.cornerRadius = 2
+        button.clipsToBounds = true
+        button.addTarget(self, action: "changeVideofps:", forControlEvents: .TouchUpInside)
+        return button
+        }()
+    
+    private(set) lazy var slowMoButton4: CustomButton = {
+        let bundle = NSBundle(forClass: self.dynamicType)
+        let button = CustomButton()
+        button.tag = 104
+        button.setTitle("1.5x%", forState: .Normal)
+        //button.titleLabel?.textAlignment = .Right
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 14)
+        button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "ic_slowMo4"), forState: .Normal)
+        button.setImage(UIImage(named: "ic_slowMo4_sel"), forState: .Selected)
+        button.imageView?.contentMode = .ScaleAspectFill
+        button.layer.cornerRadius = 2
+        button.clipsToBounds = true
+        button.addTarget(self, action: "changeVideofps:", forControlEvents: .TouchUpInside)
+        return button
+        }()
+    
+    private(set) lazy var slowMoButton5: CustomButton = {
+        let bundle = NSBundle(forClass: self.dynamicType)
+        let button = CustomButton()
+        button.tag = 105
+        button.setTitle("1.5x%", forState: .Normal)
+        //button.titleLabel?.textAlignment = .Right0
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 14)
+        button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "ic_slowMo5"), forState: .Normal)
+        button.setImage(UIImage(named: "ic_slowMo5_sel"), forState: .Selected)
+        button.imageView?.contentMode = .ScaleAspectFill
+        button.layer.cornerRadius = 2
+        button.clipsToBounds = true
+        button.addTarget(self, action: "changeVideofps:", forControlEvents: .TouchUpInside)
+        return button
+        }()
+    
+    
     public private(set) lazy var actionButtonContainer: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -133,14 +226,14 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     public private(set) var actionButton: UIControl?
     
-    public private(set) lazy var zoomVideoButton: UIButton = {
+    public private(set) lazy var slowMoVideoButton: UIButton = {
         let bundle = NSBundle(forClass: self.dynamicType)
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "icon_option_focus", inBundle: bundle, compatibleWithTraitCollection: nil), forState: .Normal)
         button.layer.cornerRadius = 3
         button.clipsToBounds = true
-        button.addTarget(self, action: "zoomVideo:", forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: "displaySlowMoControls:", forControlEvents: .TouchUpInside)
         button.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
         return button
         }()
@@ -189,6 +282,14 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         
         }()
     
+    public private(set) lazy var slowMotionControlView:UIView = {
+       let view = UIView()
+        //view.backgroundColor = UIColor.init(red: 27.0/255.0, green: 30.0/255.0, blue: 32.0/255, alpha: 1)
+        view.backgroundColor = UIColor.blackColor()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     public var completionBlock: IMGLYEditorCompletionBlock?
     public var initialFilterType = IMGLYFilterType.None
     public var initialFilterIntensity = NSNumber(double: 0.75)
@@ -201,9 +302,11 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     var videoURL: NSURL?
     var referenceURL: NSURL?
     var isFromLibrary:Bool?
-    var shouldCropVideo:Bool = false
+    var shouldCropVideo:Bool = true
     var cropStartTime:CGFloat = 0.0
     var cropEndTime:CGFloat = 20.0
+    var playbackRate:CGFloat = 1.0
+    var videoScaleFactor:CGFloat = 1.0
     private var exportSession:AVAssetExportSession!
     private var tempVideoPath:NSURL!
     
@@ -239,6 +342,12 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         //configureMenuCollectionView()
     }
     
+    override public func viewDidDisappear(animated: Bool) {
+        if self.moviePlayer?.playbackState == MPMoviePlaybackState.Playing {
+            self.moviePlayer?.stop()
+        }
+    }
+    
     override public func viewDidAppear(animated: Bool) {
         self.cropVideo(self.cropSelectionButton)
     }
@@ -250,7 +359,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         
         view.addSubview(bottomControlsView)
         view.addSubview(bottomEditorView)
-        
+        view.addSubview(slowMotionControlView)
         
         addChildViewController(filterSelectionController)
         filterSelectionController.didMoveToParentViewController(self)
@@ -258,11 +367,17 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         
         bottomControlsView.addSubview(filterSelectionButton)
         bottomControlsView.addSubview(cropSelectionButton)
-        bottomControlsView.addSubview(zoomVideoButton)
+        bottomControlsView.addSubview(slowMoVideoButton)
         bottomControlsView.addSubview(controlSelectionPointer)
         
-        // Add Video Crop control to bottomEditorView, here
+        // Add Slow Mo control to slowMotionControlView, here
+        [slowMotionControlView .addSubview(slowMoButton1)]
+        [slowMotionControlView .addSubview(slowMoButton2)]
+        [slowMotionControlView .addSubview(slowMoButton3)]
+        [slowMotionControlView .addSubview(slowMoButton4)]
+        [slowMotionControlView .addSubview(slowMoButton5)]
         
+        slowMotionControlView.hidden = true
     }
     
     
@@ -276,7 +391,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             "filterSelectionView" : filterSelectionController.view,
             "filterSelectionButton" : filterSelectionButton,
             "cropSelectionButton" : cropSelectionButton,
-            "zoomVideoButton" : zoomVideoButton,
+            "slowMotionControlView": slowMotionControlView,
+            "slowMoVideoButton" : slowMoVideoButton,
             "controlSelectionPointer": controlSelectionPointer
         ]
         
@@ -289,6 +405,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         
         configureSuperviewConstraintsWithMetrics(metrics, views: views)
         configureBottomControlsConstraintsWithMetrics(metrics, views: views)
+        configureSlowMoControlsConstraintsWithMetrics(metrics, views:views)
     }
     
     private func configureSuperviewConstraintsWithMetrics(metrics: [String : AnyObject], views: [String : AnyObject]) {
@@ -299,12 +416,19 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         //view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[cameraPreviewContainer(>=150,<=320)]|", options: [], metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|[bottomControlsView]|", options: [], metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|[bottomEditorView]|", options: [], metrics: nil, views: views))
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|[slowMotionControlView]|", options: [], metrics: nil, views: views))
+        
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|[filterSelectionView]|", options: [], metrics: nil, views: views))
         
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[cameraPreviewContainer][bottomControlsView(==topControlsViewHeight)]", options: [], metrics: metrics, views: views))
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomControlsView][bottomEditorView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomControlsView][slowMotionControlView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomEditorView][filterSelectionView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
         
+//        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMotionControlView, attribute: .Width, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Width, multiplier: 1, constant: 0))
+//        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMotionControlView, attribute: .Height, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Height, multiplier: 1, constant: 0))
+        //view.addConstraint(NSLayoutConstraint(item: slowMotionControlView, attribute: .Top, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Bottom, multiplier: 1, constant: 0))
+        //view.addConstraint(NSLayoutConstraint(item: cropSelectionButton, attribute: .CenterX, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterX, multiplier: 1, constant: 0))
         
         //            view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomControlsView][bottomEditorView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
         
@@ -358,16 +482,50 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         //            bottomControlsView.addConstraint(NSLayoutConstraint(item: actionButtonContainer, attribute: .CenterX, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterX, multiplier: 1, constant: 0))
         //            bottomControlsView.addConstraint(NSLayoutConstraint(item: bottomControlsView, attribute: .Bottom, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Bottom, multiplier: 1, constant: 10))
         
-        // zoomVideoButton
-        zoomVideoButton.addConstraint(NSLayoutConstraint(item: zoomVideoButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
-        zoomVideoButton.addConstraint(NSLayoutConstraint(item: zoomVideoButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
-        bottomControlsView.addConstraint(NSLayoutConstraint(item: zoomVideoButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
-        bottomControlsView.addConstraint(NSLayoutConstraint(item: zoomVideoButton, attribute: .Right, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Right, multiplier: 1, constant: 0))
+        // slowMoVideoButton
+        slowMoVideoButton.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
+        slowMoVideoButton.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .Right, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Right, multiplier: 1, constant: 0))
         
         controlSelectionPointer.addConstraint(NSLayoutConstraint(item: controlSelectionPointer, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: PointerControlSize.width))
         controlSelectionPointer.addConstraint(NSLayoutConstraint(item: controlSelectionPointer, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: PointerControlSize.height))
         bottomControlsView.addConstraint(NSLayoutConstraint(item: controlSelectionPointer, attribute: .Bottom, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Bottom, multiplier: 1, constant: 0))
         bottomControlsView.addConstraint(NSLayoutConstraint(item: controlSelectionPointer, attribute: .CenterX, relatedBy: .Equal, toItem: filterSelectionButton, attribute: .CenterX, multiplier: 1, constant: 0))
+    }
+    
+    private func configureSlowMoControlsConstraintsWithMetrics(metrics: [String : AnyObject], views: [String : AnyObject]) {
+        
+        let constant:CGFloat = (view.frame.width - SlowMoButtonSize.width*5) / 5
+        // slowMoButton1
+        slowMoButton1.addConstraint(NSLayoutConstraint(item: slowMoButton1, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.width))
+        slowMoButton1.addConstraint(NSLayoutConstraint(item: slowMoButton1, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.height))
+        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton1, attribute: .CenterY, relatedBy: .Equal, toItem: slowMotionControlView, attribute: .CenterY, multiplier: 1, constant: 0))
+        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton1, attribute: .Left, relatedBy: .Equal, toItem: slowMotionControlView, attribute: .Left, multiplier: 1, constant: constant))
+        
+        // slowMoButton2
+        slowMoButton2.addConstraint(NSLayoutConstraint(item: slowMoButton2, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.width))
+        slowMoButton2.addConstraint(NSLayoutConstraint(item: slowMoButton2, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.height))
+        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton2, attribute: .CenterY, relatedBy: .Equal, toItem: slowMotionControlView, attribute: .CenterY, multiplier: 1, constant: 0))
+        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton2, attribute: .Left, relatedBy: .Equal, toItem: slowMoButton1, attribute: .Right, multiplier: 1, constant: constant))
+        
+        // slowMoButton3
+        slowMoButton3.addConstraint(NSLayoutConstraint(item: slowMoButton3, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.width))
+        slowMoButton3.addConstraint(NSLayoutConstraint(item: slowMoButton3, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.height))
+        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton3, attribute: .CenterY, relatedBy: .Equal, toItem: slowMotionControlView, attribute: .CenterY, multiplier: 1, constant: 0))
+        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton3, attribute: .Left, relatedBy: .Equal, toItem: slowMoButton2, attribute: .Right, multiplier: 1, constant: constant))
+        
+        // slowMoButton4
+        slowMoButton4.addConstraint(NSLayoutConstraint(item: slowMoButton4, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.width))
+        slowMoButton4.addConstraint(NSLayoutConstraint(item: slowMoButton4, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.height))
+        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton4, attribute: .CenterY, relatedBy: .Equal, toItem: slowMotionControlView, attribute: .CenterY, multiplier: 1, constant: 0))
+        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton4, attribute: .Left, relatedBy: .Equal, toItem: slowMoButton3, attribute: .Right, multiplier: 1, constant: constant))
+        
+        // slowMoButton5
+        slowMoButton5.addConstraint(NSLayoutConstraint(item: slowMoButton5, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.width))
+        slowMoButton5.addConstraint(NSLayoutConstraint(item: slowMoButton5, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.height))
+        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton5, attribute: .CenterY, relatedBy: .Equal, toItem: slowMotionControlView, attribute: .CenterY, multiplier: 1, constant: 0))
+        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton5, attribute: .Left, relatedBy: .Equal, toItem: slowMoButton4, attribute: .Right, multiplier: 1, constant: constant))
     }
     
     private func updateConstraintsForRecordingMode() {
@@ -394,12 +552,16 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         self.cropEndTime = rightPosition
 //        print("slider values \(didChangeLeftPosition) and \(rightPosition) \(self.videoURL) and \(self.referenceURL) ")
         //self.moviePlayer?.stop()
-        self.moviePlayer?.contentURL = self.referenceURL
-        self.moviePlayer?.initialPlaybackTime = Double(didChangeLeftPosition)
-        self.moviePlayer?.endPlaybackTime = Double(rightPosition)
-        self.moviePlayer?.play()
+//        self.moviePlayer?.contentURL = self.referenceURL
+//        self.moviePlayer?.initialPlaybackTime = Double(didChangeLeftPosition)
+//        self.moviePlayer?.endPlaybackTime = Double(rightPosition)
+//        self.moviePlayer?.play()
     }
     
+    // Mark: - Video Processor Delegate
+    @objc public func processesdVideoURL(finalURL: NSURL!) {
+        self.pushShareScreenWithVideoUrl(finalURL)
+    }
     // MARK: - Targets
     public func toggleFilters(sender: UIButton?) {
         if let filterSelectionViewConstraint = self.filterSelectionViewConstraint {
@@ -443,7 +605,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         })
     }
     
-    public func zoomVideo(sender:UIButton?) {
+    public func displaySlowMoControls(sender:UIButton?) {
+        bottomEditorView.hidden = true
+        slowMotionControlView.hidden = false
         //self.toggleFilters(self.filterSelectionButton)
         let animationDuration = NSTimeInterval(0.6)
         let dampingFactor = CGFloat(0.6)
@@ -463,6 +627,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     }
     
     public func cropVideo(sender:UIButton?) {
+        bottomEditorView.hidden = false
+        slowMotionControlView.hidden = true
         //self.toggleFilters(self.filterSelectionButton)
         let animationDuration = NSTimeInterval(0.6)
         let dampingFactor = CGFloat(0.6)
@@ -481,6 +647,60 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         self.animatePointer(sender)
     }
     
+    public func changeVideofps(sender:UIButton) {
+        let tag = sender.tag
+        switch tag {
+        case 101:
+            playbackRate = 0.1
+            videoScaleFactor = 10
+            break
+            
+        case 102:
+            playbackRate = 0.25
+            videoScaleFactor = 4
+            break
+        case 103:
+            playbackRate = 0.5
+            videoScaleFactor = 2
+            break
+            
+        case 104:
+            playbackRate = 1.5
+            videoScaleFactor = 0.75
+            break
+        case 105:
+            playbackRate = 2.0
+            videoScaleFactor = 0.5
+            break
+            
+        default:
+            playbackRate = 1.0
+            break
+        }
+        slowMoButton1.imageView!.layer.borderColor = nil
+        slowMoButton1.imageView!.layer.borderWidth = 0
+        
+        slowMoButton2.imageView!.layer.borderColor = nil
+        slowMoButton2.imageView!.layer.borderWidth = 0
+        
+        slowMoButton3.imageView!.layer.borderColor = nil
+        slowMoButton3.imageView!.layer.borderWidth = 0
+        
+        slowMoButton4.imageView!.layer.borderColor = nil
+        slowMoButton4.imageView!.layer.borderWidth = 0
+        
+        slowMoButton5.imageView!.layer.borderColor = nil
+        slowMoButton5.imageView!.layer.borderWidth = 0
+        
+        sender.imageView!.layer.borderColor = UIColor.yellowColor().CGColor
+        sender.imageView!.layer.borderWidth = 2
+        
+        //self.moviePlayer?.stop()
+        self.moviePlayer?.currentPlaybackRate = Float(playbackRate)
+        //self.moviePlayer?.play()
+        
+    }
+    
     public func exportEditedVideo() {
         deleteTempVideoFile()
         
@@ -494,16 +714,29 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             self.exportSession.outputURL = tempVideoPath
             self.exportSession.outputFileType = AVFileTypeQuickTimeMovie
             
+            if self.cropEndTime > CGFloat(CMTimeGetSeconds(asset.duration)) {
+                self.cropEndTime = CGFloat(CMTimeGetSeconds(asset.duration))
+            }
             let start:CMTime = CMTimeMakeWithSeconds(Double(self.cropStartTime), asset.duration.timescale)
-            let duration:CMTime = CMTimeMakeWithSeconds(Double((self.cropEndTime - self.cropStartTime)), asset.duration.timescale)
+            let duration:CMTime = CMTimeMakeWithSeconds((Double(self.cropEndTime) - Double(self.cropStartTime)), asset.duration.timescale)
             let timeRange:CMTimeRange = CMTimeRangeMake(start, duration)
             self.exportSession.timeRange = timeRange
+            print("\(start) duration \(duration) diff \((Double(self.cropEndTime) - Double(self.cropStartTime))) and  crop time values in order \(self.cropEndTime), \(self.cropStartTime), \(timeRange)")
             
             self.exportSession.exportAsynchronouslyWithCompletionHandler( {
                 
                 switch self.exportSession.status {
                 case .Failed:
                     print("cropping failed")
+                    if !(self.isFromLibrary ?? true) {
+                        self.saveMovieWithMovieURLToAssets(self.videoURL!)
+                    } else {
+                        if self.videoScaleFactor != 1 {
+                            self.processSlowMoVideoAtRefURL(self.videoURL!)
+                        } else {
+                            self.pushShareScreenWithVideoUrl(self.referenceURL!)
+                        }
+                    }
                     break
                     
                 case .Cancelled:
@@ -511,7 +744,16 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
                     break
                     
                 case .Completed:
-                    self.saveMovieWithMovieURLToAssets(self.tempVideoPath)
+                    //self.saveMovieWithMovieURLToAssets(self.tempVideoPath)
+                    if !(self.isFromLibrary ?? true) {
+                        self.saveMovieWithMovieURLToAssets(self.videoURL!)
+                    } else {
+                        if self.videoScaleFactor != 1 {
+                            self.processSlowMoVideoAtRefURL(self.videoURL!)
+                        } else {
+                            self.pushShareScreenWithVideoUrl(self.referenceURL!)
+                        }
+                    }
                     break
                     
                 default:
@@ -614,48 +856,33 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             
         }
         if library.videoAtPathIsCompatibleWithSavedPhotosAlbum(movieURL) {
-            library.writeVideoAtPathToSavedPhotosAlbum(movieURL, completionBlock: videoWriteCompletionBlock)
+            if videoScaleFactor != 1 {
+                processSlowMoVideoAtRefURL(movieURL)
+            } else {
+                library.writeVideoAtPathToSavedPhotosAlbum(movieURL, completionBlock: videoWriteCompletionBlock)
+            }
         }
-        
-//        PHPhotoLibrary.sharedPhotoLibrary().performChanges({
-//            PHAssetChangeRequest.creationRequestForAssetFromVideoAtFileURL(movieURL)
-//            }) { success, error in
-//                if let error = error {
-//                    dispatch_async(dispatch_get_main_queue()) {
-//                        let bundle = NSBundle(forClass: self.dynamicType)
-//                        
-//                        let alertController = UIAlertController(title: NSLocalizedString("camera-view-controller.error-saving-video.title", tableName: nil, bundle: bundle, value: "", comment: ""), message: error.localizedDescription, preferredStyle: .Alert)
-//                        let cancelAction = UIAlertAction(title: NSLocalizedString("camera-view-controller.error-saving-video.cancel", tableName: nil, bundle: bundle, value: "", comment: ""), style: .Cancel, handler: nil)
-//                        
-//                        alertController.addAction(cancelAction)
-//                        
-//                        self.presentViewController(alertController, animated: true, completion: nil)
-//                    }
-//                }
-//                
-//                do {
-//                    try NSFileManager.defaultManager().removeItemAtURL(movieURL)
-//                } catch _ {
-//                }
-//        }
     }
+    
+    public func processSlowMoVideoAtRefURL(url:NSURL) {
+        
+        let videoProcessor = GCVideoProcessor()
+        videoProcessor.delegate = self
+        videoProcessor.processVideoAtPath(url, atScaleRate:videoScaleFactor)
+    }
+    
     // MARK: - EditorViewController
     
     public func tappedDone(sender: UIBarButtonItem?) {
         navigationItem.rightBarButtonItem = nil
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicatorView)
         activityIndicatorView.startAnimating()
-        if !(isFromLibrary ?? true) {
-            self.saveMovieWithMovieURLToAssets(videoURL!)
-        } else {
-            self.pushShareScreenWithVideoUrl(referenceURL!)
+        if shouldCropVideo {
+            self.exportEditedVideo()
         }
     }
     
     private func pushShareScreenWithVideoUrl(newVideoPath:NSURL) {
-        if shouldCropVideo {
-            self.exportEditedVideo()
-        }
         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let shareViewController : GCShareVideoViewController = storyboard.instantiateViewControllerWithIdentifier("SHARE_VIDEO_CONTROLLER") as! GCShareVideoViewController
         shareViewController.freshVideo = true

@@ -6,3 +6,4 @@
 #import "GCShareVideoViewController.h"
 #import "LUTToNSDataConverter.h"
 #import "VideoRangeSlider.h"
+#import "GCVideoProcessor.h"

@@ -50,7 +50,7 @@
         ;
         
         _transparentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-        _transparentView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.6];
+        _transparentView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
         _transparentView.userInteractionEnabled = FALSE;
         [self addSubview:_transparentView];
         
@@ -393,7 +393,7 @@
     
     _durationSeconds = CMTimeGetSeconds([myAsset duration]);
     // find the picsCnt based on contentSize
-    int picsCnt = MAX(3, MIN(15,ceil(_durationSeconds / 4)));//ceil(_bgView.frame.size.width / 30);
+    int picsCnt = MAX(2, MIN(15,floor(_durationSeconds / 4)));//ceil(_bgView.frame.size.width / 30);
     _bgView.contentSize = CGSizeMake(picWidth * picsCnt, _bgView.frame.size.height);
     if (_bgView.contentSize.width < [[UIScreen mainScreen] bounds].size.width) {
         [self addSubview:_centerView];
