@@ -271,7 +271,7 @@
 
 - (void) displayPlayerView: (UIView *) view fromPoint: (CGPoint) point
 {
-    [view setBounds:self.view.bounds];
+    [view setBounds:self.navigationController.view.bounds];
     [view setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.7]];
     [view setCenter:point];
     [view setAlpha:0.0];
@@ -279,8 +279,8 @@
     [view setTransform:CGAffineTransformMakeScale(0, 0)];
     
     [UIView animateWithDuration:0.5 animations:^{
-        [view setCenter:self.view.center];
-        [self.player.view setCenter:self.view.center];
+        [view setCenter:self.navigationController.view.center];
+        [self.player.view setCenter:self.navigationController.view.center];
         [view setTransform:CGAffineTransformIdentity];
         [view setAlpha:1.0];
         [self.player play];
