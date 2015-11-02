@@ -50,7 +50,7 @@
         ;
         
         _transparentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-        _transparentView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
+        _transparentView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.8];
         _transparentView.userInteractionEnabled = FALSE;
         [self addSubview:_transparentView];
         
@@ -334,9 +334,9 @@
 {
     CGFloat inset = _leftThumb.frame.size.width / 2;
     
-    _leftThumb.center = CGPointMake(_leftPosition+inset, _leftThumb.frame.size.height/2);
+    _leftThumb.center = CGPointMake(_leftPosition + inset, _leftThumb.frame.size.height/2);
     
-    _rightThumb.center = CGPointMake(_rightPosition-inset, _rightThumb.frame.size.height/2);
+    _rightThumb.center = CGPointMake(_rightPosition+inset, _rightThumb.frame.size.height/2);
     
     _topBorder.frame = CGRectMake(_leftThumb.frame.origin.x + _leftThumb.frame.size.width, 0, _rightThumb.frame.origin.x - _leftThumb.frame.origin.x - _leftThumb.frame.size.width/2, SLIDER_BORDERS_SIZE);
     

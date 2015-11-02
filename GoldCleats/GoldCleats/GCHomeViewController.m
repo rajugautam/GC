@@ -170,9 +170,13 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-        // Always display the camera UI.
     [self showList];
-    [self.view bringSubviewToFront:self.floatingButton];
+        // Always display the camera UI.
+//    CGRect frame = self.floatingButton.frame;
+//    frame.origin.y = 10 + self.tableView.frame.size.height - self.floatingButton.frame.size.height;
+//    self.floatingButton.frame = frame;
+//    
+//    [self.view bringSubviewToFront:self.floatingButton];
 }
 
 - (void)showList {

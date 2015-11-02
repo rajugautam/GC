@@ -26,7 +26,7 @@ import AssetsLibrary
 private let ButtonCollectionViewCellReuseIdentifier = "ButtonCollectionViewCell"
 private let ButtonCollectionViewCellSize = CGSize(width: 66, height: 90)
 private let BottomControlSize = CGSize(width: 47, height: 47)
-private let SlowMoButtonSize = CGSize(width: 55, height: 70)
+private let SlowMoButtonSize = CGSize(width: 55, height: 90)
 private let PointerControlSize = CGSize(width: 15, height: 9)
 private let FilterSelectionViewHeight = 100
 
@@ -105,15 +105,13 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let button = CustomButton()
         button.tag = 101
         button.setTitle("10%", forState: .Normal)
-        button.titleLabel?.textAlignment = .Left
+        button.titleLabel?.textAlignment = .Center
         button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 14)
         button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "ic_slowMo1"), forState: .Normal)
         button.setImage(UIImage(named: "ic_slowMo1_sel"), forState: .Selected)
         button.imageView?.contentMode = .ScaleAspectFill
-        button.layer.cornerRadius = 2
-        button.clipsToBounds = true
         button.addTarget(self, action: "changeVideofps:", forControlEvents: .TouchUpInside)
         return button
         }()
@@ -123,15 +121,13 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let button = CustomButton()
         button.tag = 102
         button.setTitle("25%", forState: .Normal)
-        //button.titleLabel?.textAlignment = .Right
+        button.titleLabel?.textAlignment = .Center
         button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 14)
         button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "ic_slowMo2"), forState: .Normal)
         button.setImage(UIImage(named: "ic_slowMo2_sel"), forState: .Selected)
-        //button.imageView?.contentMode = .Scale
-//        button.layer.cornerRadius = 2
-//        button.clipsToBounds = true
+        button.imageView?.contentMode = .ScaleAspectFill
         button.addTarget(self, action: "changeVideofps:", forControlEvents: .TouchUpInside)
         return button
         }()
@@ -141,15 +137,13 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let button = CustomButton()
         button.tag = 103
         button.setTitle("50%", forState: .Normal)
-        //button.titleLabel?.textAlignment = .Right
+        button.titleLabel?.textAlignment = .Center
         button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 14)
         button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "ic_slowMo3"), forState: .Normal)
         button.setImage(UIImage(named: "ic_slowMo3_sel"), forState: .Selected)
         button.imageView?.contentMode = .ScaleAspectFill
-        button.layer.cornerRadius = 2
-        button.clipsToBounds = true
         button.addTarget(self, action: "changeVideofps:", forControlEvents: .TouchUpInside)
         return button
         }()
@@ -158,16 +152,14 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let bundle = NSBundle(forClass: self.dynamicType)
         let button = CustomButton()
         button.tag = 104
-        button.setTitle("1.5x%", forState: .Normal)
-        //button.titleLabel?.textAlignment = .Right
+        button.setTitle("1.5x", forState: .Normal)
+        button.titleLabel?.textAlignment = .Center
         button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 14)
         button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "ic_slowMo4"), forState: .Normal)
         button.setImage(UIImage(named: "ic_slowMo4_sel"), forState: .Selected)
         button.imageView?.contentMode = .ScaleAspectFill
-        button.layer.cornerRadius = 2
-        button.clipsToBounds = true
         button.addTarget(self, action: "changeVideofps:", forControlEvents: .TouchUpInside)
         return button
         }()
@@ -176,16 +168,14 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let bundle = NSBundle(forClass: self.dynamicType)
         let button = CustomButton()
         button.tag = 105
-        button.setTitle("1.5x%", forState: .Normal)
-        //button.titleLabel?.textAlignment = .Right0
+        button.setTitle("2.0x", forState: .Normal)
+        button.titleLabel?.textAlignment = .Center
         button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 14)
         button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "ic_slowMo5"), forState: .Normal)
         button.setImage(UIImage(named: "ic_slowMo5_sel"), forState: .Selected)
         button.imageView?.contentMode = .ScaleAspectFill
-        button.layer.cornerRadius = 2
-        button.clipsToBounds = true
         button.addTarget(self, action: "changeVideofps:", forControlEvents: .TouchUpInside)
         return button
         }()
@@ -230,11 +220,12 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let bundle = NSBundle(forClass: self.dynamicType)
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "icon_option_focus", inBundle: bundle, compatibleWithTraitCollection: nil), forState: .Normal)
+        //button.setImage(UIImage(named: "icon_option_focus", inBundle: bundle, compatibleWithTraitCollection: nil), forState: .Normal)
+        button.setImage(UIImage(named: "ic_turtle"), forState: .Normal)
         button.layer.cornerRadius = 3
         button.clipsToBounds = true
         button.addTarget(self, action: "displaySlowMoControls:", forControlEvents: .TouchUpInside)
-        button.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
+
         return button
         }()
     
@@ -486,7 +477,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         slowMoVideoButton.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
         slowMoVideoButton.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
         bottomControlsView.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
-        bottomControlsView.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .Right, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Right, multiplier: 1, constant: 0))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .Right, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Right, multiplier: 1, constant: -10))
         
         controlSelectionPointer.addConstraint(NSLayoutConstraint(item: controlSelectionPointer, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: PointerControlSize.width))
         controlSelectionPointer.addConstraint(NSLayoutConstraint(item: controlSelectionPointer, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: PointerControlSize.height))
@@ -560,8 +551,11 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     // Mark: - Video Processor Delegate
     @objc public func processesdVideoURL(finalURL: NSURL!) {
-        self.pushShareScreenWithVideoUrl(finalURL)
+        dispatch_async(dispatch_get_main_queue()){
+            self.pushShareScreenWithVideoUrl(finalURL)
+            };
     }
+    
     // MARK: - Targets
     public func toggleFilters(sender: UIButton?) {
         if let filterSelectionViewConstraint = self.filterSelectionViewConstraint {
@@ -617,7 +611,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         filterSelectionViewConstraint!.constant = 0
         //                    self.cropSelectionViewConstraint!.constant = -1 * CGFloat(FilterSelectionViewHeight)
         UIView.animateWithDuration(animationDuration, delay: 0, usingSpringWithDamping: dampingFactor, initialSpringVelocity: 0, options: [], animations: {
-            sender?.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
+            //sender?.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
             //self.view.addSubview(self.bottomEditorView)
             self.view.layoutIfNeeded()
             }, completion: { finished in
@@ -727,16 +721,18 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
                 
                 switch self.exportSession.status {
                 case .Failed:
-                    print("cropping failed")
-                    if !(self.isFromLibrary ?? true) {
-                        self.saveMovieWithMovieURLToAssets(self.videoURL!)
-                    } else {
-                        if self.videoScaleFactor != 1 {
-                            self.processSlowMoVideoAtRefURL(self.videoURL!)
-                        } else {
-                            self.pushShareScreenWithVideoUrl(self.referenceURL!)
-                        }
-                    }
+                    print("cropping failed \(self.exportSession.error?.description)")
+//                    if !(self.isFromLibrary ?? true) {
+//                        self.saveMovieWithMovieURLToAssets(self.videoURL!)
+//                    } else {
+//                        if self.videoScaleFactor != 1 {
+//                            self.processSlowMoVideoAtRefURL(self.videoURL!)
+//                        } else {
+//                            dispatch_async(dispatch_get_main_queue()){
+//                                self.pushShareScreenWithVideoUrl(self.referenceURL!)
+//                            };
+//                        }
+//                    }
                     break
                     
                 case .Cancelled:
@@ -745,14 +741,16 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
                     
                 case .Completed:
                     //self.saveMovieWithMovieURLToAssets(self.tempVideoPath)
-                    if !(self.isFromLibrary ?? true) {
-                        self.saveMovieWithMovieURLToAssets(self.videoURL!)
-                    } else {
+//                    if !(self.isFromLibrary ?? true) {
+//                        self.saveMovieWithMovieURLToAssets(self.tempVideoPath!)
+//                    } else {
                         if self.videoScaleFactor != 1 {
-                            self.processSlowMoVideoAtRefURL(self.videoURL!)
+                            self.processSlowMoVideoAtRefURL(self.tempVideoPath!)
                         } else {
-                            self.pushShareScreenWithVideoUrl(self.referenceURL!)
-                        }
+                            dispatch_async(dispatch_get_main_queue()){
+                                self.saveMovieWithMovieURLToAssets(self.tempVideoPath!)
+                            };
+//                        }
                     }
                     break
                     
@@ -768,11 +766,12 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     private func deleteTempVideoFile() {
         let fm:NSFileManager = NSFileManager.defaultManager()
-        let exist:Bool = fm.fileExistsAtPath(tempVideoPath.absoluteString)
+        print("tempVideoPath \(tempVideoPath) and \(tempVideoPath.path)")
+        let exist:Bool = fm.fileExistsAtPath(tempVideoPath.path!)
         
         if exist {
             do {
-                try fm.removeItemAtPath(tempVideoPath.absoluteString as String)
+                try fm.removeItemAtURL(tempVideoPath)
             } catch {
                 print("unable to delete temp video \(error)")
             }
@@ -847,7 +846,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
                 print("Error writing image with metadata to Photo Library: \(error)")
             }
             else {
-                self.pushShareScreenWithVideoUrl(newURL)
+                dispatch_async(dispatch_get_main_queue()){
+                    self.pushShareScreenWithVideoUrl(newURL)
+                }
                 do {
                     try NSFileManager.defaultManager().removeItemAtURL(movieURL)
                 } catch _ {
@@ -883,6 +884,10 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     }
     
     private func pushShareScreenWithVideoUrl(newVideoPath:NSURL) {
+        do {
+            try NSFileManager.defaultManager().removeItemAtURL(self.videoURL!)
+        } catch _ {
+        }
         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let shareViewController : GCShareVideoViewController = storyboard.instantiateViewControllerWithIdentifier("SHARE_VIDEO_CONTROLLER") as! GCShareVideoViewController
         shareViewController.freshVideo = true

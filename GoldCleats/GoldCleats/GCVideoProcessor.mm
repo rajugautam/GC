@@ -165,12 +165,12 @@ double gExecTimeTotal = 0.;
             
             
             
-                            // this thread does the processing
+            // this thread does the processing
             
-//            [NSThread detachNewThreadSelector:@selector(processThread:) toTarget:self withObject:nil];
+            //[NSThread detachNewThreadSelector:@selector(processThread:) toTarget:self withObject:nil];
     
 //            [self performSelector:@selector(processThread:) onThread:[NSThread new] withObject:nil waitUntilDone:YES];
-        [self processThread:self];
+        [self processThread:rate];
     
             AVAsset *videoAsset = [[AVURLAsset alloc] initWithURL:movieURL options:nil];
             
@@ -296,54 +296,44 @@ double gExecTimeTotal = 0.;
                     
                     NSLog(@"error: %@", [exportSession error]);
                     
-                    //error: Error Domain=AVFoundationErrorDomain Code=-11800 "The operation could not be completed" UserInfo=0x2023b720 {NSLocalizedDescription=The operation could not be completed, NSUnderlyingError=0x2023bb70 "The operation couldn’t be completed. (OSStatus error -12780.)", NSLocalizedFailureReason=An unknown error occurred (-12780)}
-                    
                 }
                 
             }];
-//        }
-//    }];
 }
 
 
 
--(void)processThread:(id)param {
+-(void)processThread:(CGFloat)rate {
     @autoreleasepool {
 
         long numChannels = 1;           // DIRAC LE allows mono only
 
         float sampleRate = 44100.;
 
-
-
-            // open input file
+        // open input file
 
         [self.reader openFileForRead:self.inUrl sr:sampleRate channels:numChannels];
 
-
-
-            // create output file (overwrite if exists)
+        // create output file (overwrite if exists)
 
         [self.writer openFileForWrite:self.outUrl sr:sampleRate channels:numChannels wordLength:16 type:kAudioFileAIFFType];
 
+        // DIRAC parameters
 
+        // Here we set our time an pitch manipulation values
 
-            // DIRAC parameters
-
-            // Here we set our time an pitch manipulation values
-
-        float time      = 1.75;                 // 115% length
+        float time      = rate;                 // 115% length
 
         float pitch     = pow(2., 0./12.);     // pitch shift (0 semitones)
 
         float formant   = pow(2., 0./12.);    // formant shift (0 semitones). Note formants are reciprocal to pitch in natural transposing
 
 
-            // First we set up DIRAC to process numChannels of audio at 44.1kHz
+        // First we set up DIRAC to process numChannels of audio at 44.1kHz
 
-            // N.b.: The fastest option is kDiracLambdaPreview / kDiracQualityPreview, best is kDiracLambda3, kDiracQualityBest
+        // N.b.: The fastest option is kDiracLambdaPreview / kDiracQualityPreview, best is kDiracLambda3, kDiracQualityBest
 
-            // The probably best *default* option for general purpose signals is kDiracLambda3 / kDiracQualityGood
+        // The probably best *default* option for general purpose signals is kDiracLambda3 / kDiracQualityGood
 
         void *dirac = DiracCreate(kDiracLambdaPreview, kDiracQualityPreview, numChannels, sampleRate, &myReadData, (__bridge void*)self);
 
@@ -355,9 +345,7 @@ double gExecTimeTotal = 0.;
 
         }
 
-
-
-            // Pass the values to our DIRAC instance
+        // Pass the values to our DIRAC instance
 
         DiracSetProperty(kDiracPropertyTimeFactor, time, dirac);
 
@@ -365,23 +353,17 @@ double gExecTimeTotal = 0.;
 
         DiracSetProperty(kDiracPropertyFormantFactor, formant, dirac);
 
-
-
-            // upshifting pitch will be slower, so in this case we'll enable constant CPU pitch shifting
+        // upshifting pitch will be slower, so in this case we'll enable constant CPU pitch shifting
 
         if (pitch > 1.0)
 
             DiracSetProperty(kDiracPropertyUseConstantCpuPitchShift, 1, dirac);
 
-
-
-            // Print our settings to the console
+        // Print our settings to the console
 
         DiracPrintSettings(dirac);
 
-
-
-            // Get the number of frames from the file to display our simplistic progress bar
+        // Get the number of frames from the file to display our simplistic progress bar
 
         SInt64 numf = [self.reader fileNumFrames];
 
@@ -393,33 +375,20 @@ double gExecTimeTotal = 0.;
         
         long percent = 0;
 
-        //percent = 0;
-
-
-
-            // This is an arbitrary number of frames per call. Change as you see fit
+        // This is an arbitrary number of frames per call. Change as you see fit
 
         long numFrames = 8192;
 
-
-
-            // Allocate buffer for output
+        // Allocate buffer for output
 
         float **audio = AllocateAudioBuffer(numChannels, numFrames);
 
-
-
         double bavg = 0;
-
-
 
             // MAIN PROCESSING LOOP STARTS HERE
 
         for(;;) {
-
-
-
-                // Display ASCII style "progress bar"
+            // Display ASCII style "progress bar"
 
             percent = 100.f*(double)outframes / (double)newOutframe;
 
@@ -427,21 +396,12 @@ double gExecTimeTotal = 0.;
 
             if (lastPercent != percent) {
 
-//    [self performSelectorOnMainThread:@selector(updateBarOnMainThread:) withObject:self waitUntilDone:NO];
-
-
-
                 lastPercent = ipercent;
 
                 fflush(stdout);
 
             }
-
-
-
-            DiracStartClock();                                                              // ............................. start timer ..........................................
-
-
+       DiracStartClock();                                                              // ............................. start timer ..........................................
 
                 // Call the DIRAC process function with current time and pitch settings
 
@@ -452,7 +412,6 @@ double gExecTimeTotal = 0.;
             bavg += (numFrames/sampleRate);
 
             gExecTimeTotal += DiracClockTimeSeconds();              // ............................. stop timer ..........................................
-
             
 
                 // Process only as many frames as needed
@@ -465,37 +424,22 @@ double gExecTimeTotal = 0.;
 
             if (framesToWrite < 0) framesToWrite = 0;
 
-            
-
-                // Write the data to the output file
+            // Write the data to the output file
 
             [self.writer writeFloats:framesToWrite fromArray:audio];
 
-            
-
-                // Increase our counter for the progress bar
+            // Increase our counter for the progress bar
 
             outframes += numFrames;
-
-            
 
                 // As soon as we've written enough frames we exit the main loop
 
             if (ret <= 0) break;
 
         }
-
-        
-
         percent = 100;
 
-            //      [self performSelectorOnMainThread:@selector(updateBarOnMainThread:) withObject:self waitUntilDone:NO];
-
-        
-
-        
-
-            // Free buffer for output
+        // Free buffer for output
 
         DeallocateAudioBuffer(audio, numChannels);
 
@@ -506,33 +450,14 @@ double gExecTimeTotal = 0.;
         DiracDestroy( dirac );
 
     
-
+        
 //    [reader release];
 //
-//    [writer release]; // important - flushes data to file
+        [self.writer closeFile]; // important - flushes data to file
 //
-//    
-//
-//         start playback on main thread
-//
-//              [self performSelectorOnMainThread:@selector(playOnMainThread:) withObject:self waitUntilDone:NO];
-//
-//    
-//
-//    [pool release];
-}
+    }
 }
 
-//-(void)playOnMainThread:(id)param
-//{
-//    NSError *error = nil;
-//    AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.outUrl error:&error];
-//    if (error)
-//        NSLog(@"AVAudioPlayer error %@, %@", error, [error userInfo]);
-//    
-//    //player.delegate = self;
-//    [player play];
-//}
 
 /*
  This is the callback function that supplies data from the input stream/file whenever needed.
@@ -576,7 +501,7 @@ long myReadData(float **chdata, long numFrames, void *userData)
             
         } else {
             dispatch_async(dispatch_get_main_queue(), ^(){
-//                [self.delegate processesdVideoURL:assetURL];
+                [self.delegate processesdVideoURL:assetURL];
             });
             
         }
