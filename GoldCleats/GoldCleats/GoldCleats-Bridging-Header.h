@@ -7,3 +7,4 @@
 #import "LUTToNSDataConverter.h"
 #import "VideoRangeSlider.h"
 #import "GCVideoProcessor.h"
+#import "GCPlayerView.h"

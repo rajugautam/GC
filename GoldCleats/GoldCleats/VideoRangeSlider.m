@@ -359,9 +359,14 @@
 -(void)getMovieFrame{
     
     AVAsset *myAsset = [[AVURLAsset alloc] initWithURL:_videoUrl options:nil];
+    // Always check for tracks for desired MediaType before producing the tracks
+    if ([[myAsset tracksWithMediaType:AVMediaTypeVideo] count] > 0) {
+        
     self.imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:myAsset];
     self.imageGenerator.appliesPreferredTrackTransform = YES;
-    
+    } else {
+        return;
+    }
     if ([self isRetina]){
         self.imageGenerator.maximumSize = CGSizeMake(_bgView.frame.size.width*2, _bgView.frame.size.height*2);
     } else {

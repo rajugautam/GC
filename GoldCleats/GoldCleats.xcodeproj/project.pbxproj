@@ -311,6 +311,7 @@
 		436511381BD0E26800D2FBA2 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436511351BD0E26800D2FBA2 /* FBSDKCoreKit.framework */; settings = {ASSET_TAGS = (); }; };
 		436511391BD0E26800D2FBA2 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436511361BD0E26800D2FBA2 /* FBSDKLoginKit.framework */; settings = {ASSET_TAGS = (); }; };
 		4365113A1BD0E26800D2FBA2 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436511371BD0E26800D2FBA2 /* FBSDKShareKit.framework */; settings = {ASSET_TAGS = (); }; };
+		436638511BE8D7080088BA03 /* GCPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 436638501BE8D7080088BA03 /* GCPlayerView.m */; settings = {ASSET_TAGS = (); }; };
 		438A6D891BE36F42007A0EEC /* libDIRAC_iOS-fat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 438A6D881BE36F42007A0EEC /* libDIRAC_iOS-fat.a */; settings = {ASSET_TAGS = (); }; };
 		438A6D8C1BE36FCC007A0EEC /* Utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 438A6D8B1BE36FCC007A0EEC /* Utilities.mm */; settings = {ASSET_TAGS = (); }; };
 		438A6D911BE36FD5007A0EEC /* EAFRead.mm in Sources */ = {isa = PBXBuildFile; fileRef = 438A6D8E1BE36FD5007A0EEC /* EAFRead.mm */; settings = {ASSET_TAGS = (); }; };
@@ -693,6 +694,8 @@
 		436511351BD0E26800D2FBA2 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		436511361BD0E26800D2FBA2 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		436511371BD0E26800D2FBA2 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
+		4366384F1BE8D7080088BA03 /* GCPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCPlayerView.h; sourceTree = "<group>"; };
+		436638501BE8D7080088BA03 /* GCPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCPlayerView.m; sourceTree = "<group>"; };
 		438A6D881BE36F42007A0EEC /* libDIRAC_iOS-fat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libDIRAC_iOS-fat.a"; sourceTree = "<group>"; };
 		438A6D8A1BE36FCC007A0EEC /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
 		438A6D8B1BE36FCC007A0EEC /* Utilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Utilities.mm; sourceTree = "<group>"; };
@@ -796,6 +799,7 @@
 		43122BC71BAD979900A34D0A = {
 			isa = PBXGroup;
 			children = (
+				4366384E1BE8D6F00088BA03 /* VideoPlayer */,
 				438A6D871BE36EF8007A0EEC /* Audio Tuning */,
 				4357633E1BCE6E63008B7328 /* Camera */,
 				4343940E1BB2AC3B009FBE0F /* MMDrawer */,
@@ -1270,6 +1274,15 @@
 			name = TabBarControllers;
 			sourceTree = "<group>";
 		};
+		4366384E1BE8D6F00088BA03 /* VideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				4366384F1BE8D7080088BA03 /* GCPlayerView.h */,
+				436638501BE8D7080088BA03 /* GCPlayerView.m */,
+			);
+			name = VideoPlayer;
+			sourceTree = "<group>";
+		};
 		438A6D871BE36EF8007A0EEC /* Audio Tuning */ = {
 			isa = PBXGroup;
 			children = (
@@ -1626,6 +1639,7 @@
 				435765A81BCE8613008B7328 /* IMGLYSaturationEditorViewController.swift in Sources */,
 				435765A31BCE8613008B7328 /* IMGLYPolaSXFIlter.swift in Sources */,
 				435765861BCE8613008B7328 /* IMGLYImageCaptionButton.swift in Sources */,
+				436638511BE8D7080088BA03 /* GCPlayerView.m in Sources */,
 				43122C191BB03B4C00A34D0A /* GTLNetworking_Sources.m in Sources */,
 				435765AB1BCE8613008B7328 /* IMGLYSettledFilter.swift in Sources */,
 				435765691BCE8613008B7328 /* IMGLYContrastEditorViewController.swift in Sources */,
@@ -1826,8 +1840,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Instant Systems Inc. (6E2QT4S838)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Instant Systems Inc. (6E2QT4S838)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1849,7 +1863,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "83b439e3-4f52-40d8-b4cb-dfce039d0a95";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1872,8 +1886,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Instant Systems Inc. (6E2QT4S838)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Instant Systems Inc. (6E2QT4S838)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1888,7 +1902,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PROVISIONING_PROFILE = "83b439e3-4f52-40d8-b4cb-dfce039d0a95";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1902,8 +1916,8 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Instant Systems Inc. (6E2QT4S838)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Instant Systems Inc. (6E2QT4S838)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1948,7 +1962,7 @@
 					"\"${PODS_ROOT}/Headers/Public/XCDYouTubeKit\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "83b439e3-4f52-40d8-b4cb-dfce039d0a95";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "GoldCleats/GoldCleats-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VALID_ARCHS = "arm32 armv7 armv7s";
@@ -1962,8 +1976,8 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Instant Systems Inc. (6E2QT4S838)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Instant Systems Inc. (6E2QT4S838)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2008,7 +2022,7 @@
 					"\"${PODS_ROOT}/Headers/Public/XCDYouTubeKit\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "83b439e3-4f52-40d8-b4cb-dfce039d0a95";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "GoldCleats/GoldCleats-Bridging-Header.h";
 				VALID_ARCHS = "arm32 armv7 armv7s";
 			};

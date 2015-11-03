@@ -281,6 +281,13 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         return view
     }()
     
+    private lazy var transparentRectView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.8)
+        return view
+        }()
+    
+    private let cropRectComponent = IMGLYInstanceFactory.cropRectComponent()
     public var completionBlock: IMGLYEditorCompletionBlock?
     public var initialFilterType = IMGLYFilterType.None
     public var initialFilterIntensity = NSNumber(double: 0.75)
@@ -328,6 +335,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         tempVideoPath = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent("tempMov.mov")
         print("temp directory \(tempVideoPath)")
         
+        let longPressGesture:UILongPressGestureRecognizer = UILongPressGestureRecognizer.init(target: self, action: "startComposingVideo:")
+        
+        cameraPreviewContainer.addGestureRecognizer(longPressGesture)
         //toggleFilters(zoomVideoButton)
         //updateConstraintsForRecordingMode()
         //configureMenuCollectionView()
@@ -347,6 +357,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         view.addSubview(backgroundContainerView)
         backgroundContainerView.addSubview(cameraPreviewContainer)
         
+        cameraPreviewContainer.addSubview(transparentRectView)
         
         view.addSubview(bottomControlsView)
         view.addSubview(bottomEditorView)
@@ -557,6 +568,11 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     }
     
     // MARK: - Targets
+    
+    public func startComposingVideo(gesture:UILongPressGestureRecognizer) {
+        print("long press detected")
+    }
+    
     public func toggleFilters(sender: UIButton?) {
         if let filterSelectionViewConstraint = self.filterSelectionViewConstraint {
             let animationDuration = NSTimeInterval(0.6)
