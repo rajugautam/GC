@@ -283,11 +283,13 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     private lazy var transparentRectView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.8)
+        view.frame = CGRectMake(0, 0, self.cameraPreviewContainer.frame.size.width, self.cameraPreviewContainer.frame.size.height + 150)
+        view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.6)
         return view
         }()
     
-    private let cropRectComponent = IMGLYInstanceFactory.cropRectComponent()
+    private let cropRectComponent = GCSpotlightCircle()
+    private var dragOffset = CGPointZero
     public var completionBlock: IMGLYEditorCompletionBlock?
     public var initialFilterType = IMGLYFilterType.None
     public var initialFilterIntensity = NSNumber(double: 0.75)
@@ -341,6 +343,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         //toggleFilters(zoomVideoButton)
         //updateConstraintsForRecordingMode()
         //configureMenuCollectionView()
+        configureSpotLightRect()
+        
+        
     }
     
     override public func viewDidDisappear(animated: Bool) {
@@ -351,13 +356,84 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     override public func viewDidAppear(animated: Bool) {
         self.cropVideo(self.cropSelectionButton)
+        cropRectComponent.present()
     }
+    
+    private func configureSpotLightRect() {
+        cameraPreviewContainer.addSubview(transparentRectView)
+        cropRectComponent.cropRect = CGRectMake(cameraPreviewContainer.frame.size.width / 2 - 70, cameraPreviewContainer.frame.size.height / 2 - 70, 140, 140)
+        cropRectComponent.setup(transparentRectView, parentView: cameraPreviewContainer, showAnchors: false)
+        addGestureRecognizerToTransparentView()
+//        addGestureRecognizerToAnchors()
+    }
+    
+    private func addGestureRecognizerToTransparentView() {
+        transparentRectView.userInteractionEnabled = true
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: "handlePan:")
+        transparentRectView.addGestureRecognizer(panGestureRecognizer)
+    }
+    
+    public func handlePan(recognizer:UIPanGestureRecognizer) {
+        handlePanOnTransparentView(recognizer)
+    }
+    
+    private func handlePanOnTransparentView(recognizer: UIPanGestureRecognizer) {
+        let location = recognizer.locationInView(transparentRectView)
+        print("cropRectComponent rect \(cropRectComponent.cropRect) and location \(location)")
+//        if cropRectComponent.cropRect.contains(location) {
+        if location.x + 70 > 0 && location.y + 70 > 0 && location.x + 70 < transparentRectView.frame.width && location.y + 70 < transparentRectView.frame.height {
+            calculateDragOffsetOnNewDrag(recognizer:recognizer)
+            let newLocation = clampedLocationToBounds(location)
+            var rect = cropRectComponent.cropRect
+            rect.origin.x = newLocation.x - dragOffset.x
+            rect.origin.y = newLocation.y - dragOffset.y
+            cropRectComponent.cropRect = rect
+            cropRectComponent.layoutViewsForCropRect()
+        }
+        print("after cropRectComponent rect \(cropRectComponent.cropRect)")
+    }
+
+    private func calculateDragOffsetOnNewDrag(recognizer recognizer: UIPanGestureRecognizer) {
+        let location = recognizer.locationInView(transparentRectView)
+        if recognizer.state == UIGestureRecognizerState.Began {
+            dragOffset = CGPointMake(location.x - cropRectComponent.cropRect.origin.x, location.y - cropRectComponent.cropRect.origin.y)
+        }
+    }
+    
+    private func clampedLocationToBounds(location: CGPoint) -> CGPoint {
+        let rect = cropRectComponent.cropRect
+        var locationX = location.x
+        var locationY = location.y
+        let left = locationX - dragOffset.x
+        let right = left + rect.size.width
+        let top  = locationY - dragOffset.y
+        let bottom = top + rect.size.height
+        
+//        if left < cropRectLeftBound {
+//            locationX = cropRectLeftBound + dragOffset.x
+//        }
+//        if right > cropRectRightBound {
+//            locationX = cropRectRightBound - cropRectComponent.cropRect.size.width  + dragOffset.x
+//        }
+//        if top < cropRectTopBound {
+//            locationY = cropRectTopBound + dragOffset.y
+//        }
+//        if bottom > cropRectBottomBound {
+//            locationY = cropRectBottomBound - cropRectComponent.cropRect.size.height + dragOffset.y
+//        }
+        return CGPointMake(locationX, locationY)
+    }
+
+//    public override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        
+//        transparentRectView.frame = view.convertRect(previewImageView.visibleImageFrame, fromView: previewImageView)
+//        reCalculateCropRectBounds()
+//    }
     
     private func configureViewHierarchy() {
         view.addSubview(backgroundContainerView)
         backgroundContainerView.addSubview(cameraPreviewContainer)
-        
-        cameraPreviewContainer.addSubview(transparentRectView)
         
         view.addSubview(bottomControlsView)
         view.addSubview(bottomEditorView)
@@ -380,6 +456,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         [slowMotionControlView .addSubview(slowMoButton5)]
         
         slowMotionControlView.hidden = true
+        
+        view.addSubview(transparentRectView)
     }
     
     
@@ -439,6 +517,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         
         view.addConstraints([cameraPreviewContainerTopConstraint!, cameraPreviewContainerBottomConstraint!])
         
+        print("cameracontainer frames \(cameraPreviewContainer.frame)")
         //            cropSelectionViewConstraint = NSLayoutConstraint(item: bottomEditorView, attribute: .Top, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Bottom, multiplier: 1, constant: 0)
         //            view.addConstraint(cropSelectionViewConstraint!)
         
@@ -885,6 +964,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         
         let videoProcessor = GCVideoProcessor()
         videoProcessor.delegate = self
+        videoProcessor.overlayView = transparentRectView
         videoProcessor.processVideoAtPath(url, atScaleRate:videoScaleFactor)
     }
     

@@ -31,6 +31,10 @@
 double gExecTimeTotal = 0.;
 
 - (void)processVideoAtPath:(NSURL*)url atScaleRate:(CGFloat)rate {
+    
+//    [self exportVideoWithOverlayForURL:url];
+//    
+//    return;
     AVAsset *videoAsset = [[AVURLAsset alloc] initWithURL:url options:nil];
     
     
@@ -132,6 +136,61 @@ double gExecTimeTotal = 0.;
 }
 
 
+- (void)exportVideoWithOverlayForURL:(NSURL*) url {
+    AVURLAsset *videoAsset = [[AVURLAsset alloc] initWithURL:url options:nil];
+    AVMutableComposition *mixComposition = [AVMutableComposition composition];
+    
+    AVMutableCompositionTrack *compositionVideoTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    AVAssetTrack *clipVideoTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] lastObject];
+    [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration)
+                                   ofTrack:clipVideoTrack
+                                    atTime:kCMTimeZero
+                                     error:nil];
+    
+    [compositionVideoTrack setPreferredTransform:clipVideoTrack.preferredTransform];
+    
+    CGSize videoSize = [clipVideoTrack naturalSize];
+    CALayer *parentLayer = [CALayer layer];
+    CALayer *videoLayer = [CALayer layer];
+    videoLayer.frame = CGRectMake(0, 0, videoSize.width, videoSize.height);
+    parentLayer.frame = CGRectMake(0, 0, videoSize.width, videoSize.height);
+    [parentLayer addSublayer:videoLayer];
+    [parentLayer addSublayer:_overlayView.layer];
+    
+    AVMutableVideoComposition* videoComp = [AVMutableVideoComposition videoComposition];
+    videoComp.renderSize = [clipVideoTrack naturalSize];
+    videoComp.frameDuration = CMTimeMake(1, 30);
+    videoComp.animationTool = [AVVideoCompositionCoreAnimationTool videoCompositionCoreAnimationToolWithPostProcessingAsVideoLayer:videoLayer inLayer:parentLayer];
+    
+    AVMutableVideoCompositionInstruction *instruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+    
+    instruction.timeRange = CMTimeRangeMake(kCMTimeZero, mixComposition.duration);
+    AVAssetTrack *videoTrack = [[mixComposition tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+    AVMutableVideoCompositionLayerInstruction *layerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoTrack];
+    
+    instruction.layerInstructions = [NSArray arrayWithObject:layerInstruction];
+    videoComp.instructions = [NSArray arrayWithObject:instruction];
+    
+    AVAssetExportSession *assetExport = [[AVAssetExportSession alloc] initWithAsset:mixComposition presetName:AVAssetExportPresetHighestQuality];
+    assetExport.videoComposition = videoComp;
+    NSString *videoName = @"output.mov";
+    
+    NSString *exportPath = [NSTemporaryDirectory() stringByAppendingString:videoName];
+    NSURL *exportURL = [NSURL fileURLWithPath:exportPath];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:exportPath])
+        [[NSFileManager defaultManager] removeItemAtPath:exportPath error:nil];
+    
+    assetExport.outputFileType = AVFileTypeQuickTimeMovie;
+    assetExport.outputURL = exportURL;
+    assetExport.shouldOptimizeForNetworkUse = YES;
+    
+    [assetExport exportAsynchronouslyWithCompletionHandler:^(void){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self writeVideoToPhotoLibrary:assetExport.outputURL];
+        });
+    }];
+}
 
 - (void)writeAudioToPhotoLibrary:(NSURL *)url movieURL:(NSURL*)movieURL atScaleRate:(CGFloat)rate
 
@@ -240,9 +299,7 @@ double gExecTimeTotal = 0.;
             double videoScaleFactor = rate;
             
             CMTime videoDuration = videoAsset.duration;
-            
-            
-            
+    
             [compositionVideoTrack scaleTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
              
                                        toDuration:CMTimeMake(videoDuration.value*videoScaleFactor, videoDuration.timescale)];
@@ -501,6 +558,7 @@ long myReadData(float **chdata, long numFrames, void *userData)
             
         } else {
             dispatch_async(dispatch_get_main_queue(), ^(){
+                NSLog(@"assetURL %@", assetURL);
                 [self.delegate processesdVideoURL:assetURL];
             });
             

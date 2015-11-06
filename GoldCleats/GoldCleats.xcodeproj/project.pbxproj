@@ -312,6 +312,7 @@
 		436511391BD0E26800D2FBA2 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436511361BD0E26800D2FBA2 /* FBSDKLoginKit.framework */; settings = {ASSET_TAGS = (); }; };
 		4365113A1BD0E26800D2FBA2 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436511371BD0E26800D2FBA2 /* FBSDKShareKit.framework */; settings = {ASSET_TAGS = (); }; };
 		436638511BE8D7080088BA03 /* GCPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 436638501BE8D7080088BA03 /* GCPlayerView.m */; settings = {ASSET_TAGS = (); }; };
+		437443591BECB001006B889F /* GCSpotlightCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437443581BECB001006B889F /* GCSpotlightCircle.swift */; settings = {ASSET_TAGS = (); }; };
 		438A6D891BE36F42007A0EEC /* libDIRAC_iOS-fat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 438A6D881BE36F42007A0EEC /* libDIRAC_iOS-fat.a */; settings = {ASSET_TAGS = (); }; };
 		438A6D8C1BE36FCC007A0EEC /* Utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 438A6D8B1BE36FCC007A0EEC /* Utilities.mm */; settings = {ASSET_TAGS = (); }; };
 		438A6D911BE36FD5007A0EEC /* EAFRead.mm in Sources */ = {isa = PBXBuildFile; fileRef = 438A6D8E1BE36FD5007A0EEC /* EAFRead.mm */; settings = {ASSET_TAGS = (); }; };
@@ -696,6 +697,7 @@
 		436511371BD0E26800D2FBA2 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
 		4366384F1BE8D7080088BA03 /* GCPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCPlayerView.h; sourceTree = "<group>"; };
 		436638501BE8D7080088BA03 /* GCPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCPlayerView.m; sourceTree = "<group>"; };
+		437443581BECB001006B889F /* GCSpotlightCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCSpotlightCircle.swift; sourceTree = "<group>"; };
 		438A6D881BE36F42007A0EEC /* libDIRAC_iOS-fat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libDIRAC_iOS-fat.a"; sourceTree = "<group>"; };
 		438A6D8A1BE36FCC007A0EEC /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
 		438A6D8B1BE36FCC007A0EEC /* Utilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Utilities.mm; sourceTree = "<group>"; };
@@ -1167,6 +1169,7 @@
 				435765501BCE8613008B7328 /* NSTimerExtension.swift */,
 				435765511BCE8613008B7328 /* UIImageExtension.swift */,
 				4357633F1BCE6EB3008B7328 /* IMGLYVideoEditorViewController.swift */,
+				437443581BECB001006B889F /* GCSpotlightCircle.swift */,
 			);
 			name = Camera;
 			sourceTree = "<group>";
@@ -1711,6 +1714,7 @@
 				4357655C1BCE8613008B7328 /* IMGLYBreezeFilter.swift in Sources */,
 				435765631BCE8613008B7328 /* IMGLYChestFilter.swift in Sources */,
 				435765BC1BCE8613008B7328 /* IMGLYTextColorSelectorView.swift in Sources */,
+				437443591BECB001006B889F /* GCSpotlightCircle.swift in Sources */,
 				435765651BCE8613008B7328 /* IMGLYClassicFilter.swift in Sources */,
 				435765A91BCE8613008B7328 /* IMGLYScaleFilter.swift in Sources */,
 				435765C01BCE8613008B7328 /* IMGLYTwilightFilter.swift in Sources */,

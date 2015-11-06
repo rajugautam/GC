@@ -17,6 +17,7 @@
 @interface GCVideoProcessor : NSObject
 
 @property(nonatomic, assign) id<GCVideoProcessorDelegate> delegate;
+@property(nonatomic, retain) UIView *overlayView;
 
 - (void)processVideoAtPath:(NSURL*)url atScaleRate:(CGFloat)rate;
 @end
