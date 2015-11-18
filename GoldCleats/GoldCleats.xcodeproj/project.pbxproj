@@ -312,6 +312,7 @@
 		436511391BD0E26800D2FBA2 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436511361BD0E26800D2FBA2 /* FBSDKLoginKit.framework */; settings = {ASSET_TAGS = (); }; };
 		4365113A1BD0E26800D2FBA2 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436511371BD0E26800D2FBA2 /* FBSDKShareKit.framework */; settings = {ASSET_TAGS = (); }; };
 		436638511BE8D7080088BA03 /* GCPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 436638501BE8D7080088BA03 /* GCPlayerView.m */; settings = {ASSET_TAGS = (); }; };
+		436772801BFCB71A006D1FA7 /* ScreenCaptureView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4367727F1BFCB71A006D1FA7 /* ScreenCaptureView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		437443591BECB001006B889F /* GCSpotlightCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437443581BECB001006B889F /* GCSpotlightCircle.swift */; settings = {ASSET_TAGS = (); }; };
 		438A6D891BE36F42007A0EEC /* libDIRAC_iOS-fat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 438A6D881BE36F42007A0EEC /* libDIRAC_iOS-fat.a */; settings = {ASSET_TAGS = (); }; };
 		438A6D8C1BE36FCC007A0EEC /* Utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 438A6D8B1BE36FCC007A0EEC /* Utilities.mm */; settings = {ASSET_TAGS = (); }; };
@@ -697,6 +698,8 @@
 		436511371BD0E26800D2FBA2 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
 		4366384F1BE8D7080088BA03 /* GCPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCPlayerView.h; sourceTree = "<group>"; };
 		436638501BE8D7080088BA03 /* GCPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCPlayerView.m; sourceTree = "<group>"; };
+		4367727E1BFCB71A006D1FA7 /* ScreenCaptureView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenCaptureView.h; sourceTree = "<group>"; };
+		4367727F1BFCB71A006D1FA7 /* ScreenCaptureView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScreenCaptureView.m; sourceTree = "<group>"; };
 		437443581BECB001006B889F /* GCSpotlightCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCSpotlightCircle.swift; sourceTree = "<group>"; };
 		438A6D881BE36F42007A0EEC /* libDIRAC_iOS-fat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libDIRAC_iOS-fat.a"; sourceTree = "<group>"; };
 		438A6D8A1BE36FCC007A0EEC /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
@@ -801,6 +804,7 @@
 		43122BC71BAD979900A34D0A = {
 			isa = PBXGroup;
 			children = (
+				4367727D1BFCB705006D1FA7 /* Screen Capture View */,
 				4366384E1BE8D6F00088BA03 /* VideoPlayer */,
 				438A6D871BE36EF8007A0EEC /* Audio Tuning */,
 				4357633E1BCE6E63008B7328 /* Camera */,
@@ -1284,6 +1288,15 @@
 				436638501BE8D7080088BA03 /* GCPlayerView.m */,
 			);
 			name = VideoPlayer;
+			sourceTree = "<group>";
+		};
+		4367727D1BFCB705006D1FA7 /* Screen Capture View */ = {
+			isa = PBXGroup;
+			children = (
+				4367727E1BFCB71A006D1FA7 /* ScreenCaptureView.h */,
+				4367727F1BFCB71A006D1FA7 /* ScreenCaptureView.m */,
+			);
+			name = "Screen Capture View";
 			sourceTree = "<group>";
 		};
 		438A6D871BE36EF8007A0EEC /* Audio Tuning */ = {
@@ -1776,6 +1789,7 @@
 				435765921BCE8613008B7328 /* IMGLYLomoFilter.swift in Sources */,
 				433739121BB685A800B79093 /* GCSplashViewController.m in Sources */,
 				435765A71BCE8613008B7328 /* IMGLYResponseFilter.swift in Sources */,
+				436772801BFCB71A006D1FA7 /* ScreenCaptureView.m in Sources */,
 				430EA0A61BCED70B00EDB591 /* VideoSliderBubble.m in Sources */,
 				43122C521BB08D7700A34D0A /* VideoPlayerViewController.m in Sources */,
 				430EA0A01BCED6AF00EDB591 /* VideoSliderLeftView.m in Sources */,

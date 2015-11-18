@@ -8,3 +8,4 @@
 #import "VideoRangeSlider.h"
 #import "GCVideoProcessor.h"
 #import "GCPlayerView.h"
+#import "ScreenCaptureView.h"

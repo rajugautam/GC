@@ -63,6 +63,15 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         return view
         }()
     
+    public private(set) lazy var screenCaptureView: ScreenCaptureView = {
+        let view = ScreenCaptureView()
+        view.frame = CGRectMake(0, 0, self.cameraPreviewContainer.frame.size.width, self.cameraPreviewContainer.frame.size.height + 150)
+        view.backgroundColor = UIColor.clearColor()
+        view.userInteractionEnabled = false
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+        }()
+    
 //    public lazy var actionButtons: [IMGLYActionButton] = {
 //        let bundle = NSBundle(forClass: self.dynamicType)
 //        var handlers = [IMGLYActionButton]()
@@ -284,7 +293,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     private lazy var transparentRectView: UIView = {
         let view = UIView()
         view.frame = CGRectMake(0, 0, self.cameraPreviewContainer.frame.size.width, self.cameraPreviewContainer.frame.size.height + 150)
-        view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.6)
+        view.backgroundColor = UIColor(red: 0, green: 1, blue: 0, alpha: 0.6)
         return view
         }()
     
@@ -390,7 +399,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             cropRectComponent.cropRect = rect
             cropRectComponent.layoutViewsForCropRect()
         }
-        print("after cropRectComponent rect \(cropRectComponent.cropRect)")
+        screenCaptureView.setNeedsDisplay()
+//        print("after cropRectComponent rect \(cropRectComponent.cropRect)")
     }
 
     private func calculateDragOffsetOnNewDrag(recognizer recognizer: UIPanGestureRecognizer) {
@@ -457,7 +467,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         
         slowMotionControlView.hidden = true
         
-        view.addSubview(transparentRectView)
+        view.addSubview(screenCaptureView)
+        screenCaptureView.addSubview(transparentRectView)
     }
     
     
@@ -473,8 +484,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             "cropSelectionButton" : cropSelectionButton,
             "slowMotionControlView": slowMotionControlView,
             "slowMoVideoButton" : slowMoVideoButton,
-            "controlSelectionPointer": controlSelectionPointer
-        ]
+            "controlSelectionPointer": controlSelectionPointer        ]
         
         let metrics: [String : AnyObject] = [
             "topControlsViewHeight" : 64,
@@ -713,6 +723,18 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
                 self.filterSelectionController.endAppearanceTransition()
         })
         self.animatePointer(sender)
+        
+        var dispatchTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC)))
+        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
+            self.screenCaptureView.startRecording();
+        })
+        
+        var dispatchTime2: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(10.0 * Double(NSEC_PER_SEC)))
+        dispatch_after(dispatchTime2, dispatch_get_main_queue(), {
+            self.screenCaptureView.stopRecording();
+        })
+        
+        
     }
     
     public func cropVideo(sender:UIButton?) {
