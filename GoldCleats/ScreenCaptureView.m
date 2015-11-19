@@ -225,7 +225,7 @@
 		NSURL *outputURL = [[NSURL alloc] initFileURLWithPath:outputPath];
 		
 		NSLog(@"Completed recording, file is stored at:  %@", outputURL);
-        [self saveToPhotoAlbumFromPath:outputURL];
+//        [self saveToPhotoAlbumFromPath:outputURL];
 		if ([delegateObj respondsToSelector:@selector(recordingFinished:)]) {
 			[delegateObj performSelectorOnMainThread:@selector(recordingFinished:) withObject:(success ? outputURL : nil) waitUntilDone:YES];
 		}

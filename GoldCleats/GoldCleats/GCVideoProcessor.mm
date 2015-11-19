@@ -15,6 +15,8 @@
 #include <sys/time.h>
 #import "Dirac.h"
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <QuartzCore/QuartzCore.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 
 //@import AssetsLibrary;
 
@@ -32,9 +34,9 @@ double gExecTimeTotal = 0.;
 
 - (void)processVideoAtPath:(NSURL*)url atScaleRate:(CGFloat)rate {
     
-//    [self exportVideoWithOverlayForURL:url];
-//    
-//    return;
+    [self exportVideoWithOverlayForURL:url];
+    
+    return;
     AVAsset *videoAsset = [[AVURLAsset alloc] initWithURL:url options:nil];
     
     
@@ -135,6 +137,120 @@ double gExecTimeTotal = 0.;
     }];
 }
 
+- (void)mergeVideoAtPath:(NSURL*)video1 withVideoAtPath:(NSURL*)video2 {
+    
+    AVAsset *asset1 = [AVAsset assetWithURL:video1];
+    AVAsset *asset2 = [AVAsset assetWithURL:video2];
+    
+    AVAsset *audioAsset = [[AVURLAsset alloc] initWithURL:video1 options:nil];
+    
+    AVMutableComposition *mutableComposition = [AVMutableComposition composition];
+    AVMutableCompositionTrack *videoCompositionTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    AVMutableCompositionTrack *audioCompositionTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+    
+    AVAssetTrack *firstVideoAssetTrack = [[asset1 tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+    AVAssetTrack *secondVideoAssetTrack = [[asset2 tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+    
+    [videoCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, firstVideoAssetTrack.timeRange.duration) ofTrack:firstVideoAssetTrack atTime:kCMTimeZero error:nil];
+    [videoCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, secondVideoAssetTrack.timeRange.duration) ofTrack:secondVideoAssetTrack atTime:kCMTimeZero error:nil];
+    
+    [audioCompositionTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, firstVideoAssetTrack.timeRange.duration) ofTrack:[[audioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0] atTime:kCMTimeZero error:nil];
+
+    BOOL isFirstVideoPortrait = NO;
+    CGAffineTransform firstTransform = firstVideoAssetTrack.preferredTransform;
+    // Check the first video track's preferred transform to determine if it was recorded in portrait mode.
+    if (firstTransform.a == 0 && firstTransform.d == 0 && (firstTransform.b == 1.0 || firstTransform.b == -1.0) && (firstTransform.c == 1.0 || firstTransform.c == -1.0)) {
+        isFirstVideoPortrait = YES;
+    }
+    BOOL isSecondVideoPortrait = NO;
+    CGAffineTransform secondTransform = secondVideoAssetTrack.preferredTransform;
+    // Check the second video track's preferred transform to determine if it was recorded in portrait mode.
+    if (secondTransform.a == 0 && secondTransform.d == 0 && (secondTransform.b == 1.0 || secondTransform.b == -1.0) && (secondTransform.c == 1.0 || secondTransform.c == -1.0)) {
+        isSecondVideoPortrait = YES;
+    }
+    if ((isFirstVideoPortrait && !isSecondVideoPortrait) || (!isFirstVideoPortrait && isSecondVideoPortrait)) {
+        UIAlertView *incompatibleVideoOrientationAlert = [[UIAlertView alloc] initWithTitle:@"Error!" message:@"Cannot combine a video shot in portrait mode with a video shot in landscape mode." delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+        [incompatibleVideoOrientationAlert show];
+        return;
+    }
+    
+    AVMutableVideoCompositionInstruction *firstVideoCompositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+    // Set the time range of the first instruction to span the duration of the first video track.
+    firstVideoCompositionInstruction.timeRange = CMTimeRangeMake(kCMTimeZero, firstVideoAssetTrack.timeRange.duration);
+    AVMutableVideoCompositionInstruction * secondVideoCompositionInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+    // Set the time range of the second instruction to span the duration of the second video track.
+    secondVideoCompositionInstruction.timeRange = CMTimeRangeMake(firstVideoAssetTrack.timeRange.duration, CMTimeAdd(firstVideoAssetTrack.timeRange.duration, secondVideoAssetTrack.timeRange.duration));
+    AVMutableVideoCompositionLayerInstruction *firstVideoLayerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
+    // Set the transform of the first layer instruction to the preferred transform of the first video track.
+    [firstVideoLayerInstruction setTransform:firstTransform atTime:kCMTimeZero];
+    AVMutableVideoCompositionLayerInstruction *secondVideoLayerInstruction = [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoCompositionTrack];
+    // Set the transform of the second layer instruction to the preferred transform of the second video track.
+    [secondVideoLayerInstruction setTransform:secondTransform atTime:firstVideoAssetTrack.timeRange.duration];
+    firstVideoCompositionInstruction.layerInstructions = @[firstVideoLayerInstruction];
+    secondVideoCompositionInstruction.layerInstructions = @[secondVideoLayerInstruction];
+    AVMutableVideoComposition *mutableVideoComposition = [AVMutableVideoComposition videoComposition];
+    
+    mutableVideoComposition.instructions = @[firstVideoCompositionInstruction, secondVideoCompositionInstruction];
+    
+    CGSize naturalSizeFirst, naturalSizeSecond;
+    // If the first video asset was shot in portrait mode, then so was the second one if we made it here.
+    if (isFirstVideoPortrait) {
+        // Invert the width and height for the video tracks to ensure that they display properly.
+        naturalSizeFirst = CGSizeMake(firstVideoAssetTrack.naturalSize.height, firstVideoAssetTrack.naturalSize.width);
+        naturalSizeSecond = CGSizeMake(secondVideoAssetTrack.naturalSize.height, secondVideoAssetTrack.naturalSize.width);
+    }
+    else {
+        // If the videos weren't shot in portrait mode, we can just use their natural sizes.
+        naturalSizeFirst = firstVideoAssetTrack.naturalSize;
+        naturalSizeSecond = secondVideoAssetTrack.naturalSize;
+    }
+    float renderWidth, renderHeight;
+    // Set the renderWidth and renderHeight to the max of the two videos widths and heights.
+    if (naturalSizeFirst.width > naturalSizeSecond.width) {
+        renderWidth = naturalSizeFirst.width;
+    }
+    else {
+        renderWidth = naturalSizeSecond.width;
+    }
+    if (naturalSizeFirst.height > naturalSizeSecond.height) {
+        renderHeight = naturalSizeFirst.height;
+    }
+    else {
+        renderHeight = naturalSizeSecond.height;
+    }
+    mutableVideoComposition.renderSize = CGSizeMake(renderWidth, renderHeight);
+    // Set the frame duration to an appropriate value (i.e. 30 frames per second for video).
+    mutableVideoComposition.frameDuration = CMTimeMake(1,30);
+
+    // Create a static date formatter so we only have to initialize it once.
+    static NSDateFormatter *kDateFormatter;
+    if (!kDateFormatter) {
+        kDateFormatter = [[NSDateFormatter alloc] init];
+        kDateFormatter.dateStyle = NSDateFormatterMediumStyle;
+        kDateFormatter.timeStyle = NSDateFormatterShortStyle;
+    }
+    // Create the export session with the composition and set the preset to the highest quality.
+    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:mutableComposition presetName:AVAssetExportPresetHighestQuality];
+    // Set the desired output URL for the file created by the export process.
+    exporter.outputURL = [[[[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil] URLByAppendingPathComponent:[kDateFormatter stringFromDate:[NSDate date]]] URLByAppendingPathExtension:CFBridgingRelease(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)AVFileTypeQuickTimeMovie, kUTTagClassFilenameExtension))];
+    // Set the output file type to be a QuickTime movie.
+    exporter.outputFileType = AVFileTypeQuickTimeMovie;
+    exporter.shouldOptimizeForNetworkUse = YES;
+    exporter.videoComposition = mutableVideoComposition;
+    // Asynchronously export the composition to a video file and save this file to the camera roll once export completes.
+    [exporter exportAsynchronouslyWithCompletionHandler:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (exporter.status == AVAssetExportSessionStatusCompleted) {
+                ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
+                if ([assetsLibrary videoAtPathIsCompatibleWithSavedPhotosAlbum:exporter.outputURL]) {
+                    [assetsLibrary writeVideoAtPathToSavedPhotosAlbum:exporter.outputURL completionBlock:NULL];
+                }
+            } else if (exporter.status == AVAssetExportSessionStatusFailed) {
+                NSLog(@"export session failed");
+            }
+        });
+    }];
+}
 
 - (void)exportVideoWithOverlayForURL:(NSURL*) url {
     AVURLAsset *videoAsset = [[AVURLAsset alloc] initWithURL:url options:nil];
@@ -150,9 +266,18 @@ double gExecTimeTotal = 0.;
     [compositionVideoTrack setPreferredTransform:clipVideoTrack.preferredTransform];
     
     CGSize videoSize = [clipVideoTrack naturalSize];
+    
+    CALayer *overlayLayer = [CALayer layer];
+    [overlayLayer setContents:(id)_overlayView];
+    overlayLayer.frame = CGRectMake(0, 0, videoSize.width, videoSize.height);
+    [overlayLayer setMasksToBounds:YES];
+    
+    
     CALayer *parentLayer = [CALayer layer];
+    
     CALayer *videoLayer = [CALayer layer];
     videoLayer.frame = CGRectMake(0, 0, videoSize.width, videoSize.height);
+    
     parentLayer.frame = CGRectMake(0, 0, videoSize.width, videoSize.height);
     [parentLayer addSublayer:videoLayer];
     [parentLayer addSublayer:_overlayView.layer];
@@ -191,6 +316,18 @@ double gExecTimeTotal = 0.;
         });
     }];
 }
+
+//- (UIImage *) imageWithView:(UIView *)view
+//{
+//    UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0);
+//    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+//    
+//    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
+//    
+//    UIGraphicsEndImageContext();
+//    
+//    return img;
+//}
 
 - (void)writeAudioToPhotoLibrary:(NSURL *)url movieURL:(NSURL*)movieURL atScaleRate:(CGFloat)rate
 

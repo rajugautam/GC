@@ -20,4 +20,7 @@
 @property(nonatomic, retain) UIView *overlayView;
 
 - (void)processVideoAtPath:(NSURL*)url atScaleRate:(CGFloat)rate;
+- (void)mergeVideoAtPath:(NSURL*)video1 withVideoAtPath:(NSURL*)video2;
+//- (UIImage *) imageWithView:(UIView *)view;
+
 @end

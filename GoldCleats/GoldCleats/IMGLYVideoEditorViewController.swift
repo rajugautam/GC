@@ -34,7 +34,7 @@ private var centerModeButtonConstraint: NSLayoutConstraint?
 private var cameraPreviewContainerTopConstraint: NSLayoutConstraint?
 private var cameraPreviewContainerBottomConstraint: NSLayoutConstraint?
 
-public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderDelegate, GCVideoProcessorDelegate {
+public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderDelegate, GCVideoProcessorDelegate, ScreenCaptureViewDelegate {
     
     // MARK: - Properties
     
@@ -66,8 +66,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     public private(set) lazy var screenCaptureView: ScreenCaptureView = {
         let view = ScreenCaptureView()
         view.frame = CGRectMake(0, 0, self.cameraPreviewContainer.frame.size.width, self.cameraPreviewContainer.frame.size.height + 150)
-        view.backgroundColor = UIColor.clearColor()
-        view.userInteractionEnabled = false
+        view.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.8)
+//        view.userInteractionEnabled = false
+        view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
         }()
@@ -293,7 +294,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     private lazy var transparentRectView: UIView = {
         let view = UIView()
         view.frame = CGRectMake(0, 0, self.cameraPreviewContainer.frame.size.width, self.cameraPreviewContainer.frame.size.height + 150)
-        view.backgroundColor = UIColor(red: 0, green: 1, blue: 0, alpha: 0.6)
+        view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.6)
         return view
         }()
     
@@ -324,12 +325,13 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     override public func viewDidLoad() {
         super.viewDidLoad()
         
+//        self.view.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.4)
         let bundle = NSBundle(forClass: self.dynamicType)
         navigationItem.title = NSLocalizedString("main-editor.title", tableName: nil, bundle: bundle, value: "", comment: "")
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "cancelTapped:")
 //        let rightBtn1:UIBarButtonItem =
 //        let rightBtn2:UIBarButtonItem = UIBarButtonItem(customView: activityIndicatorView)
-//        
+//
 //        let barButtons:NSArray = [rightBtn1, rightBtn2]
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButtonItem)
         
@@ -369,9 +371,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     }
     
     private func configureSpotLightRect() {
-        cameraPreviewContainer.addSubview(transparentRectView)
+        screenCaptureView.addSubview(transparentRectView)
         cropRectComponent.cropRect = CGRectMake(cameraPreviewContainer.frame.size.width / 2 - 70, cameraPreviewContainer.frame.size.height / 2 - 70, 140, 140)
-        cropRectComponent.setup(transparentRectView, parentView: cameraPreviewContainer, showAnchors: false)
+        cropRectComponent.setup(transparentRectView, parentView: screenCaptureView, showAnchors: false)
         addGestureRecognizerToTransparentView()
 //        addGestureRecognizerToAnchors()
     }
@@ -656,6 +658,12 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             };
     }
     
+    // MARK: -Targets
+    
+    @objc public func recordingFinished(recordedURL:NSURL!) {
+        let videoProcessor = GCVideoProcessor()
+        videoProcessor.mergeVideoAtPath(self.videoURL, withVideoAtPath: recordedURL)
+    }
     // MARK: - Targets
     
     public func startComposingVideo(gesture:UILongPressGestureRecognizer) {
