@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class GCSpotlightCircle {
+@objc public class GCSpotlightCircle:NSObject {
     public var cropRect = CGRectZero
     private var transparentView_:UIView?
     private var parentView_:UIView?
