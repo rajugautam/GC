@@ -37,12 +37,6 @@ public class GCSpotlightCircle {
         let maskLayer = CAShapeLayer()
             maskLayer.frame = bounds
         maskLayer.fillColor = UIColor.blackColor().CGColor
-//        let path = UIBezierPath(rect: cropRect)
-//        path.appendPath(UIBezierPath(rect: bounds))
-//        maskLayer.path = path.CGPath
-//        maskLayer.fillRule = kCAFillRuleEvenOdd
-//        
-//        transparentView_!.layer.mask = maskLayer
         
         let path = UIBezierPath(ovalInRect: cropRect)//UIBezierPath(arcCenter: cropRect.!, radius: 60, startAngle: CGFloat(0), endAngle: CGFloat(2 * M_PI), clockwise: true);
         path.appendPath(UIBezierPath(rect: bounds))

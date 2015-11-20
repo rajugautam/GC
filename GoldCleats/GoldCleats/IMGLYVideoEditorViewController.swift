@@ -320,6 +320,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     private var exportSession:AVAssetExportSession!
     private var tempVideoPath:NSURL!
     
+    private var pathArray = [AnyObject]()
+    
     // MARK: - UIViewController
     
     override public func viewDidLoad() {
@@ -398,6 +400,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             var rect = cropRectComponent.cropRect
             rect.origin.x = newLocation.x - dragOffset.x
             rect.origin.y = newLocation.y - dragOffset.y
+            pathArray.append(NSValue(CGRect: rect))
             cropRectComponent.cropRect = rect
             cropRectComponent.layoutViewsForCropRect()
         }
@@ -662,7 +665,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     @objc public func recordingFinished(recordedURL:NSURL!) {
         let videoProcessor = GCVideoProcessor()
-        videoProcessor.mergeVideoAtPath(self.videoURL, withVideoAtPath: recordedURL)
+        //videoProcessor.mergeVideoAtPath(self.videoURL, withVideoAtPath: recordedURL)
     }
     // MARK: - Targets
     
@@ -995,7 +998,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let videoProcessor = GCVideoProcessor()
         videoProcessor.delegate = self
         videoProcessor.overlayView = transparentRectView
-        videoProcessor.processVideoAtPath(url, atScaleRate:videoScaleFactor)
+//        videoProcessor.processVideoAtPath(url, atScaleRate:videoScaleFactor)
+        videoProcessor.exportVideoWithOverlayForURL(url, withPointsArray: pathArray)
     }
     
     // MARK: - EditorViewController

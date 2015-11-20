@@ -17,6 +17,7 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <QuartzCore/QuartzCore.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import "GoldCleats-Swift.h"
 
 //@import AssetsLibrary;
 
@@ -34,9 +35,9 @@ double gExecTimeTotal = 0.;
 
 - (void)processVideoAtPath:(NSURL*)url atScaleRate:(CGFloat)rate {
     
-    [self exportVideoWithOverlayForURL:url];
-    
-    return;
+//    [self exportVideoWithOverlayForURL:url];
+//    
+//    return;
     AVAsset *videoAsset = [[AVURLAsset alloc] initWithURL:url options:nil];
     
     
@@ -252,7 +253,7 @@ double gExecTimeTotal = 0.;
     }];
 }
 
-- (void)exportVideoWithOverlayForURL:(NSURL*) url {
+- (void)exportVideoWithOverlayForURL:(NSURL*) url withPointsArray:(NSArray *)points {
     AVURLAsset *videoAsset = [[AVURLAsset alloc] initWithURL:url options:nil];
     AVMutableComposition *mixComposition = [AVMutableComposition composition];
     
@@ -267,10 +268,100 @@ double gExecTimeTotal = 0.;
     
     CGSize videoSize = [clipVideoTrack naturalSize];
     
-    CALayer *overlayLayer = [CALayer layer];
-    [overlayLayer setContents:(id)_overlayView];
-    overlayLayer.frame = CGRectMake(0, 0, videoSize.width, videoSize.height);
-    [overlayLayer setMasksToBounds:YES];
+//    CALayer *overlayLayer = [CALayer layer];
+//    [overlayLayer setContents:(id)_overlayView];
+//    overlayLayer.frame = CGRectMake(0, 0, videoSize.width, videoSize.height);
+//    [overlayLayer setMasksToBounds:YES];
+    
+    
+    UIImage *animationImage = [UIImage imageNamed:@"star.png"];;
+    CALayer *overlayLayer1 = [CALayer layer];
+    [overlayLayer1 setContents:(id)[animationImage CGImage]];
+    overlayLayer1.frame = CGRectMake(64, 100, 128, 128);
+    [overlayLayer1 setMasksToBounds:YES];
+    
+    GCSpotLightCircle *cropRectComponent = [[GCSpotLightCircle alloc] init];
+    [UIView animateWithDuration:5.0  delay:0 options: UIViewAnimationOptionCurveLinear
+                     animations:^  {
+//                         overlayLayer1.frame = CGRectMake(74, 110, 128, 128);
+//                         overlayLayer1.frame = CGRectMake(84, 115, 128, 128);
+//                         overlayLayer1.frame = CGRectMake(94, 125, 128, 128);
+//                         overlayLayer1.frame = CGRectMake(104, 135, 128, 128);
+//                         overlayLayer1.frame = CGRectMake(114, 145, 128, 128);
+//                         overlayLayer1.frame = CGRectMake(124, 155, 128, 128);
+//                         overlayLayer1.frame = CGRectMake(134, 165, 128, 128);
+//                         overlayLayer1.frame = CGRectMake(144, 175, 128, 128);
+//                         overlayLayer1.frame = CGRectMake(154, 185, 128, 128);
+//                         overlayLayer1.frame = CGRectMake(164, 195, 128, 128);
+                         
+                         
+                         for (int i =0; i < [points count]; i ++) {
+                             cropRectComponent.cropRect = [points[i] CGRectValue
+                                                           cropRectComponent.layoutViewsForCropRect()
+//
+//                         
+//                         CGRect bounds = CGRectMake(0, 0, _overlayView.frame.size.width,
+//                                                    _overlayView.frame.size.height);
+//                         
+//                         CAShapeLayer *maskLayer = [CAShapeLayer layer];
+//                         maskLayer.frame = bounds;
+//                         maskLayer.fillColor = [UIColor blackColor].CGColor;
+//                             //        let path = UIBezierPath(rect: cropRect)
+//                             //        path.appendPath(UIBezierPath(rect: bounds))
+//                             //        maskLayer.path = path.CGPath
+//                             //        maskLayer.fillRule = kCAFillRuleEvenOdd
+//                             //
+//                             //        transparentView_!.layer.mask = maskLayer
+//                         
+//                         UIBezierPath *path = [UIBezierPath bezierPathWithRect:[points[i] CGRectValue]];//UIBezierPath(arcCenter: cropRect.!, radius: 60, startAngle: CGFloat(0), endAngle: CGFloat(2 * M_PI), clockwise: true);
+////                         path.appendPath = [UIBezierPath bezierPathWithRect:CGRectMake(50, 50, 200, 300)];
+////                         path.appendPath = [UIBezierPath bezierPathWithRect:CGRectMake(50, 50, 200, 300)];
+//                         maskLayer.path = path.CGPath;
+//                         maskLayer.fillRule = kCAFillRuleEvenOdd;
+//                         _overlayView.layer.mask = maskLayer;
+//                         }
+                     }
+                     completion:^ (BOOL finished) {
+                         
+                     }];
+//    CABasicAnimation *animation =
+//    [CABasicAnimation animationWithKeyPath:@"position"];
+//    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+////    animation.duration=2.0;
+////    animation.repeatCount=5;
+////    animation.autoreverses=YES;
+//    // rotate from 0 to 360
+//    animation.fromValue=[NSValue valueWithCGPoint:CGPointMake(50, 100)];//[NSNumber numberWithFloat:0.0];
+//    animation.toValue=[NSValue valueWithCGPoint:CGPointMake(150, 200)];
+//    
+//    CABasicAnimation *animation2 =
+//    [CABasicAnimation animationWithKeyPath:@"position"];
+//    animation2.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+//        //    animation.duration=2.0;
+//        //    animation.repeatCount=5;
+//        //    animation.autoreverses=YES;
+//        // rotate from 0 to 360
+//    animation2.fromValue=[NSValue valueWithCGPoint:CGPointMake(150, 200)];
+//    
+//    animation2.toValue=[NSValue valueWithCGPoint:CGPointMake(250, 250)];
+//    
+//    CABasicAnimation *animation3 =
+//    [CABasicAnimation animationWithKeyPath:@"position"];
+//    animation3.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+//        //    animation.duration=2.0;
+//        //    animation.repeatCount=5;
+//        //    animation.autoreverses=YES;
+//        // rotate from 0 to 360
+//    animation3.fromValue=[NSValue valueWithCGPoint:CGPointMake(250, 250)];
+//    animation.toValue=[NSValue valueWithCGPoint:CGPointMake(50, 300)];
+//    
+//    CAAnimationGroup * group =[CAAnimationGroup animation];
+//    group.removedOnCompletion=NO; group.fillMode=kCAFillModeForwards;
+//    group.animations =[NSArray arrayWithObjects:animation, animation2, animation3, nil];
+//    group.duration = 2.7;
+//        //[NSNumber numberWithFloat:(2.0 * M_PI)];
+////    animation.beginTime = AVCoreAnimationBeginTimeAtZero;
+//    [overlayLayer1 addAnimation:group forKey:@"frame"];
     
     
     CALayer *parentLayer = [CALayer layer];
@@ -280,7 +371,7 @@ double gExecTimeTotal = 0.;
     
     parentLayer.frame = CGRectMake(0, 0, videoSize.width, videoSize.height);
     [parentLayer addSublayer:videoLayer];
-    [parentLayer addSublayer:_overlayView.layer];
+    [parentLayer addSublayer:overlayLayer1];
     
     AVMutableVideoComposition* videoComp = [AVMutableVideoComposition videoComposition];
     videoComp.renderSize = [clipVideoTrack naturalSize];
