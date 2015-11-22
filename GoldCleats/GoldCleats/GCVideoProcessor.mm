@@ -272,90 +272,69 @@ double gExecTimeTotal = 0.;
     
     CGSize videoSize = [clipVideoTrack naturalSize];
     
-//    self.overlayLayer = [CALayer layer];
-//    self.overlayLayer = _overlayView.layer;
-////    [overlayLayer setContents:(id)_overlayView];
-//    self.overlayLayer.frame = CGRectMake(10, 10, 50, 50);
-//    [self.overlayLayer setMasksToBounds:YES];
-  
+    NSLog(@"video track size %@", NSStringFromCGSize(videoSize));
+    
+    UIView *bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, videoSize.width*2, videoSize.height*2)];
+    
+    bgView.backgroundColor = [UIColor blackColor];
+    
+    bgView.alpha = 0.5;
+    
+    CAShapeLayer *aCircle=[CAShapeLayer layer];
+    
+    aCircle.frame = bgView.frame;
+    
+    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(bgView.frame.size.width / 2 - 70, bgView.frame.size.height / 2 -70, 140, 140)];
+    
+    [path appendPath:[UIBezierPath bezierPathWithRect:bgView.frame]];
+        //    aCircle.path=[UIBezierPath bezierPathWithRoundedRect:imgView.bounds cornerRadius:imgView.frame.size.height/2].CGPath; // Considering the ImageView is square in Shape
+    
+    aCircle.path = path.CGPath;
+    aCircle.fillColor=[UIColor blackColor].CGColor;
+    aCircle.fillRule = kCAFillRuleEvenOdd;
+    bgView.layer.mask=aCircle;
     
     self.overlayLayer = [CALayer layer];
-    [self.overlayLayer setContents:(id)[[UIImage imageNamed:@"ic_slowMo1"] CGImage]];
-    self.overlayLayer.frame = CGRectMake(10, 10, 20, 20);
+    self.overlayLayer = bgView.layer;
+    self.overlayLayer.frame = CGRectMake(0, 0, videoSize.width *2, videoSize.height *2);
+        //    self.overlayLayer.affineTransform = clipVideoTrack.preferredTransform;
     [self.overlayLayer setMasksToBounds:YES];
 
-     for (int i =0; i < [points count]; i ++) {
-         
-         if (i >= 40) {
-             break;
-         }
-    
-     CGRect bounds = CGRectMake(0, 0, self.overlayLayer.frame.size.width,
-                                self.overlayLayer.frame.size.height);
-     
-         CALayer *tempLayer = [CALayer layer];
-         tempLayer = _overlayView.layer;
-//         //    [overlayLayer setContents:(id)_overlayView];
-         tempLayer.frame = CGRectMake(40, 40, 50, 50);
-
-         CGRect rect1 = [points[i] CGRectValue];
-         CGPoint point1 = rect1.origin;
-    
-         [self moveLayer:tempLayer to:point1];
-         [tempLayer setMasksToBounds:YES];
-//
-         self.overlayLayer.mask = tempLayer;
-    
+    NSMutableArray *pointsArray = [NSMutableArray array];
+    for (int i =0; i < [self.pointArray count]; i++) {
+        
+        CGRect rect = [self.pointArray[i] CGRectValue];
+            //
+        CGRect layerRect = self.overlayLayer.frame;
+        
+        CGRect newRect = CGRectMake(layerRect.origin.x + rect.origin.x, layerRect.origin.y + rect.origin.y, layerRect.size.width, layerRect.size.height);
+        CGPoint mypoint = CGPointMake(rect.origin.x + (rect.size.width / 2), rect.origin.y + (rect.size.height / 2));
+        [pointsArray addObject:[NSValue valueWithCGPoint:mypoint]];
+        
     }
-//                         CAShapeLayer *maskLayer = [CAShapeLayer layer];
-//                         maskLayer.frame = bounds;
-//                         maskLayer.fillColor = [UIColor blackColor].CGColor;
-////                             //        let path = UIBezierPath(rect: cropRect)
-////                             //        path.appendPath(UIBezierPath(rect: bounds))
-////                             //        maskLayer.path = path.CGPath
-////                             //        maskLayer.fillRule = kCAFillRuleEvenOdd
-////                             //
-////                             //        transparentView_!.layer.mask = maskLayer
-//                         UIBezierPath *path = [UIBezierPath bezierPath];
-//                         path = [UIBezierPath bezierPathWithRect:[points[i] CGRectValue]];
-//                             [path appendPath:[UIBezierPath bezierPathWithRect:bounds]];
-////                             path.appendPath = [UIBezierPath bezierPathWithRect:bounds];
-//                             //UIBezierPath(arcCenter: cropRect.!, radius: 60, startAngle: CGFloat(0), endAngle: CGFloat(2 * M_PI), clockwise: true);
-////                             CGPathRef path1 = path.CGPath;
-////                         path1.appendPath = [UIBezierPath bezierPathWithRect:CGRectMake(50, 50, 200, 300)];
-//////                         path.appendPath = [UIBezierPath bezierPathWithRect:CGRectMake(50, 50, 200, 300)];
-//                         maskLayer.path = path.CGPath;
-//                         maskLayer.fillRule = kCAFillRuleEvenOdd;
-//                         self.overlayLayer.mask = maskLayer;
-//                             
-//                             self.overlayLayer.mask.frame = [points[i] CGRectValue];
-//                             
-//                         CABasicAnimation *animation =
-//                             [CABasicAnimation animationWithKeyPath:@"position"];
-//                             animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
-//                             animation.duration=1.0;
-                             //animation.autoreverses=YES;
-                             // rotate from 0 to 360
-//                             CGRect rect1 = [points[0] CGRectValue];
-//                             CGPoint point1 = rect1.origin;
-//                             animation.fromValue=[NSValue valueWithCGPoint:point1];//[NSNumber numberWithFloat:0.0];
-                             
-//                             CGRect rect2 = [[points lastObject] CGRectValue];
-//                             CGPoint point2 = rect2.origin;
-//                             animation.delegate = self;
-//                             animation.toValue=[NSValue valueWithCGPoint:point2];
-//                             [self.overlayLayer addAnimation:animation forKey:[NSString stringWithFormat:@"%dframe", i]];
-
-//                         }
-//                     }
-//                     completion:^ (BOOL finished) {
-//                         
-//                     }];
+    
+    self.overlayLayer.sublayerTransform = CATransform3DMakeScale(1.0f, -1.0f, 1.0f);
+    CAKeyframeAnimation *keyFrameAnim = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+    
+    keyFrameAnim.values = pointsArray;
+    
+    keyFrameAnim.duration = 5;
+    
+//    keyFrameAnim.delegate = self;
+    
+    keyFrameAnim.removedOnCompletion = NO;
+    
+    keyFrameAnim.beginTime = AVCoreAnimationBeginTimeAtZero;
+    
+    [self.overlayLayer.mask addAnimation:keyFrameAnim forKey:@"position"];
     
     
     CALayer *parentLayer = [CALayer layer];
     
+    parentLayer.masksToBounds = FALSE;
+    
     CALayer *videoLayer = [CALayer layer];
+    
     videoLayer.frame = CGRectMake(0, 0, videoSize.width, videoSize.height);
     
     parentLayer.frame = CGRectMake(0, 0, videoSize.width, videoSize.height);
@@ -397,85 +376,16 @@ double gExecTimeTotal = 0.;
     }];
 }
 
--(void)moveLayer:(CALayer*)layer to:(CGPoint)point
-{
-    // Prepare the animation from the current position to the new position
-    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"position"];
-    animation.fromValue = [self.overlayLayer valueForKey:@"position"];
-    animation.toValue = [NSValue valueWithCGPoint:point];
-    animation.duration = .3;
-//    animation.repeatCount = 5;
-//    animation.autoreverses = true;
-    layer.position = point;
-    
-    [layer addAnimation:animation forKey:@"position"];
-}
 
 - (void)animationDidStart:(CAAnimation *)anim {
-        for (int i =0; i < [self.pointArray count]; i ++) {
-//                             cropRectComponent.cropRect = [points[i] CGRectValue];
-//                             [cropRectComponent layoutViewsForCropRect];
-//;
-//
-//                         CGRect bounds = CGRectMake(0, 0, self.overlayLayer.frame.size.width,
-//                                                    self.overlayLayer.frame.size.height);
-//
-//                         CAShapeLayer *maskLayer = [CAShapeLayer layer];
-//                         maskLayer.frame = bounds;
-//                         maskLayer.fillColor = [UIColor blackColor].CGColor;
-////                             //        let path = UIBezierPath(rect: cropRect)
-////                             //        path.appendPath(UIBezierPath(rect: bounds))
-////                             //        maskLayer.path = path.CGPath
-////                             //        maskLayer.fillRule = kCAFillRuleEvenOdd
-////                             //
-////                             //        transparentView_!.layer.mask = maskLayer
-//                         UIBezierPath *path = [UIBezierPath bezierPath];
-//                         path = [UIBezierPath bezierPathWithRect:[self.pointArray[i] CGRectValue]];
-//                             //[path appendPath:[UIBezierPath bezierPathWithRect:bounds]];
-////                             path.appendPath = [UIBezierPath bezierPathWithRect:bounds];
-//                             //UIBezierPath(arcCenter: cropRect.!, radius: 60, startAngle: CGFloat(0), endAngle: CGFloat(2 * M_PI), clockwise: true);
-////                             CGPathRef path1 = path.CGPath;
-////                         path1.appendPath = [UIBezierPath bezierPathWithRect:CGRectMake(50, 50, 200, 300)];
-//////                         path.appendPath = [UIBezierPath bezierPathWithRect:CGRectMake(50, 50, 200, 300)];
-//                         maskLayer.path = path.CGPath;
-//                         maskLayer.fillRule = kCAFillRuleEvenOdd;
-                         self.overlayLayer.mask.bounds = [self.pointArray[i] CGRectValue];
-                }
+    
+
 }
 
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-    
+//    self.overlayLayer.opacity = 0.0f;
 }
-//- (void)addMastRectViewForBounds:(CGRect)bounds {
-//    
-//    
-//}
-//private func addMaskRectView() {
-//    let bounds = CGRectMake(0, 0, transparentView_!.frame.size.width,
-//                            transparentView_!.frame.size.height)
-//    
-//    let maskLayer = CAShapeLayer()
-//    maskLayer.frame = bounds
-//    maskLayer.fillColor = UIColor.blackColor().CGColor
-//    
-//    let path = UIBezierPath(ovalInRect: cropRect)//UIBezierPath(arcCenter: cropRect.!, radius: 60, startAngle: CGFloat(0), endAngle: CGFloat(2 * M_PI), clockwise: true);
-//    path.appendPath(UIBezierPath(rect: bounds))
-//    maskLayer.path = path.CGPath
-//    maskLayer.fillRule = kCAFillRuleEvenOdd
-//    transparentView_!.layer.mask = maskLayer
-//}
-//- (UIImage *) imageWithView:(UIView *)view
-//{
-//    UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0);
-//    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
-//    
-//    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
-//    
-//    UIGraphicsEndImageContext();
-//    
-//    return img;
-//}
 
 - (void)writeAudioToPhotoLibrary:(NSURL *)url movieURL:(NSURL*)movieURL atScaleRate:(CGFloat)rate
 
