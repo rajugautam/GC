@@ -41,7 +41,6 @@
         
         _bgView = [[UIScrollView alloc] initWithFrame:CGRectMake(thumbWidth-BG_VIEW_BORDERS_SIZE, 0, frame.size.width-(thumbWidth*2)+BG_VIEW_BORDERS_SIZE*2, frame.size.height)];
         _bgView.showsHorizontalScrollIndicator = FALSE;
-        _bgView.delegate = self;
         _bgView.layer.borderColor = [UIColor lightGrayColor].CGColor;
         _bgView.delegate = self;
         _bgView.layer.borderWidth = BG_VIEW_BORDERS_SIZE;

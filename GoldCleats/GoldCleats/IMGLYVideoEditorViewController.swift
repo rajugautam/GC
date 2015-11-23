@@ -30,11 +30,13 @@ private let SlowMoButtonSize = CGSize(width: 55, height: 90)
 private let PointerControlSize = CGSize(width: 15, height: 9)
 private let FilterSelectionViewHeight = 100
 
+private let SpotLightControlViewHeight = 160
+
 private var centerModeButtonConstraint: NSLayoutConstraint?
 private var cameraPreviewContainerTopConstraint: NSLayoutConstraint?
 private var cameraPreviewContainerBottomConstraint: NSLayoutConstraint?
 
-public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderDelegate, GCVideoProcessorDelegate, ScreenCaptureViewDelegate {
+public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderDelegate, GCVideoProcessorDelegate{
     
     // MARK: - Properties
     
@@ -63,15 +65,6 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         return view
         }()
     
-    public private(set) lazy var screenCaptureView: ScreenCaptureView = {
-        let view = ScreenCaptureView()
-        view.frame = CGRectMake(0, 0, self.cameraPreviewContainer.frame.size.width, self.cameraPreviewContainer.frame.size.height + 150)
-        view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
-//        view.userInteractionEnabled = false
-        view.delegate = self
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-        }()
     
 //    public lazy var actionButtons: [IMGLYActionButton] = {
 //        let bundle = NSBundle(forClass: self.dynamicType)
@@ -190,10 +183,33 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         return button
         }()
     
+    private(set) lazy var finishSpotLightBtn: UIButton = {
+        let bundle = NSBundle(forClass: self.dynamicType)
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "ic_select_blue"), forState: .Normal)
+        button.setImage(UIImage(named: "ic_select_blue"), forState: .Selected)
+        button.imageView?.contentMode = .ScaleAspectFill
+        button.addTarget(self, action: "processSpotLightVideo:", forControlEvents: .TouchUpInside)
+        return button
+        }()
+    
+    private(set) lazy var cancelSpotLigthBtn: UIButton = {
+        let bundle = NSBundle(forClass: self.dynamicType)
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "ic_close_blue"), forState: .Normal)
+        button.setImage(UIImage(named: "ic_close_blue"), forState: .Selected)
+        button.imageView?.contentMode = .ScaleAspectFill
+        button.addTarget(self, action: "dismissSpotLightControl:", forControlEvents: .TouchUpInside)
+        return button
+        }()
+    
     private(set) lazy var spotLight01: UIButton = {
         let bundle = NSBundle(forClass: self.dynamicType)
         let button = UIButton()
         button.tag = 201
+        button.layer.cornerRadius = 4
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "ic_spotlight01"), forState: .Normal)
         button.setImage(UIImage(named: "ic_spotlight01"), forState: .Selected)
@@ -207,6 +223,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let bundle = NSBundle(forClass: self.dynamicType)
         let button = UIButton()
         button.tag = 202
+        button.layer.cornerRadius = 4
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "ic_spotlight02"), forState: .Normal)
         button.setImage(UIImage(named: "ic_spotlight02"), forState: .Selected)
@@ -219,6 +236,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let bundle = NSBundle(forClass: self.dynamicType)
         let button = UIButton()
         button.tag = 203
+        button.layer.cornerRadius = 4
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "ic_spotlight03"), forState: .Normal)
         button.setImage(UIImage(named: "ic_spotlight03"), forState: .Selected)
@@ -231,6 +249,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let bundle = NSBundle(forClass: self.dynamicType)
         let button = UIButton()
         button.tag = 204
+        button.layer.cornerRadius = 4
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "ic_spotlight04"), forState: .Normal)
         button.setImage(UIImage(named: "ic_spotlight04"), forState: .Selected)
@@ -270,6 +289,17 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         label.alpha = 0
         label.textColor = UIColor.whiteColor()
         label.text = "00:00"
+        return label
+        }()
+    
+    public private(set) lazy var spotLightTitle: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.alpha = 1
+        label.textColor = UIColor.whiteColor()
+        label.textAlignment = .Center
+        label.font = UIFont.boldSystemFontOfSize(17)
+        label.text = "SPOTLIGHT"
         return label
         }()
     
@@ -316,7 +346,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         button.setImage(UIImage(named: "ic_spotlight04", inBundle: bundle, compatibleWithTraitCollection: nil), forState: .Normal)
         button.layer.cornerRadius = 3
         button.clipsToBounds = true
-        button.addTarget(self, action: "applySpotlight:", forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: "displaySpotlight:", forControlEvents: .TouchUpInside)
         return button
         }()
     
@@ -351,6 +381,14 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         return view
     }()
     
+    public private(set) lazy var spotLightControlView:UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.init(red: 27.0/255.0, green: 30.0/255.0, blue: 32.0/255, alpha: 1)
+        //view.backgroundColor = UIColor.blackColor()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+        }()
+    
     private lazy var transparentRectView: UIView = {
         let view = UIView()
         view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)
@@ -381,6 +419,10 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     private var exportSession:AVAssetExportSession!
     private var tempVideoPath:NSURL!
     
+    private var cropRecRadius:CGFloat = 150
+    
+    
+    
     private var pathArray = [AnyObject]()
     
     // MARK: - UIViewController
@@ -391,13 +433,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let bundle = NSBundle(forClass: self.dynamicType)
         navigationItem.title = NSLocalizedString("main-editor.title", tableName: nil, bundle: bundle, value: "", comment: "")
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "cancelTapped:")
-//        let rightBtn1:UIBarButtonItem =
-//        let rightBtn2:UIBarButtonItem = UIBarButtonItem(customView: activityIndicatorView)
-//
-//        let barButtons:NSArray = [rightBtn1, rightBtn2]
+
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButtonItem)
-        
-//        navigationController?.delegate = self
         
         fixedFilterStack.effectFilter = IMGLYInstanceFactory.effectFilterWithType(initialFilterType)
         fixedFilterStack.effectFilter.inputIntensity = initialFilterIntensity
@@ -416,7 +453,6 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         //toggleFilters(zoomVideoButton)
         //updateConstraintsForRecordingMode()
         //configureMenuCollectionView()
-        configureSpotLightRect()
         
         
     }
@@ -429,7 +465,6 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     override public func viewDidAppear(animated: Bool) {
         self.cropVideo(self.cropSelectionButton)
-        cropRectComponent.present()
     }
     
     private func configureSpotLightRect() {
@@ -447,14 +482,17 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     }
     
     public func handlePan(recognizer:UIPanGestureRecognizer) {
+        
+        // Reset array assuming user wants to start again
+        //pathArray = [AnyObject]()
         handlePanOnTransparentView(recognizer)
     }
     
     private func handlePanOnTransparentView(recognizer: UIPanGestureRecognizer) {
         let location = recognizer.locationInView(transparentRectView)
         print("cropRectComponent rect \(cropRectComponent.cropRect) and location \(location)")
-//        if cropRectComponent.cropRect.contains(location) {
-        if location.x + 70 > 0 && location.y + 70 > 0 && location.x + 70 < transparentRectView.frame.width && location.y + 70 < transparentRectView.frame.height {
+        if transparentRectView.frame.contains(location) {
+        //if location.x + cropRecRadius > 0 && location.y + cropRecRadius > 0 && location.x + cropRecRadius < transparentRectView.frame.width && location.y + cropRecRadius < transparentRectView.frame.height {
             calculateDragOffsetOnNewDrag(recognizer:recognizer)
             let newLocation = clampedLocationToBounds(location)
             var rect = cropRectComponent.cropRect
@@ -464,7 +502,10 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             cropRectComponent.cropRect = rect
             cropRectComponent.layoutViewsForCropRect()
         }
-        //screenCaptureView.setNeedsDisplay()
+        
+        if recognizer.state == .Ended {
+            finishSpotLightBtn.hidden = false
+        }
 //        print("after cropRectComponent rect \(cropRectComponent.cropRect)")
     }
 
@@ -513,6 +554,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         view.addSubview(bottomControlsView)
         view.addSubview(bottomEditorView)
         view.addSubview(slowMotionControlView)
+        view.addSubview(spotLightControlView);
         
         addChildViewController(filterSelectionController)
         filterSelectionController.didMoveToParentViewController(self)
@@ -520,8 +562,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         
         bottomControlsView.addSubview(filterSelectionButton)
         bottomControlsView.addSubview(cropSelectionButton)
-        bottomControlsView.addSubview(slowMoVideoButton)
         bottomControlsView.addSubview(spotLightSelectionButton)
+        bottomControlsView.addSubview(slowMoVideoButton)
         bottomControlsView.addSubview(controlSelectionPointer)
         
         // Add Slow Mo control to slowMotionControlView, here
@@ -531,11 +573,21 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         [slowMotionControlView .addSubview(slowMoButton4)]
         [slowMotionControlView .addSubview(slowMoButton5)]
         
+        [spotLightControlView .addSubview(spotLight01)]
+        [spotLightControlView .addSubview(spotLight02)]
+        [spotLightControlView .addSubview(spotLight03)]
+        [spotLightControlView .addSubview(spotLight04)]
+        
+        [spotLightControlView .addSubview(finishSpotLightBtn)];
+        finishSpotLightBtn.hidden = true
+        [spotLightControlView .addSubview(cancelSpotLigthBtn)];
+        
+        [spotLightControlView .addSubview(spotLightTitle)];
+        
+        
         slowMotionControlView.hidden = true
         
-        view.addSubview(transparentRectView)
-//        view.addSubview(screenCaptureView)
-//        screenCaptureView.addSubview(transparentRectView)
+        spotLightControlView.hidden = true
     }
     
     
@@ -549,14 +601,16 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             "filterSelectionView" : filterSelectionController.view,
             "filterSelectionButton" : filterSelectionButton,
             "cropSelectionButton" : cropSelectionButton,
-            "slowMotionControlView": slowMotionControlView,
-            "slowMoVideoButton" : slowMoVideoButton,
             "spotLightSelectionButton" : spotLightSelectionButton,
+            "slowMotionControlView": slowMotionControlView,
+            "spotLightControlView" : spotLightControlView,
+            "slowMoVideoButton" : slowMoVideoButton,
             "controlSelectionPointer": controlSelectionPointer        ]
         
         let metrics: [String : AnyObject] = [
             "topControlsViewHeight" : 64,
             "filterSelectionViewHeight" : FilterSelectionViewHeight,
+            "SptoLightControlViewHeight" : SpotLightControlViewHeight,
             "topControlMargin" : 20,
             "topControlMinWidth" : 44
         ]
@@ -564,6 +618,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         configureSuperviewConstraintsWithMetrics(metrics, views: views)
         configureBottomControlsConstraintsWithMetrics(metrics, views: views)
         configureSlowMoControlsConstraintsWithMetrics(metrics, views:views)
+        configureSpotLightControlsConstraintsWithMetrics(metrics, views:views)
     }
     
     private func configureSuperviewConstraintsWithMetrics(metrics: [String : AnyObject], views: [String : AnyObject]) {
@@ -575,20 +630,17 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|[bottomControlsView]|", options: [], metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|[bottomEditorView]|", options: [], metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|[slowMotionControlView]|", options: [], metrics: nil, views: views))
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|[spotLightControlView]|", options: [], metrics: nil, views: views))
         
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|[filterSelectionView]|", options: [], metrics: nil, views: views))
         
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[cameraPreviewContainer][bottomControlsView(==topControlsViewHeight)]", options: [], metrics: metrics, views: views))
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[cameraPreviewContainer][spotLightControlView(==SptoLightControlViewHeight)]", options: [], metrics: metrics, views: views))
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomControlsView][bottomEditorView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomControlsView][slowMotionControlView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
+        
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomEditorView][filterSelectionView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
         
-//        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMotionControlView, attribute: .Width, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Width, multiplier: 1, constant: 0))
-//        slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMotionControlView, attribute: .Height, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Height, multiplier: 1, constant: 0))
-        //view.addConstraint(NSLayoutConstraint(item: slowMotionControlView, attribute: .Top, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Bottom, multiplier: 1, constant: 0))
-        //view.addConstraint(NSLayoutConstraint(item: cropSelectionButton, attribute: .CenterX, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterX, multiplier: 1, constant: 0))
-        
-        //            view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[bottomControlsView][bottomEditorView(==filterSelectionViewHeight)]", options: [], metrics: metrics, views: views))
         
         cameraPreviewContainerTopConstraint = NSLayoutConstraint(item: cameraPreviewContainer, attribute: .Top, relatedBy: .Equal, toItem: topLayoutGuide, attribute: .Bottom, multiplier: 1, constant: 0)
         cameraPreviewContainerBottomConstraint = NSLayoutConstraint(item: cameraPreviewContainer, attribute: .Bottom, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Top, multiplier: 1, constant: 0)
@@ -623,7 +675,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         //                bottomControlsView.addConstraint(NSLayoutConstraint(item: bottomControlsView, attribute: .Top, relatedBy: .Equal, toItem: actionButtonContainer, attribute: .Top, multiplier: 1, constant: -5))
         //            }
         
-        let constant:CGFloat = (view.frame.width - BottomControlSize.width*4) / 4
+        let constant:CGFloat = (view.frame.width - BottomControlSize.width*4) / 5
         
         // filterSelectionButton
         filterSelectionButton.addConstraint(NSLayoutConstraint(item: filterSelectionButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
@@ -635,12 +687,12 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         cropSelectionButton.addConstraint(NSLayoutConstraint(item: cropSelectionButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
         cropSelectionButton.addConstraint(NSLayoutConstraint(item: cropSelectionButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
         bottomControlsView.addConstraint(NSLayoutConstraint(item: cropSelectionButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
-        bottomControlsView.addConstraint(NSLayoutConstraint(item: cropSelectionButton, attribute: .CenterX, relatedBy: .Equal, toItem: filterSelectionButton, attribute: .Right, multiplier: 1, constant: constant))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: cropSelectionButton, attribute: .Left, relatedBy: .Equal, toItem: filterSelectionButton, attribute: .Right, multiplier: 1, constant: constant))
         
         spotLightSelectionButton.addConstraint(NSLayoutConstraint(item: spotLightSelectionButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
         spotLightSelectionButton.addConstraint(NSLayoutConstraint(item: spotLightSelectionButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
         bottomControlsView.addConstraint(NSLayoutConstraint(item: spotLightSelectionButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
-        bottomControlsView.addConstraint(NSLayoutConstraint(item: spotLightSelectionButton, attribute: .CenterX, relatedBy: .Equal, toItem: cropSelectionButton, attribute: .Right, multiplier: 1, constant: constant))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: spotLightSelectionButton, attribute: .Left, relatedBy: .Equal, toItem: cropSelectionButton, attribute: .Right, multiplier: 1, constant: constant))
         
 
         
@@ -648,7 +700,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         slowMoVideoButton.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.width))
         slowMoVideoButton.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: BottomControlSize.height))
         bottomControlsView.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .CenterY, relatedBy: .Equal, toItem: bottomControlsView, attribute: .CenterY, multiplier: 1, constant: 0))
-        bottomControlsView.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .Right, relatedBy: .Equal, toItem: bottomControlsView, attribute: .Right, multiplier: 1, constant: constant))
+        bottomControlsView.addConstraint(NSLayoutConstraint(item: slowMoVideoButton, attribute: .Left, relatedBy: .Equal, toItem: spotLightSelectionButton, attribute: .Right, multiplier: 1, constant: constant))
         
         
         
@@ -660,7 +712,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     private func configureSlowMoControlsConstraintsWithMetrics(metrics: [String : AnyObject], views: [String : AnyObject]) {
         
-        let constant:CGFloat = (view.frame.width - SlowMoButtonSize.width*5) / 5
+        let constant:CGFloat = (view.frame.width - SlowMoButtonSize.width*5) / 6
         // slowMoButton1
         slowMoButton1.addConstraint(NSLayoutConstraint(item: slowMoButton1, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.width))
         slowMoButton1.addConstraint(NSLayoutConstraint(item: slowMoButton1, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.height))
@@ -690,6 +742,51 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         slowMoButton5.addConstraint(NSLayoutConstraint(item: slowMoButton5, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.height))
         slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton5, attribute: .CenterY, relatedBy: .Equal, toItem: slowMotionControlView, attribute: .CenterY, multiplier: 1, constant: 0))
         slowMotionControlView.addConstraint(NSLayoutConstraint(item: slowMoButton5, attribute: .Left, relatedBy: .Equal, toItem: slowMoButton4, attribute: .Right, multiplier: 1, constant: constant))
+    }
+    
+    private func configureSpotLightControlsConstraintsWithMetrics(metrics: [String : AnyObject], views: [String : AnyObject]) {
+        
+        let constant:CGFloat = (view.frame.width - SlowMoButtonSize.width*4) / 5
+        
+        spotLightTitle.addConstraint(NSLayoutConstraint(item: spotLightTitle, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 120))
+        spotLightTitle.addConstraint(NSLayoutConstraint(item: spotLightTitle, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 30))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: spotLightTitle, attribute: .Top, relatedBy: .Equal, toItem: spotLightControlView, attribute: .Top, multiplier: 1, constant: constant))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: spotLightTitle, attribute: .CenterX, relatedBy: .Equal, toItem: spotLightControlView, attribute: .CenterX, multiplier: 1, constant: 0))
+        
+        cancelSpotLigthBtn.addConstraint(NSLayoutConstraint(item: cancelSpotLigthBtn, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 35))
+        cancelSpotLigthBtn.addConstraint(NSLayoutConstraint(item: cancelSpotLigthBtn, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 35))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: cancelSpotLigthBtn, attribute: .Top, relatedBy: .Equal, toItem: spotLightControlView, attribute: .Top, multiplier: 1, constant: constant))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: cancelSpotLigthBtn, attribute: .Left, relatedBy: .Equal, toItem: spotLightControlView, attribute: .Left, multiplier: 1, constant: constant))
+        
+        finishSpotLightBtn.addConstraint(NSLayoutConstraint(item: finishSpotLightBtn, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 35))
+        finishSpotLightBtn.addConstraint(NSLayoutConstraint(item: finishSpotLightBtn, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 35))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: finishSpotLightBtn, attribute: .Top, relatedBy: .Equal, toItem: spotLightControlView, attribute: .Top, multiplier: 1, constant: constant))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: finishSpotLightBtn, attribute: .Right, relatedBy: .Equal, toItem: spotLightControlView, attribute: .Right, multiplier: 1, constant: -constant))
+        
+        
+        // slowMoButton1
+        spotLight01.addConstraint(NSLayoutConstraint(item: spotLight01, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.width))
+        spotLight01.addConstraint(NSLayoutConstraint(item: spotLight01, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.height))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: spotLight01, attribute: .Bottom, relatedBy: .Equal, toItem: spotLightControlView, attribute: .Bottom, multiplier: 1, constant: 0))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: spotLight01, attribute: .Left, relatedBy: .Equal, toItem: spotLightControlView, attribute: .Left, multiplier: 1, constant: constant))
+        
+        // slowMoButton2
+        spotLight02.addConstraint(NSLayoutConstraint(item: spotLight02, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.width))
+        spotLight02.addConstraint(NSLayoutConstraint(item: spotLight02, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.height))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: spotLight02, attribute: .Bottom, relatedBy: .Equal, toItem: spotLightControlView, attribute: .Bottom, multiplier: 1, constant: 0))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: spotLight02, attribute: .Left, relatedBy: .Equal, toItem: spotLight01, attribute: .Right, multiplier: 1, constant: constant))
+        
+        // slowMoButton3
+        spotLight03.addConstraint(NSLayoutConstraint(item: spotLight03, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.width))
+        spotLight03.addConstraint(NSLayoutConstraint(item: spotLight03, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.height))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: spotLight03, attribute: .Bottom, relatedBy: .Equal, toItem: spotLightControlView, attribute: .Bottom, multiplier: 1, constant: 0))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: spotLight03, attribute: .Left, relatedBy: .Equal, toItem: spotLight02, attribute: .Right, multiplier: 1, constant: constant))
+        
+        // slowMoButton4
+        spotLight04.addConstraint(NSLayoutConstraint(item: spotLight04, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.width))
+        spotLight04.addConstraint(NSLayoutConstraint(item: spotLight04, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: SlowMoButtonSize.height))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: spotLight04, attribute: .Bottom, relatedBy: .Equal, toItem: spotLightControlView, attribute: .Bottom, multiplier: 1, constant: 0))
+        spotLightControlView.addConstraint(NSLayoutConstraint(item: spotLight04, attribute: .Left, relatedBy: .Equal, toItem: spotLight03, attribute: .Right, multiplier: 1, constant: constant))
     }
     
     private func updateConstraintsForRecordingMode() {
@@ -729,12 +826,90 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             };
     }
     
-    // MARK: -Targets
-    
-    @objc public func recordingFinished(recordedURL:NSURL!) {
+    // Mark: SpotLight Video Targets
+    public func processSpotLightVideo(sender:UIButton) {
         let videoProcessor = GCVideoProcessor()
-        //videoProcessor.mergeVideoAtPath(self.videoURL, withVideoAtPath: recordedURL)
+        videoProcessor.delegate = self
+        videoProcessor.overlayView = transparentRectView
+        //videoProcessor.processVideoAtPath(url, atScaleRate:videoScaleFactor)
+        videoProcessor.exportVideoWithOverlayForURL(self.videoURL, withPointsArray: pathArray, circleRadius:cropRecRadius)
     }
+    
+    public func dismissSpotLightControl(sender:UIButton) {
+        transparentRectView.removeFromSuperview()
+        spotLightControlView.hidden = true
+        self.cropVideo(self.cropSelectionButton)
+    }
+    
+    public func changeSpotlightRadius(sender:UIButton) {
+        switch(sender.tag) {
+        case 201:
+            cropRecRadius = 60
+            break
+            
+        case 202:
+            cropRecRadius = 150
+            break
+            
+        case 203:
+            cropRecRadius = 200
+            break
+            
+        case 204:
+            cropRecRadius = 280
+            break
+            
+        default:
+            
+            break
+        }
+        
+        spotLight01.imageView!.layer.borderColor = nil
+        spotLight01.imageView!.layer.borderWidth = 0
+        
+        spotLight02.imageView!.layer.borderColor = nil
+        spotLight02.imageView!.layer.borderWidth = 0
+        
+        spotLight03.imageView!.layer.borderColor = nil
+        spotLight03.imageView!.layer.borderWidth = 0
+        
+        spotLight04.imageView!.layer.borderColor = nil
+        spotLight04.imageView!.layer.borderWidth = 0
+        
+        cropRectComponent.cropRect = CGRectMake((cameraPreviewContainer.frame.size.width - cropRecRadius)/2 , (cameraPreviewContainer.frame.size.height - cropRecRadius)/2, cropRecRadius, cropRecRadius)
+        cropRectComponent.layoutViewsForCropRect()
+        
+        sender.imageView!.layer.borderColor = UIColor.yellowColor().CGColor
+        sender.imageView!.layer.cornerRadius = 3
+        sender.imageView!.layer.borderWidth = 2
+        
+    }
+    
+    public func displaySpotlight(sender:UIButton) {
+        view.addSubview(transparentRectView)
+        configureSpotLightRect()
+        spotLightControlView.hidden = false
+        cropRectComponent.present()
+        bottomEditorView.hidden = true
+        slowMotionControlView.hidden = true
+        //self.toggleFilters(self.filterSelectionButton)
+        let animationDuration = NSTimeInterval(0.6)
+        let dampingFactor = CGFloat(0.6)
+        
+        let filterSelectionViewConstraint = self.filterSelectionViewConstraint
+        filterSelectionController.beginAppearanceTransition(false, animated: true)
+        filterSelectionViewConstraint!.constant = 0
+        //                    self.cropSelectionViewConstraint!.constant = -1 * CGFloat(FilterSelectionViewHeight)
+        UIView.animateWithDuration(animationDuration, delay: 0, usingSpringWithDamping: dampingFactor, initialSpringVelocity: 0, options: [], animations: {
+            //sender?.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
+            //self.view.addSubview(self.bottomEditorView)
+            self.view.layoutIfNeeded()
+            }, completion: { finished in
+                self.filterSelectionController.endAppearanceTransition()
+        })
+        self.animatePointer(sender)
+    }
+    
     // MARK: - Targets
     
     public func startComposingVideo(gesture:UILongPressGestureRecognizer) {
@@ -802,18 +977,6 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
                 self.filterSelectionController.endAppearanceTransition()
         })
         self.animatePointer(sender)
-        
-//        var dispatchTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC)))
-//        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
-//            self.screenCaptureView.startRecording();
-//        })
-//        
-//        var dispatchTime2: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(10.0 * Double(NSEC_PER_SEC)))
-//        dispatch_after(dispatchTime2, dispatch_get_main_queue(), {
-//            self.screenCaptureView.stopRecording();
-//        })
-        
-        
     }
     
     public func cropVideo(sender:UIButton?) {
@@ -883,8 +1046,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         slowMoButton5.imageView!.layer.borderWidth = 0
         
         sender.imageView!.layer.borderColor = UIColor.yellowColor().CGColor
+        sender.imageView!.layer.cornerRadius = 3
         sender.imageView!.layer.borderWidth = 2
-        
         //self.moviePlayer?.stop()
         self.moviePlayer?.currentPlaybackRate = Float(playbackRate)
         //self.moviePlayer?.play()
@@ -1066,8 +1229,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         let videoProcessor = GCVideoProcessor()
         videoProcessor.delegate = self
         videoProcessor.overlayView = transparentRectView
-//        videoProcessor.processVideoAtPath(url, atScaleRate:videoScaleFactor)
-        videoProcessor.exportVideoWithOverlayForURL(url, withPointsArray: pathArray)
+        videoProcessor.processVideoAtPath(url, atScaleRate:videoScaleFactor)
+        //videoProcessor.exportVideoWithOverlayForURL(url, withPointsArray: pathArray)
     }
     
     // MARK: - EditorViewController

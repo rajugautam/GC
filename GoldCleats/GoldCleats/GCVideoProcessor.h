@@ -21,7 +21,7 @@
 
 - (void)processVideoAtPath:(NSURL*)url atScaleRate:(CGFloat)rate;
 - (void)mergeVideoAtPath:(NSURL*)video1 withVideoAtPath:(NSURL*)video2;
-- (void)exportVideoWithOverlayForURL:(NSURL*) url withPointsArray:(NSArray *)points;
+- (void)exportVideoWithOverlayForURL:(NSURL*) url withPointsArray:(NSArray *)points circleRadius:(CGFloat)circleRadius;
 //- (UIImage *) imageWithView:(UIView *)view;
 
 @end

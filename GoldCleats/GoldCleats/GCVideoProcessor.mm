@@ -255,7 +255,7 @@ double gExecTimeTotal = 0.;
     }];
 }
 
-- (void)exportVideoWithOverlayForURL:(NSURL*) url withPointsArray:(NSArray *)points {
+- (void)exportVideoWithOverlayForURL:(NSURL*) url withPointsArray:(NSArray *)points circleRadius:(CGFloat)circleRadius {
     self.pointArray = points;
     
     AVURLAsset *videoAsset = [[AVURLAsset alloc] initWithURL:url options:nil];
@@ -274,6 +274,11 @@ double gExecTimeTotal = 0.;
     
     NSLog(@"video track size %@", NSStringFromCGSize(videoSize));
     
+//    CGFloat scaleX = 2;//videoSize.width / 320;
+//    CGFloat scaleY = videoSize.height / 480;
+//    
+//    circleRadius = scaleX >= 2 ? circleRadius * 2 : circleRadius;
+    
     UIView *bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, videoSize.width*2, videoSize.height*2)];
     
     bgView.backgroundColor = [UIColor blackColor];
@@ -284,7 +289,7 @@ double gExecTimeTotal = 0.;
     
     aCircle.frame = bgView.frame;
     
-    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(bgView.frame.size.width / 2 - 70, bgView.frame.size.height / 2 -70, 140, 140)];
+    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake((bgView.frame.size.width / 2 - circleRadius), (bgView.frame.size.height/2 - circleRadius), circleRadius, circleRadius)];
     
     [path appendPath:[UIBezierPath bezierPathWithRect:bgView.frame]];
         //    aCircle.path=[UIBezierPath bezierPathWithRoundedRect:imgView.bounds cornerRadius:imgView.frame.size.height/2].CGPath; // Considering the ImageView is square in Shape
@@ -297,34 +302,54 @@ double gExecTimeTotal = 0.;
     self.overlayLayer = [CALayer layer];
     self.overlayLayer = bgView.layer;
     self.overlayLayer.frame = CGRectMake(0, 0, videoSize.width *2, videoSize.height *2);
-        //    self.overlayLayer.affineTransform = clipVideoTrack.preferredTransform;
+    //self.overlayLayer.affineTransform = clipVideoTrack.preferredTransform; // fuck this line, this is culprit
     [self.overlayLayer setMasksToBounds:YES];
 
     NSMutableArray *pointsArray = [NSMutableArray array];
     for (int i =0; i < [self.pointArray count]; i++) {
         
         CGRect rect = [self.pointArray[i] CGRectValue];
+        
+        //CGPoint newPoint = [bgView convertPoint:mypoint fromView:_overlayView];
+        
+        //NSLog(@"converted point %@ and older %@", NSStringFromCGPoint(newPoint), NSStringFromCGPoint(mypoint));
             //
         CGRect layerRect = self.overlayLayer.frame;
         
-        CGRect newRect = CGRectMake(layerRect.origin.x + rect.origin.x, layerRect.origin.y + rect.origin.y, layerRect.size.width, layerRect.size.height);
-        CGPoint mypoint = CGPointMake(rect.origin.x + (rect.size.width / 2), rect.origin.y + (rect.size.height / 2));
+        CGRect newRect = CGRectMake(rect.origin.x, rect.origin.y, videoSize.width, videoSize.height);
+        CGPoint mypoint = CGPointMake(newRect.origin.x  + (newRect.size.width) / 2, newRect.origin.y + (newRect.size.height) / 2);
+        
+        NSLog(@"gcvideo new rect %@ and point %@", NSStringFromCGRect(newRect), NSStringFromCGPoint(mypoint));
+//        CGPoint mypoint = CGPointMake(250 * scaleX, 250 * scaleY);
         [pointsArray addObject:[NSValue valueWithCGPoint:mypoint]];
         
     }
     
-    self.overlayLayer.sublayerTransform = CATransform3DMakeScale(1.0f, -1.0f, 1.0f);
+    //self.overlayLayer.sublayerTransform = CATransform3DMakeScale(1.0f, -1.0f, 1.0f);
     CAKeyframeAnimation *keyFrameAnim = [CAKeyframeAnimation animationWithKeyPath:@"position"];
     
     keyFrameAnim.values = pointsArray;
     
-    keyFrameAnim.duration = 5;
+    keyFrameAnim.duration = CMTimeGetSeconds(mixComposition.duration);
     
-//    keyFrameAnim.delegate = self;
+    keyFrameAnim.delegate = self;
     
     keyFrameAnim.removedOnCompletion = NO;
     
     keyFrameAnim.beginTime = AVCoreAnimationBeginTimeAtZero;
+    
+//    CABasicAnimation *animation
+//    =[CABasicAnimation animationWithKeyPath:@"opacity"];
+//    animation.duration=3.0;
+//    animation.repeatCount=5;
+//    animation.autoreverses=YES;
+//    // animate from fully visible to invisible
+//    animation.fromValue=[NSNumber numberWithFloat:1.0];
+//    animation.toValue=[NSNumber numberWithFloat:0.0];
+//    animation.beginTime = AVCoreAnimationBeginTimeAtZero;
+//    [overlayLayer1 addAnimation:animation forKey:@"animateOpacity"];
+//    
+    
     
     [self.overlayLayer.mask addAnimation:keyFrameAnim forKey:@"position"];
     
