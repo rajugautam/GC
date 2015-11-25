@@ -42,6 +42,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     public private(set) lazy var cameraPreviewContainer: UIView = {
         self.moviePlayer = MPMoviePlayerController(contentURL: self.videoURL)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("moviePlayingFinished"), name: MPMoviePlayerPlaybackDidFinishNotification, object: nil)
+
         if let player = self.moviePlayer {
             //player.view.frame = self.view.bounds
             player.view.frame = CGRectMake(0, 0, self.view.frame.size.width, 150);
@@ -50,6 +52,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             player.play()
             player.scalingMode = .AspectFill
         }
+        
         let playerView : UIView = self.moviePlayer!.view
         playerView.translatesAutoresizingMaskIntoConstraints = false
         playerView.clipsToBounds = true
@@ -306,6 +309,20 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         return label
         }()
     
+    public private(set) lazy var startSpotLightMsg: UILabel = {
+        let label = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = UIColor.blackColor()
+        label.layer.cornerRadius = 2
+        label.textAlignment = .Center
+        label.font = UIFont(name: "Helvetica-Medium", size: 14)
+        label.layer.borderColor = UIColor.darkGrayColor().CGColor
+        label.layer.borderWidth = 2
+        label.backgroundColor = UIColor.whiteColor()
+        label.text = "Hold Video to Apply"
+        return label
+        }()
+    
     public private(set) lazy var spotLightTitle: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -430,6 +447,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     var cropEndTime:CGFloat = 20.0
     var playbackRate:CGFloat = 1.0
     var videoScaleFactor:CGFloat = 1.0
+    var startPlaybackTime:NSTimeInterval = 0.0
+    var endPlaybackTime:NSTimeInterval = 0.0
     private var exportSession:AVAssetExportSession!
     private var tempVideoPath:NSURL!
     
@@ -505,16 +524,22 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     
     private func handlePanOnTransparentView(recognizer: UIPanGestureRecognizer) {
         if recognizer.state == .Began {
+            navigationItem.rightBarButtonItem?.enabled = false
+            startPlaybackTime = (self.moviePlayer?.currentPlaybackTime)!
+            // Reset array assuming user wants to start again
+            pathArray = [AnyObject]()
+            startSpotLightMsg.removeFromSuperview()
+//            self.transparentRectView.alpha = 1.0
             shouldDisplaySpotLight()
         } else if recognizer.state == .Ended {
+            endPlaybackTime = (self.moviePlayer?.currentPlaybackTime)!
             finishSpotLightBtn.hidden = false
             finishSpotLightBtn.enabled = true
             self.transparentRectView.removeFromSuperview()
-            
         }
         
         let location = recognizer.locationInView(transparentRectView)
-        print("cropRectComponent rect \(cropRectComponent.cropRect) and location \(location)")
+        //print("cropRectComponent rect \(cropRectComponent.cropRect) and location \(location)")
         if transparentRectView.frame.contains(location) {
         //if location.x + cropRecRadius > 0 && location.y + cropRecRadius > 0 && location.x + cropRecRadius < transparentRectView.frame.width && location.y + cropRecRadius < transparentRectView.frame.height {
             calculateDragOffsetOnNewDrag(recognizer:recognizer)
@@ -522,6 +547,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             var rect = cropRectComponent.cropRect
             rect.origin.x = newLocation.x - dragOffset.x
             rect.origin.y = newLocation.y - dragOffset.y
+            
+//            var newRect = rect
+//            newRect.origin.y = transparentRectView.frame.height - rect.origin.y
             pathArray.append(NSValue(CGRect: rect))
             cropRectComponent.cropRect = rect
             cropRectComponent.layoutViewsForCropRect()
@@ -827,6 +855,12 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     }
     
     
+    // MARK: MoviePlayer delegate
+    
+    private func moviePlayingFinished() {
+        startPlaybackTime = 0.0
+    }
+    
     // MARK: - Video Slider delegate func
     @objc public func videoRange(slider:VideoRangeSlider?, didChangeLeftPosition:CGFloat, rightPosition:CGFloat) {
         self.shouldCropVideo = true
@@ -844,13 +878,14 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     @objc public func processesdVideoURL(finalURL: NSURL!, isSavedToPhotoLibrary:Bool) {
         MBProgressHUD.hideAllHUDsForView(self.view, animated: true)
 
-        if isSavedToPhotoLibrary {
+        navigationItem.rightBarButtonItem?.enabled = true
+        if !isSavedToPhotoLibrary {
             self.transparentRectView.removeFromSuperview()
             finishSpotLightBtn.enabled = false
             //spotLightControlView.hidden = true
             self.videoURL = finalURL
             tempVideoPath = finalURL
-            
+            self.referenceURL = finalURL
             self.moviePlayer?.stop()
             self.moviePlayer?.contentURL = self.videoURL
             self.moviePlayer?.play()
@@ -872,17 +907,21 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         videoProcessor.delegate = self
         videoProcessor.overlayView = transparentRectView
         //videoProcessor.processVideoAtPath(url, atScaleRate:videoScaleFactor)
-        videoProcessor.exportVideoWithOverlayForURL(self.videoURL, withPointsArray: pathArray, circleRadius:cropRecRadius)
+        videoProcessor.exportVideoWithOverlayForURL(self.videoURL, withPointsArray: pathArray, circleRadius:cropRecRadius, startPlaybackTime:startPlaybackTime)
     }
     
     public func dismissSpotLightControl(sender:UIButton?) {
-        
+        navigationItem.rightBarButtonItem?.enabled = true
         self.transparentRectView.removeFromSuperview()
         self.cropVideo(self.cropSelectionButton)
         spotLightControlView.hidden = true
     }
     
     public func changeSpotlightRadius(sender:UIButton) {
+        startSpotLightMsg.frame = CGRectMake((self.view.frame.size.width - 150)/2, (self.view.frame.size.height - 45)/2, 180, 45)
+
+        self.view.addSubview(startSpotLightMsg)
+        
         switch(sender.tag) {
         case 201:
             cropRecRadius = 60
@@ -917,6 +956,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         spotLight04.imageView!.layer.borderColor = nil
         spotLight04.imageView!.layer.borderWidth = 0
         
+//        self.transparentRectView.removeFromSuperview()
+//        view.addSubview(transparentRectView)
+        
         shouldDisplaySpotLight()
         
         cropRectComponent.cropRect = CGRectMake((cameraPreviewContainer.frame.size.width - cropRecRadius)/2 , (cameraPreviewContainer.frame.size.height - cropRecRadius)/2, cropRecRadius, cropRecRadius)
@@ -925,15 +967,15 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         sender.imageView!.layer.borderColor = UIColor.yellowColor().CGColor
         sender.imageView!.layer.cornerRadius = 3
         sender.imageView!.layer.borderWidth = 2
-        
-        let dispatchTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(0.6 * Double(NSEC_PER_SEC)))
-        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
-            UIView .animateWithDuration(0.3, animations: {
-//                self.transparentRectView.alpha = 0.0
-//                self.transparentRectView.removeFromSuperview()
-                
-            })
-            })
+        self.transparentRectView.alpha = 1.0
+//        let dispatchTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(0.6 * Double(NSEC_PER_SEC)))
+//        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
+//            UIView .animateWithDuration(0.3, animations: {
+//                self.transparentRectView.alpha = 0.05
+////                self.transparentRectView.removeFromSuperview()
+//                
+//            })
+//            })
     }
     
     public func shouldDisplaySpotLight() {
