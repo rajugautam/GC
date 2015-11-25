@@ -274,10 +274,11 @@ double gExecTimeTotal = 0.;
     
     NSLog(@"video track size %@", NSStringFromCGSize(videoSize));
     
-//    CGFloat scaleX = 2;//videoSize.width / 320;
-//    CGFloat scaleY = videoSize.height / 480;
-//    
-//    circleRadius = scaleX >= 2 ? circleRadius * 2 : circleRadius;
+//    CGFloat scaleX = videoSize.width*2 / 640;//(videoSize.width >= videoSize.height) ? videoSize.width*2 / 1136 : videoSize.height*2 / 640;
+//    CGFloat scaleY = videoSize.height*2 / 1136;
+//
+//CGFloat scaleX = 2;
+    circleRadius = circleRadius *1.5;//(scaleX>scaleY) ? circleRadius * scaleX : circleRadius *scaleY;
     
     UIView *bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, videoSize.width*2, videoSize.height*2)];
     
@@ -325,7 +326,7 @@ double gExecTimeTotal = 0.;
         
     }
     
-    //self.overlayLayer.sublayerTransform = CATransform3DMakeScale(1.0f, -1.0f, 1.0f);
+        //self.overlayLayer.affineTransform = CGAffineTransformMakeRotation(M_PI/2.0);//CATransform3DMakeScale(1.0f, 0.0f, 0.0f);
     CAKeyframeAnimation *keyFrameAnim = [CAKeyframeAnimation animationWithKeyPath:@"position"];
     
     keyFrameAnim.values = pointsArray;
@@ -334,22 +335,26 @@ double gExecTimeTotal = 0.;
     
     keyFrameAnim.delegate = self;
     
-    keyFrameAnim.removedOnCompletion = NO;
+    keyFrameAnim.removedOnCompletion = FALSE;
     
     keyFrameAnim.beginTime = AVCoreAnimationBeginTimeAtZero;
     
-//    CABasicAnimation *animation
+//    CABasicAnimation *opaqueAnim
 //    =[CABasicAnimation animationWithKeyPath:@"opacity"];
-//    animation.duration=3.0;
-//    animation.repeatCount=5;
-//    animation.autoreverses=YES;
+//    opaqueAnim.duration=0.3;
+//    opaqueAnim.beginTime = 5;
 //    // animate from fully visible to invisible
-//    animation.fromValue=[NSNumber numberWithFloat:1.0];
-//    animation.toValue=[NSNumber numberWithFloat:0.0];
-//    animation.beginTime = AVCoreAnimationBeginTimeAtZero;
-//    [overlayLayer1 addAnimation:animation forKey:@"animateOpacity"];
+//    opaqueAnim.fromValue=[NSNumber numberWithFloat:1.0];
+//    opaqueAnim.toValue=[NSNumber numberWithFloat:0.0];
+//        //opaqueAnim.beginTime = AVCoreAnimationBeginTimeAtZero;
+////
 //    
-    
+//    CAAnimationGroup *animGroup = [CAAnimationGroup animation];
+//    [animGroup setAnimations:[NSArray arrayWithObjects:keyFrameAnim, opaqueAnim, nil]];
+//    [animGroup setDuration:3.0];
+//    [animGroup setRemovedOnCompletion:NO];
+//    [anim setFillMode:kCAFillModeForwards];
+//    [layer addAnimation:anim forKey:@"layerAnim"];
     
     [self.overlayLayer.mask addAnimation:keyFrameAnim forKey:@"position"];
     
@@ -396,7 +401,8 @@ double gExecTimeTotal = 0.;
     
     [assetExport exportAsynchronouslyWithCompletionHandler:^(void){
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self writeVideoToPhotoLibrary:assetExport.outputURL];
+            [self.delegate processesdVideoURL:assetExport.outputURL isSavedToPhotoLibrary:NO];
+//            [self writeVideoToPhotoLibrary:assetExport.outputURL];
         });
     }];
 }
@@ -409,7 +415,7 @@ double gExecTimeTotal = 0.;
 
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-//    self.overlayLayer.opacity = 0.0f;
+        //self.overlayLayer.opacity = 0.0f;
 }
 
 - (void)writeAudioToPhotoLibrary:(NSURL *)url movieURL:(NSURL*)movieURL atScaleRate:(CGFloat)rate
@@ -779,7 +785,7 @@ long myReadData(float **chdata, long numFrames, void *userData)
         } else {
             dispatch_async(dispatch_get_main_queue(), ^(){
                 NSLog(@"assetURL %@", assetURL);
-                [self.delegate processesdVideoURL:assetURL];
+                [self.delegate processesdVideoURL:assetURL isSavedToPhotoLibrary:TRUE];
             });
             
         }

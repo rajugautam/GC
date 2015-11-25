@@ -9,3 +9,4 @@
 #import "GCVideoProcessor.h"
 #import "GCPlayerView.h"
 #import "ScreenCaptureView.h"
+#import "MBProgressHUD.h"

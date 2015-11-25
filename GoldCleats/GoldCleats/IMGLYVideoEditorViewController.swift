@@ -54,6 +54,20 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         playerView.translatesAutoresizingMaskIntoConstraints = false
         playerView.clipsToBounds = true
         return playerView
+        
+        
+//        let asset_1 = AVAsset(URL: self.videoURL!) as AVAsset
+//        let playerItem_1 = AVPlayerItem(asset: asset_1)
+//        
+//        let player_1 = AVPlayer(playerItem: playerItem_1)
+//        
+//        let playerLayer_1 = AVPlayerLayer(player: player_1)
+//        
+//        playerLayer_1.frame = CGRectMake(0, 0, self.view.frame.size.width, 150);
+//        
+//        self.view.layer.addSublayer(playerLayer_1)
+//        player_1.con
+//        player_1!.play()
         }()
     
     
@@ -448,7 +462,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         print("temp directory \(tempVideoPath)")
         
         let longPressGesture:UILongPressGestureRecognizer = UILongPressGestureRecognizer.init(target: self, action: "startComposingVideo:")
-        
+//        
         cameraPreviewContainer.addGestureRecognizer(longPressGesture)
         //toggleFilters(zoomVideoButton)
         //updateConstraintsForRecordingMode()
@@ -468,8 +482,9 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     }
     
     private func configureSpotLightRect() {
+        transparentRectView.hidden = false
         cameraPreviewContainer.addSubview(transparentRectView)
-        cropRectComponent.cropRect = CGRectMake(cameraPreviewContainer.frame.size.width / 2 - 70, cameraPreviewContainer.frame.size.height / 2 - 70, 140, 140)
+        cropRectComponent.cropRect = CGRectMake((cameraPreviewContainer.frame.size.width/2  - cropRecRadius/2), (cameraPreviewContainer.frame.size.height/2 - cropRecRadius)/2, cropRecRadius, cropRecRadius)
         cropRectComponent.setup(transparentRectView, parentView: cameraPreviewContainer, showAnchors: false)
         addGestureRecognizerToTransparentView()
 //        addGestureRecognizerToAnchors()
@@ -489,6 +504,15 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
     }
     
     private func handlePanOnTransparentView(recognizer: UIPanGestureRecognizer) {
+        if recognizer.state == .Began {
+            shouldDisplaySpotLight()
+        } else if recognizer.state == .Ended {
+            finishSpotLightBtn.hidden = false
+            finishSpotLightBtn.enabled = true
+            self.transparentRectView.removeFromSuperview()
+            
+        }
+        
         let location = recognizer.locationInView(transparentRectView)
         print("cropRectComponent rect \(cropRectComponent.cropRect) and location \(location)")
         if transparentRectView.frame.contains(location) {
@@ -503,10 +527,7 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
             cropRectComponent.layoutViewsForCropRect()
         }
         
-        if recognizer.state == .Ended {
-            finishSpotLightBtn.hidden = false
-        }
-//        print("after cropRectComponent rect \(cropRectComponent.cropRect)")
+        //        print("after cropRectComponent rect \(cropRectComponent.cropRect)")
     }
 
     private func calculateDragOffsetOnNewDrag(recognizer recognizer: UIPanGestureRecognizer) {
@@ -813,21 +834,40 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         self.cropEndTime = rightPosition
 //        print("slider values \(didChangeLeftPosition) and \(rightPosition) \(self.videoURL) and \(self.referenceURL) ")
         //self.moviePlayer?.stop()
-//        self.moviePlayer?.contentURL = self.referenceURL
+        //        self.moviePlayer?.contentURL = self.referenceURL
 //        self.moviePlayer?.initialPlaybackTime = Double(didChangeLeftPosition)
 //        self.moviePlayer?.endPlaybackTime = Double(rightPosition)
 //        self.moviePlayer?.play()
     }
     
     // Mark: - Video Processor Delegate
-    @objc public func processesdVideoURL(finalURL: NSURL!) {
+    @objc public func processesdVideoURL(finalURL: NSURL!, isSavedToPhotoLibrary:Bool) {
+        MBProgressHUD.hideAllHUDsForView(self.view, animated: true)
+
+        if isSavedToPhotoLibrary {
+            self.transparentRectView.removeFromSuperview()
+            finishSpotLightBtn.enabled = false
+            //spotLightControlView.hidden = true
+            self.videoURL = finalURL
+            tempVideoPath = finalURL
+            
+            self.moviePlayer?.stop()
+            self.moviePlayer?.contentURL = self.videoURL
+            self.moviePlayer?.play()
+        } else {
         dispatch_async(dispatch_get_main_queue()){
             self.pushShareScreenWithVideoUrl(finalURL)
             };
+        }
     }
     
     // Mark: SpotLight Video Targets
     public func processSpotLightVideo(sender:UIButton) {
+        
+        let loadingNotification = MBProgressHUD.showHUDAddedTo(self.view, animated: true)
+        loadingNotification.mode = MBProgressHUDMode.Indeterminate
+        loadingNotification.labelText = "Applying..."
+        
         let videoProcessor = GCVideoProcessor()
         videoProcessor.delegate = self
         videoProcessor.overlayView = transparentRectView
@@ -835,10 +875,11 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         videoProcessor.exportVideoWithOverlayForURL(self.videoURL, withPointsArray: pathArray, circleRadius:cropRecRadius)
     }
     
-    public func dismissSpotLightControl(sender:UIButton) {
-        transparentRectView.removeFromSuperview()
-        spotLightControlView.hidden = true
+    public func dismissSpotLightControl(sender:UIButton?) {
+        
+        self.transparentRectView.removeFromSuperview()
         self.cropVideo(self.cropSelectionButton)
+        spotLightControlView.hidden = true
     }
     
     public func changeSpotlightRadius(sender:UIButton) {
@@ -876,6 +917,8 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         spotLight04.imageView!.layer.borderColor = nil
         spotLight04.imageView!.layer.borderWidth = 0
         
+        shouldDisplaySpotLight()
+        
         cropRectComponent.cropRect = CGRectMake((cameraPreviewContainer.frame.size.width - cropRecRadius)/2 , (cameraPreviewContainer.frame.size.height - cropRecRadius)/2, cropRecRadius, cropRecRadius)
         cropRectComponent.layoutViewsForCropRect()
         
@@ -883,13 +926,25 @@ public class IMGLYVideoEditorViewController: UIViewController, VideoRangeSliderD
         sender.imageView!.layer.cornerRadius = 3
         sender.imageView!.layer.borderWidth = 2
         
+        let dispatchTime: dispatch_time_t = dispatch_time(DISPATCH_TIME_NOW, Int64(0.6 * Double(NSEC_PER_SEC)))
+        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
+            UIView .animateWithDuration(0.3, animations: {
+//                self.transparentRectView.alpha = 0.0
+//                self.transparentRectView.removeFromSuperview()
+                
+            })
+            })
+    }
+    
+    public func shouldDisplaySpotLight() {
+        view.addSubview(transparentRectView)
+        configureSpotLightRect()
+//        spotLightControlView.hidden = false
+        cropRectComponent.present()
     }
     
     public func displaySpotlight(sender:UIButton) {
-        view.addSubview(transparentRectView)
-        configureSpotLightRect()
         spotLightControlView.hidden = false
-        cropRectComponent.present()
         bottomEditorView.hidden = true
         slowMotionControlView.hidden = true
         //self.toggleFilters(self.filterSelectionButton)

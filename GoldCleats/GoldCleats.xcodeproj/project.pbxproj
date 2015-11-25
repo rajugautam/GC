@@ -54,6 +54,7 @@
 		43122C4F1BB087D600A34D0A /* GTMOAuth2ViewTouch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 43122C4E1BB087D600A34D0A /* GTMOAuth2ViewTouch.xib */; };
 		43122C521BB08D7700A34D0A /* VideoPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 43122C511BB08D7700A34D0A /* VideoPlayerViewController.m */; };
 		43122C561BB178FF00A34D0A /* video_placeholder@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 43122C551BB178FF00A34D0A /* video_placeholder@3x.png */; };
+		431783221C038367002B8A2D /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 431783211C038367002B8A2D /* MBProgressHUD.m */; settings = {ASSET_TAGS = (); }; };
 		433739121BB685A800B79093 /* GCSplashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 433739111BB685A800B79093 /* GCSplashViewController.m */; };
 		433739141BB687C800B79093 /* logo-gc-large.png in Resources */ = {isa = PBXBuildFile; fileRef = 433739131BB687C800B79093 /* logo-gc-large.png */; };
 		433739171BB69A4C00B79093 /* GCProfileCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 433739161BB69A4C00B79093 /* GCProfileCell.m */; };
@@ -430,6 +431,8 @@
 		43122C501BB08D7700A34D0A /* VideoPlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPlayerViewController.h; sourceTree = "<group>"; };
 		43122C511BB08D7700A34D0A /* VideoPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPlayerViewController.m; sourceTree = "<group>"; };
 		43122C551BB178FF00A34D0A /* video_placeholder@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "video_placeholder@3x.png"; sourceTree = "<group>"; };
+		431783201C038367002B8A2D /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		431783211C038367002B8A2D /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		433739101BB685A800B79093 /* GCSplashViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCSplashViewController.h; sourceTree = "<group>"; };
 		433739111BB685A800B79093 /* GCSplashViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCSplashViewController.m; sourceTree = "<group>"; };
 		433739131BB687C800B79093 /* logo-gc-large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-gc-large.png"; sourceTree = "<group>"; };
@@ -846,6 +849,7 @@
 		43122BD21BAD979900A34D0A /* GoldCleats */ = {
 			isa = PBXGroup;
 			children = (
+				4317831F1C03834A002B8A2D /* Hud View */,
 				430262151BE23A0D00B1777A /* Objects */,
 				435DEFEA1BDF848D009AB97D /* TabBarControllers */,
 				430EA09A1BCED52F00EDB591 /* Custom Views */,
@@ -1044,6 +1048,15 @@
 				4343940A1BB2A3FB009FBE0F /* share_golden@3x.png */,
 			);
 			name = Images;
+			sourceTree = "<group>";
+		};
+		4317831F1C03834A002B8A2D /* Hud View */ = {
+			isa = PBXGroup;
+			children = (
+				431783201C038367002B8A2D /* MBProgressHUD.h */,
+				431783211C038367002B8A2D /* MBProgressHUD.m */,
+			);
+			name = "Hud View";
 			sourceTree = "<group>";
 		};
 		434393F21BB1B72F009FBE0F /* Categories */ = {
@@ -1705,6 +1718,7 @@
 				435765BE1BCE8613008B7328 /* IMGLYTextFilter.swift in Sources */,
 				435765831BCE8613008B7328 /* IMGLYGobblinFilter.swift in Sources */,
 				435765AD1BCE8613008B7328 /* IMGLYShapeLayer.swift in Sources */,
+				431783221C038367002B8A2D /* MBProgressHUD.m in Sources */,
 				4357655B1BCE8613008B7328 /* IMGLYBoxGradientView.swift in Sources */,
 				435765571BCE8613008B7328 /* IMGLYBleachedBlueFilter.swift in Sources */,
 				435765841BCE8613008B7328 /* IMGLYGradientViewDelegate.swift in Sources */,

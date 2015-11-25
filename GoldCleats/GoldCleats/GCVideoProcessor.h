@@ -11,7 +11,7 @@
 @protocol GCVideoProcessorDelegate <NSObject>
 
 @optional
--(void)processesdVideoURL:(NSURL *)finalURL;
+-(void)processesdVideoURL:(NSURL *)finalURL isSavedToPhotoLibrary:(BOOL)flag;
 
 @end
 @interface GCVideoProcessor : NSObject
